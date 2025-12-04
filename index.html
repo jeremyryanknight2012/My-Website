@@ -42,28 +42,13 @@ header {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    box-sizing: border-box;
 }
-#site-title {
-    font-size: 20px;
-    white-space: nowrap;
-}
-#search-bar {
-    flex: 1;
-    max-width: 450px;
-}
+#search-bar { flex: 1; max-width: 450px; }
 #search-input {
     width: 100%;
     padding: 6px 8px;
     border-radius: 6px;
     border: none;
-    font-size: 14px;
-}
-header button {
-    padding: 8px 14px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
 }
 
 /* SETTINGS PANEL */
@@ -76,9 +61,8 @@ header button {
     background: var(--panel);
     color: white;
     padding: 20px;
-    box-sizing: border-box;
     transform: translateX(-100%);
-    transition: transform 0.35s ease;
+    transition: 0.35s ease;
     z-index: 9999;
 }
 #settings-panel.open {
@@ -86,24 +70,25 @@ header button {
 }
 
 /* PAGE */
-.page {
-    padding: 20px;
-}
+.page { padding: 20px; }
 
 /* SCROLLER */
-.scroller-container { position: relative; margin-top: 15px; }
+.scroller-container {
+    position: relative;
+    margin-top: 15px;
+}
 .scroller {
     display: flex;
     overflow-x: auto;
     gap: 12px;
-    padding: 10px 0;
     scroll-behavior: smooth;
+    padding: 10px 0;
 }
 .card {
     min-width: 200px;
     height: 120px;
     background: #444;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
     display: flex;
     align-items: center;
@@ -126,7 +111,7 @@ header button {
 .left-arrow { left: -5px; }
 .right-arrow { right: -5px; }
 
-/* EMBED WINDOW */
+/* EMBED VIEWER */
 #embed-container {
     position: fixed;
     inset: 0;
@@ -173,7 +158,7 @@ header button {
 <!-- TRANSITION -->
 <div id="transition-screen"></div>
 
-<!-- SETTINGS PANEL -->
+<!-- SETTINGS -->
 <div id="settings-panel">
     <h2>Settings</h2>
     <button onclick="toggleDarkMode()">Dark Mode</button>
@@ -185,10 +170,8 @@ header button {
 
 <!-- HEADER -->
 <header>
-    <div id="site-title">PUT NAME HERE</div>
-    <div id="search-bar">
-        <input id="search-input" placeholder="Search games...">
-    </div>
+    <div id="site-title">SME</div>
+    <div id="search-bar"><input id="search-input" placeholder="Search games..."></div>
     <button id="settings-button" onclick="openSettings()">Settings</button>
 </header>
 
@@ -201,19 +184,17 @@ header button {
 
         <div id="hub-scroll" class="scroller">
 
-            <!-- MINECRAFT (NEW TAB WINDOW + FULLSCREEN IFRAME) -->
-            <div class="card" onclick="openNewTabGame('Minecraft',
-'https://jeremy4401.github.io/SME/minecraft/Eaglercraft_1.12_Offline_en_US.html')">
+            <!-- MINECRAFT - Must open in new tab -->
+            <div class="card" onclick="openNewTabGame('https://jeremy4401.github.io/SME/minecraft/Eaglercraft_1.12_Offline_en_US.html')">
                 Minecraft
             </div>
 
-            <!-- SLIME RANCHER -->
-            <div class="card" onclick="openNewTabGame('Slime Rancher',
-'https://jeremy4401.github.io/SME/slime/Slime%20Rancher.html')">
+            <!-- SLIME RANCHER - Must open in new tab -->
+            <div class="card" onclick="openNewTabGame('https://jeremy4401.github.io/SME/slime/Slime%20Rancher.html')">
                 Slime Rancher
             </div>
 
-            <!-- ADD YOUR OWN -->
+            <!-- EMBED GAME -->
             <div class="card" onclick="openEmbedURL('PUT URL HERE')">
                 PUT NAME HERE
             </div>
@@ -230,112 +211,101 @@ header button {
 
 <script>
 
-/* SETTINGS PANEL */
-function openSettings() {
+/******** SETTINGS ********/
+function openSettings(){
     document.getElementById("settings-panel").classList.add("open");
 }
-document.addEventListener("click", function(e) {
-    const panel = document.getElementById("settings-panel");
-    const btn = document.getElementById("settings-button");
-    if (panel.classList.contains("open") && !panel.contains(e.target) && e.target !== btn) {
+document.addEventListener("click",function(e){
+    const panel=document.getElementById("settings-panel");
+    const btn=document.getElementById("settings-button");
+    if(panel.classList.contains("open")&&!panel.contains(e.target)&&e.target!==btn){
         panel.classList.remove("open");
     }
 });
 
-/* DARK MODE */
-function toggleDarkMode() {
+/******** DARK MODE ********/
+function toggleDarkMode(){
     document.body.classList.toggle("dark");
 }
 
-/* PERFORMANCE MODE */
-function togglePerformance() {
+/******** PERFORMANCE MODE ********/
+function togglePerformance(){
     document.body.classList.toggle("performance");
 }
 
-/* CTRL+W BLOCK */
-document.addEventListener("keydown", e => {
-    if (e.ctrlKey && e.key.toLowerCase() === "w") {
+/******** BLOCK CTRL+W ********/
+document.addEventListener("keydown",e=>{
+    if(e.ctrlKey&&e.key.toLowerCase()==="w"){
         e.preventDefault();
         alert("Ctrl+W is disabled.");
     }
 });
 
-/* EXPORT / IMPORT */
-function exportSettings() {
-    const data = {
-        dark: document.body.classList.contains("dark"),
-        performance: document.body.classList.contains("performance")
+/******** EXPORT / IMPORT ********/
+function exportSettings(){
+    const data={
+        dark:document.body.classList.contains("dark"),
+        performance:document.body.classList.contains("performance")
     };
-    const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "settings.json";
+    const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="settings.json";
     a.click();
 }
-function importSettings(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const r = new FileReader();
-    r.onload = e => {
-        const s = JSON.parse(e.target.result);
-        document.body.classList.toggle("dark", s.dark);
-        document.body.classList.toggle("performance", s.performance);
+function importSettings(event){
+    const file=event.target.files[0];
+    if(!file)return;
+    const r=new FileReader();
+    r.onload=e=>{
+        const s=JSON.parse(e.target.result);
+        document.body.classList.toggle("dark",s.dark);
+        document.body.classList.toggle("performance",s.performance);
     };
     r.readAsText(file);
 }
 
-/* SEARCH */
-document.getElementById("search-input").addEventListener("input", function() {
-    let q = this.value.toLowerCase();
-    document.querySelectorAll(".card").forEach(card => {
-        let t = card.textContent.toLowerCase();
-        card.style.display = t.includes(q) ? "flex" : "none";
+/******** SEARCH ********/
+document.getElementById("search-input").addEventListener("input",function(){
+    let q=this.value.toLowerCase();
+    document.querySelectorAll(".card").forEach(c=>{
+        c.style.display = c.textContent.toLowerCase().includes(q) ? "flex" : "none";
     });
 });
 
-/* SCROLLER */
-function scrollLeft(id){ document.getElementById(id).scrollLeft -= 220; }
-function scrollRight(id){ document.getElementById(id).scrollLeft += 220; }
+/******** SCROLLER ********/
+function scrollLeft(id){document.getElementById(id).scrollLeft-=220;}
+function scrollRight(id){document.getElementById(id).scrollLeft+=220;}
 
-/* TRANSITION */
-function transition(cb) {
-    let t = document.getElementById("transition-screen");
+/******** TRANSITION ********/
+function transition(callback){
+    let t=document.getElementById("transition-screen");
     t.classList.add("active");
-    setTimeout(() => {
-        cb();
-        setTimeout(() => t.classList.remove("active"), 350);
-    }, 350);
+    setTimeout(()=>{
+        callback();
+        setTimeout(()=>t.classList.remove("active"),300);
+    },300);
 }
 
-/* EMBED MODE */
-function openEmbedURL(url) {
-    transition(() => {
-        document.getElementById("embed-frame").src = url;
-        document.getElementById("embed-container").style.display = "block";
-        document.getElementById("home-btn").style.display = "block";
+/******** EMBED GAMES ********/
+function openEmbedURL(url){
+    transition(()=>{
+        document.getElementById("embed-frame").src=url;
+        document.getElementById("embed-container").style.display="block";
+        document.getElementById("home-btn").style.display="block";
     });
 }
-function closeEmbed() {
-    transition(() => {
-        document.getElementById("embed-container").style.display = "none";
-        document.getElementById("embed-frame").src = "";
-        document.getElementById("home-btn").style.display = "none";
+function closeEmbed(){
+    transition(()=>{
+        document.getElementById("embed-container").style.display="none";
+        document.getElementById("embed-frame").src="";
+        document.getElementById("home-btn").style.display="none";
     });
 }
 
-/* NEW TAB WINDOW + FULLSCREEN IFRAME (for blocked games) */
-function openNewTabGame(name, url) {
-    var win = window.open("", "_blank");
-    win.document.title = name;
-    var iframe = win.document.createElement("iframe");
-    iframe.src = url;
-    iframe.style.position = "fixed";
-    iframe.style.inset = "0";
-    iframe.style.border = "none";
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-    win.document.body.style.margin = "0";
-    win.document.body.appendChild(iframe);
+/******** OPEN BLOCKED GAMES IN NEW TAB ********/
+function openNewTabGame(url){
+    window.open(url,"_blank");
 }
 
 </script>
