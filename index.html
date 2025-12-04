@@ -233,10 +233,19 @@ h1 {
         <div class="arrow left-arrow" onclick="scrollLeft('hub-scroll')">&#10094;</div>
 
         <div id="hub-scroll" class="scroller">
-            <!-- Example cards - replace URLs and names -->
-            <div class="card" onclick="openEmbedURL('https://jeremy4401.github.io/SME/minecraft/Eaglercraft_1.12_Offline_en_US.html">Minecraft</div>
-            <div class="card" onclick="openEmbedURL("https://jeremy4401.github.io/SME/slime/SlimeRancher.html">Slime Rancher</div>
-            <div class="card" onclick="openEmbedURL('PUT URL HERE')">PUT NAME HERE</div>
+
+            <div class="card" onclick="openEmbedURL('https://jeremy4401.github.io/SME/minecraft/Eaglercraft_1.12_Offline_en_US.html')">
+                Minecraft
+            </div>
+
+            <div class="card" onclick="openEmbedURL('https://jeremy4401.github.io/SME/slime/SlimeRancher.html')">
+                Slime Rancher
+            </div>
+
+            <div class="card" onclick="openEmbedURL('PUT URL HERE')">
+                PUT NAME HERE
+            </div>
+
         </div>
 
         <div class="arrow right-arrow" onclick="scrollRight('hub-scroll')">&#10095;</div>
@@ -269,14 +278,12 @@ h1 {
 <div id="home-btn" onclick="closeEmbed()">Home</div>
 
 <script>
-/* -------------------------
-   SETTINGS PANEL LOGIC
-------------------------- */
+/* SETTINGS PANEL */
 function openSettings() {
     document.getElementById("settings-panel").classList.add("open");
 }
 
-// Close settings when clicking anywhere outside it
+// Click outside settings closes it
 document.addEventListener("click", function(e) {
     const panel = document.getElementById("settings-panel");
     const settingsBtn = document.getElementById("settings-button");
@@ -284,30 +291,24 @@ document.addEventListener("click", function(e) {
     if (!panel.classList.contains("open")) return;
 
     const clickInsidePanel = panel.contains(e.target);
-    const clickOnSettingsBtn = (e.target === settingsBtn) || settingsBtn.contains(e.target);
+    const clickOnSettingsBtn = settingsBtn.contains(e.target);
 
     if (!clickInsidePanel && !clickOnSettingsBtn) {
         panel.classList.remove("open");
     }
 });
 
-/* -------------------------
-   DARK MODE
-------------------------- */
+/* DARK MODE */
 function toggleDarkMode() {
     document.body.classList.toggle("dark");
 }
 
-/* -------------------------
-   PERFORMANCE MODE
-------------------------- */
+/* PERFORMANCE MODE */
 function togglePerformance() {
     document.body.classList.toggle("performance");
 }
 
-/* -------------------------
-   PREVENT CTRL+W
-------------------------- */
+/* DISABLE CTRL W */
 document.addEventListener("keydown", e => {
     if (e.ctrlKey && e.key.toLowerCase() === "w") {
         e.preventDefault();
@@ -315,9 +316,7 @@ document.addEventListener("keydown", e => {
     }
 });
 
-/* -------------------------
-   EXPORT / IMPORT SETTINGS
-------------------------- */
+/* EXPORT / IMPORT SETTINGS */
 function exportSettings() {
     const data = {
         dark: document.body.classList.contains("dark"),
@@ -344,9 +343,7 @@ function importSettings(event) {
     r.readAsText(file);
 }
 
-/* -------------------------
-   GLOBAL SEARCH (FILTER CARDS)
-------------------------- */
+/* SEARCH FILTER */
 document.getElementById("search-input").addEventListener("input", function () {
     const q = this.value.toLowerCase();
     document.querySelectorAll(".card").forEach(card => {
@@ -355,9 +352,7 @@ document.getElementById("search-input").addEventListener("input", function () {
     });
 });
 
-/* -------------------------
-   NETFLIX-STYLE SCROLL
-------------------------- */
+/* SCROLLER */
 function scrollLeft(id) {
     document.getElementById(id).scrollLeft -= 250;
 }
@@ -366,9 +361,7 @@ function scrollRight(id) {
     document.getElementById(id).scrollLeft += 250;
 }
 
-/* -------------------------
-   WHITE TRANSITION
-------------------------- */
+/* TRANSITION */
 function transition(callback) {
     const t = document.getElementById("transition-screen");
     t.classList.add("active");
@@ -379,9 +372,7 @@ function transition(callback) {
     }, 350);
 }
 
-/* -------------------------
-   EMBED MODE (HUB PAGE)
-------------------------- */
+/* EMBED MODE */
 function openEmbedURL(url) {
     transition(() => {
         document.getElementById("embed-frame").src = url;
@@ -398,9 +389,7 @@ function closeEmbed() {
     });
 }
 
-/* -------------------------
-   NORMAL LINK NAVIGATION (LINKS PAGE)
-------------------------- */
+/* NORMAL LINK */
 function openNormalURL(url) {
     transition(() => {
         window.open(url, "_blank");
