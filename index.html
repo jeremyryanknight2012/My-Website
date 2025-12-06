@@ -6,9 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* --------------------------
-   GLOBAL + DARK/LIGHT MODE
------------------------------*/
+/* --------------------------------
+   GLOBAL + THEME + FONT
+-----------------------------------*/
+@font-face {
+  font-family: "Comic Sans MS";
+  src: local("Comic Sans MS"), local("ComicSansMS");
+}
+
 :root {
   --bg: #111;
   --bg2: #1a1a1a;
@@ -17,6 +22,7 @@
   --sidebar-bg: #0d0d0d;
   --sidebar-width: 60px;
   --sidebar-expanded: 200px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
 body.light {
@@ -24,18 +30,19 @@ body.light {
   --bg2: #e6e6e6;
   --text: #111;
   --sidebar-bg: #ddd;
+  --shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Arial, sans-serif;
+  font-family: "Comic Sans MS", sans-serif !important;
 }
 
-/* --------------------------
-      SIDEBAR (COLLAPSIBLE)
------------------------------*/
+/* --------------------------------
+           SIDEBAR
+-----------------------------------*/
 #sidebar {
   position: fixed;
   top: 0;
@@ -63,9 +70,9 @@ body {
   background: rgba(255,255,255,0.1);
 }
 
-/* --------------------------
-        MAIN CONTENT
------------------------------*/
+/* --------------------------------
+           MAIN AREA
+-----------------------------------*/
 #main {
   margin-left: var(--sidebar-width);
   transition: margin-left .25s ease;
@@ -75,58 +82,116 @@ body {
   margin-left: var(--sidebar-expanded);
 }
 
-.section {
-  padding: 20px;
-}
-.row {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding-bottom: 10px;
+header {
+  margin-bottom: 20px;
 }
 
-/* --------------------------
-          CARDS
------------------------------*/
-.card {
-  width: 180px;                /* smaller, consistent */
-  flex: 0 0 180px;             /* ensures perfect fixed width */
-  background: var(--bg2);
+#search {
   padding: 10px;
-  border-radius: 12px;
+  width: 260px;
+  border-radius: 8px;
+  border: none;
+  background: var(--bg2);
+  color: var(--text);
+  font-size: 15px;
+}
+
+/* --------------------------------
+         CATEGORY FILTER TABS
+-----------------------------------*/
+#cat-tabs {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+
+.cat-btn {
+  padding: 8px 14px;
+  background: var(--bg2);
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform .15s ease;
+  transition: background .15s;
+  box-shadow: var(--shadow);
+}
+
+.cat-btn:hover {
+  background: #333;
+}
+
+.cat-btn.active {
+  background: var(--accent);
+}
+
+/* --------------------------------
+        GAME CARDS (IMPROVED)
+-----------------------------------*/
+.row {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  flex-wrap: nowrap;
+}
+
+.card {
+  width: 170px;
+  flex: 0 0 170px;
+  background: var(--bg2);
+  padding: 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: var(--shadow);
 }
 
 .card:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px) scale(1.05);
+  background: #222;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 
 .card img {
-  width: 160px;                /* perfectly even image size */
-  height: 120px;               /* fixed height */
-  object-fit: cover;           /* no stretching */
-  border-radius: 10px;
+  width: 150px;
+  height: 115px;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .card button {
-  width: 160px;                /* perfectly aligned button */
-  padding: 8px;
+  width: 150px;
+  padding: 9px;
   margin-top: 10px;
   background: var(--accent);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  box-shadow: var(--shadow);
 }
 
-/* --------------------------
-         EMBED PLAYER
------------------------------*/
+.card button:hover {
+  background: #5fd86a;
+}
+
+/* --------------------------------
+      MOBILE MASONRY GRID MODE
+-----------------------------------*/
+@media (max-width: 650px) {
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    overflow: visible;
+  }
+}
+
+/* --------------------------------
+        EMBED WINDOW
+-----------------------------------*/
 #embed-container {
   position: fixed;
   inset: 0;
@@ -134,39 +199,29 @@ body {
   display: none;
   z-index: 9999;
 }
+
 #embed-frame {
   width: 100%;
   height: 100%;
   border: none;
 }
+
 #spinner {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 30px;
-}
-
-/* --------------------------
-      TOP SEARCH BAR
------------------------------*/
-#search {
-  padding: 10px;
-  width: 250px;
-  border-radius: 8px;
-  border: none;
-  background: var(--bg2);
-  color: var(--text);
+  font-size: 28px;
 }
 
 </style>
 </head>
 <body>
 
-<!-- --------------------------
-         SIDEBAR MENU
------------------------------ -->
+<!-- --------------------------------
+              SIDEBAR
+----------------------------------- -->
 <div id="sidebar">
   <div class="sidebar-item" onclick="scrollToSection('games')">🎮 Games</div>
   <div class="sidebar-item" onclick="scrollToSection('downloads')">⬇ Downloads</div>
@@ -175,68 +230,63 @@ body {
   <div class="sidebar-item" onclick="panic()">⚠ Panic</div>
 </div>
 
-<!-- --------------------------
-         MAIN CONTENT
------------------------------ -->
+<!-- --------------------------------
+              MAIN
+----------------------------------- -->
 <div id="main">
 
 <header>
-  <input id="search" placeholder="Search games...">
+  <input id="search" placeholder="Search...">
 </header>
 
+<!-- DOWNLOADS -->
 <div class="section" id="downloads">
   <h1>Downloads</h1>
   <div class="row" id="download-row"></div>
 </div>
 
+<!-- GAMES -->
 <div class="section" id="games">
   <h1>Games</h1>
+
+  <!-- CATEGORY TABS -->
+  <div id="cat-tabs"></div>
+
   <div class="row" id="game-row"></div>
 </div>
 
+<!-- CATEGORIES SECTION -->
 <div class="section" id="categories">
   <h1>Categories</h1>
-  <div id="cat-list"></div>
+  <p>Choose a category above to filter games!</p>
 </div>
 
-</div> <!-- main -->
+</div>
 
-<!-- --------------------------
-       EMBED CONTAINER
------------------------------ -->
+<!-- --------------------------------
+           EMBED CONTAINER
+----------------------------------- -->
 <div id="embed-container">
   <div id="spinner">Loading...</div>
   <iframe id="embed-frame"></iframe>
 </div>
 
 <script>
-/* --------------------------
-      ULTRAVIOLET ENCODER
------------------------------ */
+/* --------------------------------
+        ULTRAVIOLET ENCODER
+-----------------------------------*/
 const uvHost = "https://holyubofficial.net/service/";
 function uvEncode(url) {
   return uvHost + btoa(url).replace(/=/g,"");
 }
 
-/* --------------------------
-      GAME + DOWNLOAD DATA
------------------------------ */
+/* --------------------------------
+        GAME + DOWNLOAD DATA
+-----------------------------------*/
 const downloads = [
-  {
-    name: "Minecraft",
-    img: "thumbnails/minecraft.png",
-    link: "https://drive.google.com/uc?export=download&id=1lQnwB_6FZ-wPXQPg3NxcBTEVJRFxY00u"
-  },
-  {
-    name: "Slope",
-    img: "thumbnails/slope.png",
-    link: "https://drive.google.com/uc?export=download&id=1IS41Lxh7Yuu4QZh7AcyhUGng_PuhwiEP"
-  },
-  {
-    name: "Subway Surfers",
-    img: "thumbnails/subawysurfers.png",
-    link: "https://drive.google.com/uc?export=download&id=10UUI0JaXaQk5eKckAz_-o74s0aVdiL0J"
-  }
+  {name:"Minecraft", img:"thumbnails/minecraft.png", link:"https://drive.google.com/uc?export=download&id=1lQnwB_6FZ-wPXQPg3NxcBTEVJRFxY00u"},
+  {name:"Slope", img:"thumbnails/slope.png", link:"https://drive.google.com/uc?export=download&id=1IS41Lxh7Yuu4QZh7AcyhUGng_PuhwiEP"},
+  {name:"Subway Surfers", img:"thumbnails/subawysurfers.png", link:"https://drive.google.com/uc?export=download&id=10UUI0JaXaQk5eKckAz_-o74s0aVdiL0J"}
 ];
 
 const games = [
@@ -247,9 +297,26 @@ const games = [
   {name:"Proxies", img:"thumbnails/proxy.png", url:"https://jeremy4401.github.io/Proxies", cat:"Tools"}
 ];
 
-/* --------------------------
-        LOAD CARDS
------------------------------ */
+/* --------------------------------
+      UNIQUE CATEGORIES
+-----------------------------------*/
+const categories = [...new Set(games.map(g => g.cat))];
+
+/* --------------------------------
+       BUILD CATEGORY TABS
+-----------------------------------*/
+function buildCategoryTabs() {
+  const tabContainer = document.getElementById("cat-tabs");
+  tabContainer.innerHTML = `<div class="cat-btn active" onclick="filterGames('All')">All</div>`;
+  categories.forEach(cat => {
+    tabContainer.innerHTML += `<div class="cat-btn" onclick="filterGames('${cat}')">${cat}</div>`;
+  });
+}
+buildCategoryTabs();
+
+/* --------------------------------
+          LOAD GAME CARDS
+-----------------------------------*/
 function loadCards() {
   const drow = document.getElementById("download-row");
   downloads.forEach(d => {
@@ -262,9 +329,10 @@ function loadCards() {
   });
 
   const grow = document.getElementById("game-row");
+  grow.innerHTML = "";
   games.forEach(g => {
     grow.innerHTML += `
-      <div class="card" onclick="openEmbed('${uvEncode(g.url)}')">
+      <div class="card game-card" data-cat="${g.cat}" onclick="openEmbed('${uvEncode(g.url)}')">
         <img src="${g.img}">
         <button>${g.name}</button>
       </div>
@@ -273,9 +341,22 @@ function loadCards() {
 }
 loadCards();
 
-/* --------------------------
-        EMBED SYSTEM
------------------------------ */
+/* --------------------------------
+         CATEGORY FILTER
+-----------------------------------*/
+function filterGames(cat) {
+  document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
+  document.querySelector(`.cat-btn:nth-child(${cat==="All" ? 1 : categories.indexOf(cat)+2})`).classList.add("active");
+
+  document.querySelectorAll(".game-card").forEach(c => {
+    if (cat === "All" || c.dataset.cat === cat) c.style.display = "flex";
+    else c.style.display = "none";
+  });
+}
+
+/* --------------------------------
+          EMBED SYSTEM
+-----------------------------------*/
 function openEmbed(url){
   const cont = document.getElementById("embed-container");
   const frame = document.getElementById("embed-frame");
@@ -297,44 +378,44 @@ document.addEventListener("keydown", e=>{
   if(e.key==="T") toggleTheme();
 });
 
-/* --------------------------
+/* --------------------------------
         FULLSCREEN MODE
------------------------------ */
+-----------------------------------*/
 function toggleFullscreen() {
   const iframe = document.getElementById("embed-frame");
   if (!document.fullscreenElement) iframe.requestFullscreen();
   else document.exitFullscreen();
 }
 
-/* --------------------------
-       SEARCH FILTER
------------------------------ */
+/* --------------------------------
+          SEARCH SYSTEM
+-----------------------------------*/
 document.getElementById("search").addEventListener("input", e=>{
   const q = e.target.value.toLowerCase();
   document.querySelectorAll(".card").forEach(card=>{
-    card.style.display = card.innerText.toLowerCase().includes(q) ? "block" : "none";
+    card.style.display = card.innerText.toLowerCase().includes(q) ? "flex" : "none";
   });
 });
 
-/* --------------------------
-       THEME TOGGLE
------------------------------ */
+/* --------------------------------
+          THEME TOGGLE
+-----------------------------------*/
 function toggleTheme() {
   document.body.classList.toggle("light");
   localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
 }
 if(localStorage.getItem("theme")==="light") document.body.classList.add("light");
 
-/* --------------------------
-       PANIC (FAST EXIT)
------------------------------ */
+/* --------------------------------
+          PANIC BUTTON
+-----------------------------------*/
 function panic() {
   window.location.href = "https://classroom.google.com";
 }
 
-/* --------------------------
-       AUTO SCROLL
------------------------------ */
+/* --------------------------------
+          SMOOTH SCROLL
+-----------------------------------*/
 function scrollToSection(id) {
   document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
