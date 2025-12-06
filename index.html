@@ -252,11 +252,6 @@ body.light .postBox { background:#ddd; }
     <div id="settingsContent"></div>
   </div>
 
-  <div id="theater" class="section">
-  <h1>SME Theater</h1>
-  <p>Loading Theater...</p>
-</div>
-
 </div>
 
 <!-- EMBED WINDOW -->
@@ -308,6 +303,8 @@ function nav(id){
     "settingsPage": "Settings"
   };
   document.getElementById("pageTitle").textContent = titleMap[id] || "SME";
+
+if(id === "theater") loadTheater();  
 }
 
 function toggleTheme(){ document.body.classList.toggle('light'); }
@@ -1855,6 +1852,14 @@ setInterval(()=>renderHome(), 4000);
 
 /* Initial profile page render (so it's ready when user clicks) */
 renderProfile();
+function loadTheater() {
+  document.getElementById("theater").innerHTML = `
+    <h1>SME Theater</h1>
+    <iframe src="https://jeremy4401.github.io/SME-Theater/"
+            style="width:100%;height:90vh;border:none;border-radius:12px;background:#000;">
+    </iframe>
+  `;
+}
 
 </script>
 
