@@ -100,6 +100,7 @@ body.light .postBox { background:#ddd; }
   cursor:pointer;
   transition:.2s;
   position:relative;
+  vertical-align:top;
 }
 .card:hover { transform:translateY(-6px) scale(1.05); }
 .card img { width:100%; border-radius:10px; }
@@ -111,7 +112,17 @@ body.light .postBox { background:#ddd; }
 }
 .star.fav { color:gold; text-shadow:0 0 10px gold; }
 
-/* EMBED WINDOW */
+/* INLINE GAME FRAME INSIDE CARD */
+.inlineFrame {
+  display:none;
+  width:100%;
+  height:300px;
+  border:none;
+  margin-top:8px;
+  border-radius:10px;
+}
+
+/* EMBED WINDOW (for other flows using play()) */
 #embedWin {
   display:none; position:fixed; inset:0; background:#000d;
   z-index:9999;
@@ -304,7 +315,7 @@ function nav(id){
   };
   document.getElementById("pageTitle").textContent = titleMap[id] || "SME";
 
-if(id === "theater") loadTheater();  
+  if(id === "theater") loadTheater();  
 }
 
 function toggleTheme(){ document.body.classList.toggle('light'); }
@@ -549,6 +560,7 @@ let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
 /* ============================
       RENDER GAMES LIST
+   (fixed, with PNG → inline iframe)
 ============================ */
 
 function renderGames(){
@@ -566,26 +578,6 @@ function renderGames(){
 
   let html = `
     <h1>Games</h1>
-   
- <h1>Slime Rancher</h1>
-
-    <!-- Clickable Preview Image -->
-    <img id="preview" src="slimerancher.png" alt="Game Preview">
-
-    <!-- Embedded Game (hidden until clicked) -->
-    <iframe id="gameFrame" src="" allowfullscreen></iframe>
-
-    <script>
-        const preview = document.getElementById("preview");
-        const gameFrame = document.getElementById("gameFrame");
-
-        // Game URL:
-        const gameURL = "https://jeremy4401.github.io/slime-rancher;
-
-        preview.addEventListener("click", () => {
-            preview.style.display = "none";   // Hide image
-            gameFrame.src = gameURL;          // Load game
-            gameFrame.style.display = "block"; // Show iframe
 
     <div style="margin-bottom:15px;">
       <input id="gameSearch" placeholder="Search games..."
@@ -609,10 +601,17 @@ function renderGames(){
   list.forEach(g=>{
     let isFav = favorites.includes(g.name) ? "fav" : "";
     html += `
-      <div class="card" onclick="openGameDetails('${g.name}')" style="position:relative;">
+      <div class="card" style="position:relative;" data-url="${g.url}">
         <div class="star ${isFav}" onclick="toggleFav('${g.name}');event.stopPropagation();">★</div>
-        <img src="${g.img}">
-        <button>${g.name}</button>
+
+        <!-- PNG preview – click to start game inline -->
+        <img src="${g.img}" alt="${g.name} preview" onclick="startInlineGame(this)">
+
+        <!-- Game title still opens detail modal -->
+        <button onclick="openGameDetails('${g.name}');event.stopPropagation();">${g.name}</button>
+
+        <!-- Inline iframe that appears after clicking PNG -->
+        <iframe class="inlineFrame" allowfullscreen></iframe>
       </div>
     `;
   });
@@ -620,6 +619,21 @@ function renderGames(){
   html += "</div>";
 
   sec.innerHTML = html;
+}
+
+/* When you click a PNG preview inside a card, start the game inline */
+function startInlineGame(imgEl){
+  const card = imgEl.closest(".card");
+  if (!card) return;
+  const frame = card.querySelector(".inlineFrame");
+  if (!frame) return;
+
+  const url = enc(card.dataset.url);
+
+  // Hide the image, show the game
+  imgEl.style.display = "none";
+  frame.src = url;
+  frame.style.display = "block";
 }
 
 /* ============================
@@ -1363,7 +1377,8 @@ function openThemePanel(){
     <label>Accent Color</label><br>
     <input id="c_acc" type="color"><br><br>
 
-    <button onclick="saveCustomTheme()"
+    <button onclick="saveCustomTheme()
+"
       style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;">
       Save Theme
     </button>
@@ -1872,6 +1887,7 @@ setInterval(()=>renderHome(), 4000);
 
 /* Initial profile page render (so it's ready when user clicks) */
 renderProfile();
+
 function loadTheater() {
   document.getElementById("theater").innerHTML = `
     <h1>SME Theater</h1>
