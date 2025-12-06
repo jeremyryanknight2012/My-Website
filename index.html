@@ -17,6 +17,7 @@
     --text: #fff;
     --panel: #333;
 }
+
 body {
     margin: 0;
     background: var(--bg);
@@ -29,7 +30,7 @@ body {
 /* PERFORMANCE MODE */
 .performance * {
     image-rendering: pixelated;
-    filter: blur(0.2px);
+    filter: blur(0.25px);
     transition: none !important;
 }
 
@@ -37,18 +38,10 @@ body {
 header {
     background: #222;
     color: white;
-    padding: 10px 14px;
+    padding: 12px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-}
-#search-bar { flex: 1; max-width: 450px; }
-#search-input {
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: none;
 }
 
 /* SETTINGS PANEL */
@@ -67,63 +60,62 @@ header {
 }
 #settings-panel.open { transform: translateX(0); }
 
-/* PAGE */
-.page { padding: 20px; }
+/* SECTIONS */
+.section {
+    min-height: 100vh;
+    padding: 40px;
+    box-sizing: border-box;
+    border-bottom: 3px solid #444;
+}
+.section h1 {
+    margin-top: 0;
+}
 
-/* DOWNLOAD CARDS */
-.download-box {
+/* NETFLIX STYLE SCROLL ROW */
+.row-container {
+    margin-top: 20px;
+    position: relative;
+}
+.row {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
+}
+.row::-webkit-scrollbar {
+    height: 10px;
+}
+.row::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 4px;
+}
+
+/* CARDS */
+.card {
+    min-width: 240px;
     background: #222;
+    color: white;
     padding: 15px;
     border-radius: 8px;
-    color: white;
-    min-width: 240px;
+    cursor: pointer;
+    transition: .2s;
 }
-
-.download-box h2 {
-    margin: 0 0 8px;
-}
-
-.download-btn {
-    display: inline-block;
-    padding: 12px 20px;
-    background: #4CAF50;
-    color: white !important;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: 0.2s;
-}
-.download-btn:hover {
-    background: #45a049;
+.card:hover {
     transform: scale(1.06);
 }
+.card h2 { margin: 0 0 8px; }
 
-/* SCROLLER */
-.scroller-container { position: relative; margin-top: 15px; }
-.scroller {
-    display: flex;
-    overflow-x: auto;
-    gap: 12px;
-    scroll-behavior: smooth;
-    padding: 10px 0;
-}
-
-.arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 32px;
-    background: rgba(0,0,0,0.6);
-    padding: 5px 10px;
-    border-radius: 6px;
+.download-btn {
+    background: #4CAF50;
     color: white;
-    cursor: pointer;
+    padding: 10px;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 6px;
 }
-.left-arrow { left: -5px; }
-.right-arrow { right: -5px; }
 
-/* EMBED VIEWER */
+/* EMBED VIEW */
 #embed-container {
     position: fixed;
     inset: 0;
@@ -131,14 +123,17 @@ header {
     display: none;
     z-index: 9000;
 }
-#embed-frame { width: 100%; height: 100%; border: none; }
+#embed-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
 
-/* HOME BUTTON */
 #home-btn {
     position: fixed;
     bottom: 12px;
     left: 12px;
-    padding: 10px 16px;
+    padding: 12px 18px;
     background: #444;
     color: white;
     border-radius: 6px;
@@ -165,7 +160,7 @@ header {
 <!-- TRANSITION -->
 <div id="transition-screen"></div>
 
-<!-- SETTINGS -->
+<!-- SETTINGS PANEL -->
 <div id="settings-panel">
     <h2>Settings</h2>
     <button onclick="toggleDarkMode()">Dark Mode</button>
@@ -178,101 +173,83 @@ header {
 <!-- HEADER -->
 <header>
     <div id="site-title">SME</div>
-    <div id="search-bar"><input id="search-input" placeholder="Search games..."></div>
     <button id="settings-button" onclick="openSettings()">Settings</button>
 </header>
 
-<!-- HUB PAGE -->
-<div id="hub-page" class="page">
-    <h1>Unblocked Hub</h1>
-
-    <div class="scroller-container">
-        <div class="arrow left-arrow" onclick="scrollLeft('hub-scroll')">&#10094;</div>
-
-        <div id="hub-scroll" class="scroller">
-    <div id="page" class="page">
+<!-- SECTION 1: DOWNLOADS -->
+<section class="section">
     <h1>Game Downloads</h1>
 
-    <div class="scroller-container">
-        <div class="arrow left-arrow" onclick="scrollLeft('hub-scroll')">&#10094;</div>
-
-        <div id="hub-scroll" class="scroller">
-
+    <div class="row-container">
+        <div class="row">
             <!-- MINECRAFT -->
-            <div class="download-box">
+            <div class="card">
                 <h2>Minecraft</h2>
-                <a class="download-btn" href="https://drive.google.com/uc?export=download&id=1lQnwB_6FZ-wPXQPg3NxcBTEVJRFxY00u" download>
-                    Download Minecraft
+                <a class="download-btn" 
+                   href="https://drive.google.com/uc?export=download&id=1lQnwB_6FZ-wPXQPg3NxcBTEVJRFxY00u">
+                   Download
                 </a>
             </div>
 
             <!-- SLOPE -->
-            <div class="download-box">
+            <div class="card">
                 <h2>Slope</h2>
-                <a class="download-btn" href="https://drive.google.com/uc?export=download&id=1IS41Lxh7Yuu4QZh7AcyhUGng_PuhwiEP" download>
-                    Download Slope
+                <a class="download-btn" 
+                   href="https://drive.google.com/uc?export=download&id=1IS41Lxh7Yuu4QZh7AcyhUGng_PuhwiEP">
+                   Download
                 </a>
             </div>
 
             <!-- SUBWAY SURFERS -->
-            <div class="download-box">
+            <div class="card">
                 <h2>Subway Surfers</h2>
-                <a class="download-btn" href="https://drive.google.com/uc?export=download&id=10UUI0JaXaQk5eKckAz_-o74s0aVdiL0J" download>
-                    Download Subway Surfers
+                <a class="download-btn" 
+                   href="https://drive.google.com/uc?export=download&id=10UUI0JaXaQk5eKckAz_-o74s0aVdiL0J">
+                   Download
                 </a>
             </div>
-
         </div>
-
-        <div class="arrow right-arrow" onclick="scrollRight('hub-scroll')">&#10095;</div>
     </div>
-</div>
-<div id="page" class="page">
+</section>
+
+<!-- SECTION 2: GAMES -->
+<section class="section">
     <h1>Games</h1>
 
-    <div class="scroller-container">
-        <div class="arrow left-arrow" onclick="scrollLeft('hub-scroll')">&#10094;</div>
-
-        <div id="hub-scroll" class="scroller">
-<!-- SLIME RANCHER -->
-<div class="download-box" onclick="openEmbedURL('https://jeremy4401.github.io/slime-rancher/')">
-    <h2>Slime Rancher</h2>
-    <button class="download-btn">Play</button>
-</div>
-
-            <div class="arrow right-arrow" onclick="scrollRight('hub-scroll')">&#10095;</div>
+    <div class="row-container">
+        <div class="row">
+            <div class="card" onclick="openEmbedURL('https://jeremy4401.github.io/slime-rancher/')">
+                <h2>Slime Rancher</h2>
+                <button class="download-btn">Play</button>
+            </div>
+        </div>
     </div>
-</div>
-<div id="page" class="page">
-    <h1></h1>
+</section>
 
-    <div class="scroller-container">
-        <div class="arrow left-arrow" onclick="scrollLeft('hub-scroll')">&#10094;</div>
+<!-- SECTION 3: THEATER -->
+<section class="section">
+    <h1>Theater</h1>
 
-        <div id="hub-scroll" class="scroller">
+    <div class="row-container">
+        <div class="row">
+            <div class="card" onclick="openEmbedURL('https://jeremy4401.github.io/SME-Theater')">
+                <h2>Theater</h2>
+                <button class="download-btn">Watch</button>
+            </div>
+        </div>
+    </div>
+</section>
 
-            <div class="download-box" onclick="openEmbedURL('https://jeremy4401.github.io/SME-Theater')">
-    <h2>Theater</h2>
-    <button class="download-btn">Watch</button>
-</div>
-        
-            <!-- EMBED VIEWER -->
+<!-- EMBED VIEW -->
 <div id="embed-container"><iframe id="embed-frame"></iframe></div>
 <div id="home-btn" onclick="closeEmbed()">Home</div>
 
 <script>
 
-/******** SETTINGS ********/
+/******** SETTINGS PANEL ********/
 function openSettings(){
-    document.getElementById("settings-panel").classList.add("open");
+    document.getElementById("settings-panel").classList.toggle("open");
 }
-document.addEventListener("click",function(e){
-    const panel=document.getElementById("settings-panel");
-    const btn=document.getElementById("settings-button");
-    if(panel.classList.contains("open")&&!panel.contains(e.target)&&e.target!==btn){
-        panel.classList.remove("open");
-    }
-});
 
 /******** DARK MODE ********/
 function toggleDarkMode(){
@@ -284,49 +261,31 @@ function togglePerformance(){
     document.body.classList.toggle("performance");
 }
 
-/******** BLOCK CTRL+W ********/
-document.addEventListener("keydown",e=>{
-    if(e.ctrlKey&&e.key.toLowerCase()==="w"){
-        e.preventDefault();
-        alert("Ctrl+W is disabled.");
-    }
-});
-
-/******** EXPORT / IMPORT ********/
+/******** EXPORT SETTINGS ********/
 function exportSettings(){
-    const data={
-        dark:document.body.classList.contains("dark"),
-        performance:document.body.classList.contains("performance")
+    const data = {
+        dark: document.body.classList.contains("dark"),
+        performance: document.body.classList.contains("performance")
     };
-    const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download="settings.json";
+    const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "settings.json";
     a.click();
 }
+
+/******** IMPORT SETTINGS ********/
 function importSettings(event){
-    const file=event.target.files[0];
-    if(!file)return;
-    const r=new FileReader();
-    r.onload=e=>{
-        const s=JSON.parse(e.target.result);
-        document.body.classList.toggle("dark",s.dark);
-        document.body.classList.toggle("performance",s.performance);
+    const file = event.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = e => {
+        const s = JSON.parse(e.target.result);
+        document.body.classList.toggle("dark", s.dark);
+        document.body.classList.toggle("performance", s.performance);
     };
     r.readAsText(file);
 }
-
-/******** SEARCH ********/
-document.getElementById("search-input").addEventListener("input",function(){
-    let q=this.value.toLowerCase();
-    document.querySelectorAll(".download-box").forEach(box=>{
-        box.style.display = box.textContent.toLowerCase().includes(q) ? "block" : "none";
-    });
-});
-
-/******** SCROLLER ********/
-function scrollLeft(id){document.getElementById(id).scrollLeft-=220;}
-function scrollRight(id){document.getElementById(id).scrollLeft+=220;}
 
 /******** TRANSITION ********/
 function transition(callback){
@@ -338,7 +297,7 @@ function transition(callback){
     },300);
 }
 
-/******** EMBED ********/
+/******** EMBED VIEW ********/
 function openEmbedURL(url){
     transition(()=>{
         document.getElementById("embed-frame").src=url;
