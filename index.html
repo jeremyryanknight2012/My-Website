@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SME Launcher - FINAL BUILD</title>
+<title>SME Launcher</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- ============================= -->
@@ -191,6 +191,7 @@ body.light .postBox { background:#ddd; }
   <div onclick="nav('games')">🎮</div>
   <div onclick="nav('downloads')">⬇</div>
   <div onclick="nav('favorites')">⭐</div>
+  <div onclick="nav('theater')">🎬</div>
   <div onclick="nav('friends')">👥</div>
   <div onclick="nav('profile')">👤</div>
   <div onclick="openSettings()">⚙️</div>
@@ -244,11 +245,17 @@ body.light .postBox { background:#ddd; }
   <div id="games" class="section"></div>
   <div id="downloads" class="section"></div>
   <div id="favorites" class="section"></div>
+  <div id="theater" class="section"></div>
   <div id="friends" class="section"></div>
   <div id="profile" class="section"></div>
   <div id="settingsPage" class="section">
     <div id="settingsContent"></div>
   </div>
+
+  <div id="theater" class="section">
+  <h1>SME Theater</h1>
+  <p>Loading Theater...</p>
+</div>
 
 </div>
 
@@ -295,6 +302,7 @@ function nav(id){
     "games": "Games",
     "downloads": "Downloads",
     "favorites": "Favorites",
+    "theater": "Theater",
     "friends": "Friends",
     "profile": "Profile",
     "settingsPage": "Settings"
@@ -534,9 +542,9 @@ renderHome();
 
 /* GAME LIST */
 let games = [
-  {name:"Slime Rancher", img:"thumb1.png", url:"https://jeremy4401.github.io/slime-rancher/", cat:"Action"},
-  {name:"Minecraft Classic", img:"thumb2.png", url:"https://classic.minecraft.net/", cat:"Survival"},
-  {name:"Buckshot Roulette", img:"thumb3.png", url:"https://cdn.jsdelivr.net/gh/genizy/web-port@main/buckshot-roulette/index.html", cat:"Horror"}
+  {name:"Slime Rancher", img:"slimerancher.png", url:"https://jeremy4401.github.io/slime-rancher/", cat:"Action"},
+  {name:"Minecraft Classic", img:"minecraft.png", url:"https://classic.minecraft.net/", cat:"Survival"},
+  {name:"Buckshot Roulette", img:"buckshotroulette.png", url:"https://cdn.jsdelivr.net/gh/genizy/web-port@main/buckshot-roulette/index.html", cat:"Horror"}
 ];
 
 /* FAVORITE STORAGE */
