@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SME Launcher - FINAL BUILD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ============================= -->
+<!--  PHASE 24 + FULL SYSTEM CORE   -->
+<!-- ============================= -->
+
+<style>
+/* GLOBAL THEME */
+@font-face { font-family: "Comic Sans MS"; src: local("Comic Sans MS"); }
+:root {
+  --bg:#0f0f0f;
+  --bg2:#1a1a1a;
+  --text:#fff;
+  --accent:#4caf50;
+  --sidebar:#000;
+  --banner1:#000;
+  --banner2:#0f0f0f;
+}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Comic Sans MS";
+  overflow-x:hidden;
+}
+
+/* SIDEBAR (HOME AT TOP) */
+#sidebar {
+  position:fixed; top:0; left:0; width:75px; height:100%;
+  background:var(--sidebar);
+  padding-top:20px;
+  display:flex; flex-direction:column; gap:10px;
+}
+#sidebar div {
+  padding:15px; cursor:pointer; text-align:center;
+  font-size:24px; transition:.2s;
+}
+#sidebar div:hover { transform:scale(1.2); }
+
+/* MAIN AREA */
+#main { margin-left:90px; padding:20px; }
+
+/* SECTION BASE */
+.section { display:none; }
+.section.active { display:block; }
+
+/* HOME DASHBOARD LAYOUT */
+#homeDashboard {
+  padding:20px;
+  animation:fadeIn .4s ease;
+}
+
+/* HOME CARDS */
+.homeCard {
+  background:var(--bg2);
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:20px;
+  box-shadow:0 0 10px #0005;
+}
+
+/* SOCIAL FEED STYLES */
+.postBox {
+  background:#222;
+  padding:12px;
+  border-radius:10px;
+  margin:10px 0;
+}
+.postAuthor { font-weight:bold; color:var(--accent); }
+.postTime { opacity:.6; font-size:11px; }
+.postActions {
+  margin-top:5px; font-size:13px; opacity:.8;
+  display:flex; gap:15px;
+}
+
+/* GAME CARDS */
+.card {
+  background:var(--bg2);
+  width:180px;
+  border-radius:12px;
+  padding:12px;
+  display:inline-block;
+  margin:8px;
+  cursor:pointer;
+  transition:.2s;
+  position:relative;
+}
+.card:hover { transform:translateY(-6px) scale(1.05); }
+.card img { width:100%; border-radius:10px; }
+
+/* FAVORITES STAR */
+.star {
+  position:absolute; top:8px; left:8px;
+  font-size:20px; cursor:pointer; color:#777;
+}
+.star.fav { color:gold; text-shadow:0 0 10px gold; }
+
+/* EMBED WINDOW */
+#embedWin {
+  display:none; position:fixed; inset:0; background:#000d;
+  z-index:9999;
+}
+#embedFrame { width:100%; height:100%; border:none; }
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================= -->
+<!--         SIDEBAR START         -->
+<!-- ============================= -->
+<div id="sidebar">
+
+  <!-- HOME IS NOW FIRST -->
+  <div onclick="nav('homeDashboard')">🏠</div>
+
+  <div onclick="nav('games')">🎮</div>
+  <div onclick="nav('downloads')">⬇</div>
+  <div onclick="nav('favorites')">⭐</div>
+  <div onclick="nav('friends')">👥</div>
+  <div onclick="nav('profile')">👤</div>
+  <div onclick="openSettings()">⚙️</div>
+  <div onclick="toggleTheme()">🌗</div>
+  <div onclick="panic()">⚠</div>
+
+</div>
+
+<!-- ============================= -->
+<!--         MAIN AREA ROOT        -->
+<!-- ============================= -->
+<div id="main">
+
+  <!-- HOME DASHBOARD DEFAULT -->
+  <h1 id="pageTitle">Home</h1>
+
+  <!-- HOME DASHBOARD SECTION -->
+  <div id="homeDashboard" class="section active">
+
+    <div class="homeCard">
+      <h2>Welcome back!</h2>
+      <p>Your personalized SME Dashboard</p>
+    </div>
+
+    <div id="continuePlaying" class="homeCard">
+      <h3>Continue Playing</h3>
+      <div id="continueList"></div>
+    </div>
+
+    <div id="socialFeed" class="homeCard">
+      <h3>Social Feed</h3>
+      <div id="feedPosts"></div>
+      <textarea id="feedInput" placeholder="Share something..."
+        style="width:100%;height:60px;padding:10px;border:none;border-radius:8px;background:#222;color:white;margin-top:10px;"></textarea>
+      <button onclick="postToFeed()" style="padding:10px;margin-top:8px;width:100%;border:none;border-radius:8px;background:var(--accent);color:white;">Post</button>
+    </div>
+
+    <div id="friendsOnline" class="homeCard">
+      <h3>Friends Online</h3>
+      <div id="onlineList"></div>
+    </div>
+
+    <div id="activityLog" class="homeCard">
+      <h3>Recent Activity</h3>
+      <div id="activityList"></div>
+    </div>
+
+  </div>
+
+  <!-- OTHER SECTIONS (WILL BE FILLED IN PART 2+) -->
+  <div id="games" class="section"></div>
+  <div id="downloads" class="section"></div>
+  <div id="favorites" class="section"></div>
+  <div id="friends" class="section"></div>
+  <div id="profile" class="section"></div>
+  <div id="settingsPage" class="section"></div>
+
+</div>
+
+<!-- EMBED WINDOW -->
+<div id="embedWin"><iframe id="embedFrame"></iframe></div>
+
+<!-- ============================= -->
+<!--   START OF MAIN SCRIPT TAG    -->
+<!-- ============================= -->
+<script>
+
+/* ============================
+      GLOBAL NAVIGATION
+============================ */
+function nav(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  let titleMap = {
+    "homeDashboard": "Home",
+    "games": "Games",
+    "downloads": "Downloads",
+    "favorites": "Favorites",
+    "friends": "Friends",
+    "profile": "Profile",
+    "settingsPage": "Settings"
+  };
+  document.getElementById("pageTitle").textContent = titleMap[id] || "SME";
+}
+
+function toggleTheme(){ document.body.classList.toggle('light'); }
+function panic(){ location.href = "https://classroom.google.com"; }
+
+/* ============================
+   DATA LOADERS FOR HOME
+============================ */
+let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+let activity = JSON.parse(localStorage.getItem("activity") || "[]");
+let friends = JSON.parse(localStorage.getItem("friends") || "[]");
+let profile = JSON.parse(localStorage.getItem("profile") || "{}");
+
+  /* ============================
+     HOME DASHBOARD RENDERERS
+============================ */
+
+/* --------- CONTINUE PLAYING --------- */
+function renderContinuePlaying(){
+  let box = document.getElementById("continueList");
+
+  if(recent.length === 0){
+    box.innerHTML = "<p>No recent games.</p>";
+    return;
+  }
+
+  box.innerHTML = "";
+
+  recent.slice(0,3).forEach(name=>{
+    let g = games.find(x=>x.name===name);
+    if(!g) return;
+
+    box.innerHTML += `
+      <div class="card" style="width:150px;" onclick="play(enc('${g.url}'))">
+        <img src="${g.img}">
+        <button>${g.name}</button>
+      </div>
+    `;
+  });
+}
+
+
+/* ============================
+        SOCIAL FEED SYSTEM
+============================ */
+
+let feed = JSON.parse(localStorage.getItem("feed") || "[]");
+
+/* Create a new post */
+function postToFeed(){
+  let text = document.getElementById("feedInput").value.trim();
+  if(text.length === 0) return;
+
+  let entry = {
+    id: Date.now(),
+    user: profile.username || "You",
+    text: text,
+    time: new Date().toLocaleTimeString(),
+    likes: 0,
+    comments: []
+  };
+
+  feed.unshift(entry);
+  localStorage.setItem("feed", JSON.stringify(feed));
+  document.getElementById("feedInput").value = "";
+
+  renderFeed();
+}
+
+/* Like post */
+function likePost(id){
+  let p = feed.find(x=>x.id===id);
+  if(!p) return;
+  p.likes++;
+  localStorage.setItem("feed", JSON.stringify(feed));
+  renderFeed();
+}
+
+/* Add comment */
+function commentPost(id){
+  let msg = prompt("Write a comment:");
+  if(!msg) return;
+
+  let p = feed.find(x=>x.id===id);
+  if(!p) return;
+
+  p.comments.push({
+    user: profile.username || "You",
+    text: msg,
+    time: new Date().toLocaleTimeString()
+  });
+
+  localStorage.setItem("feed", JSON.stringify(feed));
+  renderFeed();
+}
+
+/* Render feed */
+function renderFeed(){
+  let box = document.getElementById("feedPosts");
+  box.innerHTML = "";
+
+  if(feed.length === 0){
+    box.innerHTML = "<p>No posts yet. Be the first!</p>";
+    return;
+  }
+
+  feed.forEach(p=>{
+    let commentHTML = "";
+    p.comments.forEach(c=>{
+      commentHTML += `
+        <div style="margin-left:10px;opacity:.8;">
+          <b style="color:var(--accent)">${c.user}:</b> ${c.text}
+          <span style="font-size:10px;opacity:.5;">${c.time}</span>
+        </div>
+      `;
+    });
+
+    box.innerHTML += `
+      <div class="postBox">
+        <div class="postAuthor">${p.user}</div>
+        <div class="postTime">${p.time}</div>
+        <p>${p.text}</p>
+
+        <div class="postActions">
+          <span onclick="likePost(${p.id})">❤️ ${p.likes}</span>
+          <span onclick="commentPost(${p.id})">💬 Comment</span>
+        </div>
+
+        ${commentHTML}
+      </div>
+    `;
+  });
+}
+
+
+/* ============================
+       FRIENDS ONLINE LIST
+============================ */
+
+function renderFriendsOnline(){
+  let box = document.getElementById("onlineList");
+  box.innerHTML = "";
+
+  if(friends.length === 0){
+    box.innerHTML = "<p>No friends added.</p>";
+    return;
+  }
+
+  friends.forEach(code=>{
+    box.innerHTML += `
+      <div style="padding:8px;background:#222;border-radius:8px;margin:5px 0;">
+        <b>${code}</b> — <span style="color:#4caf50;">Online</span>
+      </div>
+    `;
+  });
+}
+
+
+/* ============================
+        ACTIVITY LOG (HOME)
+============================ */
+
+function renderActivityHome(){
+  let box = document.getElementById("activityList");
+  box.innerHTML = "";
+
+  if(activity.length === 0){
+    box.innerHTML = "<p>No recent activity.</p>";
+    return;
+  }
+
+  activity.slice(0,5).forEach(a=>{
+    box.innerHTML += `
+      <div style="padding:10px;background:#222;margin:8px 0;border-radius:10px;">
+        <b>${a.type}:</b> ${a.detail}<br>
+        <span style="font-size:10px;opacity:.6;">${a.time}</span>
+      </div>
+    `;
+  });
+}
+
+
+/* ============================
+     HOME PAGE AUTO RENDER
+============================ */
+function renderHome(){
+  renderContinuePlaying();
+  renderFeed();
+  renderFriendsOnline();
+  renderActivityHome();
+}
+
+/* Render immediately when loading */
+renderHome();
+
+/* ============================================================
+     PART 3 — FULL GAME SYSTEM (PHASE 1–7 UPGRADED)
+============================================================ */
+
+/* GAME LIST */
+let games = [
+  {name:"Slime Rancher", img:"thumb1.png", url:"https://jeremy4401.github.io/slime-rancher/", cat:"Action"},
+  {name:"Minecraft Classic", img:"thumb2.png", url:"https://classic.minecraft.net/", cat:"Survival"},
+  {name:"Buckshot Roulette", img:"thumb3.png", url:"https://cdn.jsdelivr.net/gh/genizy/web-port@main/buckshot-roulette/index.html", cat:"Horror"}
+];
+
+/* FAVORITE STORAGE */
+let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+/* ============================
+      RENDER GAMES LIST
+============================ */
+
+function renderGames(){
+  let sec = document.getElementById("games");
+
+  /* Search + Sort parameters */
+  let searchVal = document.getElementById("gameSearch")?.value?.toLowerCase() || "";
+  let sortVal = document.getElementById("sortSelect")?.value || "none";
+
+  /* Filter by search */
+  let list = games.filter(g => g.name.toLowerCase().includes(searchVal));
+
+  /* Sorting */
+  if(sortVal === "az") list.sort((a,b)=>a.name.localeCompare(b.name));
+  if(sortVal === "za") list.sort((a,b)=>b.name.localeCompare(a.name));
+  if(sortVal === "fav") list = list.filter(g => favorites.includes(g.name));
+  if(sortVal === "recent") list = list.filter(g => recent.includes(g.name));
+
+  /* UI HTML */
+  let html = `
+    <h1>Games</h1>
+
+    <div style="margin-bottom:15px;">
+      <input id="gameSearch" placeholder="Search games..."
+        style="padding:10px;width:240px;border-radius:8px;background:#222;border:none;color:white;"
+        oninput="renderGames()">
+
+      <select id="sortSelect"
+        style="padding:10px;border-radius:8px;background:#222;color:white;border:none;"
+        onchange="renderGames()">
+        <option value="none">Sort: None</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+        <option value="fav">Favorites</option>
+        <option value="recent">Recently Played</option>
+      </select>
+    </div>
+
+    <div id="gameCards">
+  `;
+
+  list.forEach(g=>{
+    let isFav = favorites.includes(g.name) ? "fav" : "";
+    html += `
+      <div class="card" onclick="openGameDetails('${g.name}')" style="position:relative;">
+        <div class="star ${isFav}" onclick="toggleFav('${g.name}');event.stopPropagation();">★</div>
+        <img src="${g.img}">
+        <button>${g.name}</button>
+      </div>
+    `;
+  });
+
+  html += "</div>";
+
+  sec.innerHTML = html;
+}
+
+/* ============================
+      FAVORITES SYSTEM
+============================ */
+
+function toggleFav(name){
+  if(favorites.includes(name))
+    favorites = favorites.filter(x=>x!==name);
+  else
+    favorites.push(name);
+
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+
+  renderGames();
+  renderFavorites();
+  renderHome(); // sync continue-playing & dashboard
+}
+
+/* Render favorite section */
+function renderFavorites(){
+  let sec = document.getElementById("favorites");
+  sec.innerHTML = "<h1>Favorites</h1>";
+
+  if(favorites.length === 0){
+    sec.innerHTML += "<p>No favorites yet.</p>";
+    return;
+  }
+
+  favorites.forEach(f=>{
+    let g = games.find(x=>x.name===f);
+    if(!g) return;
+
+    sec.innerHTML += `
+      <div class="card" onclick="openGameDetails('${g.name}')">
+        <img src="${g.img}">
+        <button>${g.name}</button>
+      </div>
+    `;
+  });
+}
+
+/* ============================
+        CATEGORIES
+============================ */
+
+function renderCategories(){
+  let sec = document.getElementById("games");
+
+  // Get list of categories
+  let cats = [...new Set(games.map(g=>g.cat))];
+
+  let html = "<h3>Categories:</h3>";
+
+  cats.forEach(c=>{
+    html += `
+      <button onclick="filterCategory('${c}')" 
+        style="padding:6px;margin:5px;border-radius:8px;
+        background:#333;color:white;border:none;">
+        ${c}
+      </button>
+    `;
+  });
+
+  html += `
+    <button onclick="renderGames()" 
+      style="padding:6px;margin:5px;border-radius:8px;
+      background:var(--accent);color:white;border:none;">
+      All
+    </button>
+  `;
+
+  sec.innerHTML = html + sec.innerHTML;
+}
+
+function filterCategory(cat){
+  let sec = document.getElementById("games");
+  let list = games.filter(g=>g.cat===cat);
+
+  let html = `<h1>Games — ${cat}</h1>`;
+
+  list.forEach(g=>{
+    let isFav = favorites.includes(g.name) ? "fav" : "";
+    html += `
+      <div class="card" onclick="openGameDetails('${g.name}')">
+        <div class="star ${isFav}" onclick="toggleFav('${g.name}');event.stopPropagation();">★</div>
+        <img src="${g.img}">
+        <button>${g.name}</button>
+      </div>
+    `;
+  });
+
+  sec.innerHTML = html;
+}
+
+<!-- GAME DETAILS MODAL FIX -->
+<div id="gameModal" 
+     style="display:none;position:fixed;inset:0;background:#000a;z-index:99999;
+            align-items:center;justify-content:center;">
+  
+  <div id="modalBox" 
+       style="width:420px;background:var(--bg2);padding:20px;border-radius:15px;
+              box-shadow:0 0 20px #000;color:white;">
+
+    <img id="modalImg" src="" style="width:100%;border-radius:10px;">
+    
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+
+    <button id="playBtn"
+      style="padding:10px;width:100%;border:none;border-radius:8px;
+             background:var(--accent);color:white;margin-top:10px;">
+      Play
+    </button>
+
+    <button onclick="closeGameModal()"
+      style="padding:10px;width:100%;border:none;border-radius:8px;
+             background:#333;color:white;margin-top:10px;">
+      Close
+    </button>
+
+  </div>
+</div>
+
+/* ============================
+         GAME LAUNCH
+============================ */
+
+function play(url){
+  document.getElementById("embedWin").style.display = "block";
+  document.getElementById("embedFrame").src = url;
+}
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){
+    document.getElementById("embedWin").style.display = "none";
+    document.getElementById("embedFrame").src = "";
+  }
+});
+
+/* ============================
+    RENDER FAVORITES + GAMES
+============================ */
+
+renderGames();
+renderFavorites();
+renderCategories();
+
+/* ============================================================
+       PART 4 — FULL FRIEND SYSTEM + DM MESSAGING
+============================================================ */
+
+/* LOAD SOCIAL DATA */
+let requests = JSON.parse(localStorage.getItem("requests") || "[]");
+
+/* ============================================
+      RENDER FRIEND LIST PAGE
+============================================ */
+function renderFriends(){
+  let sec = document.getElementById("friends");
+
+  sec.innerHTML = `
+    <h1>Friends</h1>
+
+    <h3>Your Friend Code:</h3>
+    <div style='background:#222;padding:10px;border-radius:10px;margin-bottom:10px;'>
+      ${friendCode}
+    </div>
+
+    <h3>Pending Requests</h3>
+    <div id="reqList"></div>
+
+    <h3>Your Friends</h3>
+    <div id="friendList"></div>
+
+    <h3>Add Friend</h3>
+    <input id='addFriendCode' placeholder='Enter code'
+      style='padding:10px;width:200px;border:none;border-radius:8px;background:#222;color:white;'>
+    <button onclick='sendFriendRequest()'
+      style='padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;margin-left:5px;'>
+      Add
+    </button>
+
+    <div id="friendProfile" style="margin-top:25px;display:none;"></div>
+  `;
+
+  loadRequests();
+  loadFriends();
+}
+
+renderFriends();
+
+/* ============================================
+     SEND FRIEND REQUEST
+============================================ */
+function sendFriendRequest(){
+  let code = document.getElementById("addFriendCode").value.trim();
+  if(code.length === 0) return alert("Enter a friend code.");
+  if(code === friendCode) return alert("You cannot add yourself.");
+
+  requests.push({from: code});
+  saveSocial();
+
+  loadRequests();
+  alert("Friend request sent!");
+}
+
+/* ============================================
+      LOAD REQUEST LIST
+============================================ */
+function loadRequests(){
+  let box = document.getElementById("reqList");
+  box.innerHTML = "";
+
+  if(requests.length === 0){
+    box.innerHTML = "<p>No pending requests.</p>";
+    return;
+  }
+
+  requests.forEach(r=>{
+    box.innerHTML += `
+      <div style='background:#222;padding:10px;border-radius:8px;margin:5px 0;'>
+        Request from <b>${r.from}</b><br>
+        <button onclick="acceptReq('${r.from}')"
+          style='padding:6px;border:none;border-radius:6px;background:#4caf50;color:white;margin-right:5px;'>
+          Accept
+        </button>
+        <button onclick="declineReq('${r.from}')"
+          style='padding:6px;border:none;border-radius:6px;background:#c0392b;color:white;'>
+          Decline
+        </button>
+      </div>
+    `;
+  });
+}
+
+/* ============================================
+       ACCEPT / DECLINE REQUEST
+============================================ */
+function acceptReq(code){
+  if(!friends.includes(code)) friends.push(code);
+  requests = requests.filter(r=>r.from !== code);
+  saveSocial();
+  loadRequests();
+  loadFriends();
+}
+
+function declineReq(code){
+  requests = requests.filter(r=>r.from !== code);
+  saveSocial();
+  loadRequests();
+}
+
+/* ============================================
+       LOAD FRIEND LIST
+============================================ */
+function loadFriends(){
+  let box = document.getElementById("friendList");
+  box.innerHTML = "";
+
+  if(friends.length === 0){
+    box.innerHTML = "<p>No friends added.</p>";
+    return;
+  }
+
+  friends.forEach(code=>{
+    box.innerHTML += `
+      <div class='friendCard'
+        onclick="openFriend('${code}')"
+        style='padding:10px;background:#222;border-radius:8px;margin:5px 0;cursor:pointer;'>
+        <b>${code}</b>
+        <div style="font-size:12px;color:var(--accent);opacity:.8;">Online</div>
+      </div>
+    `;
+  });
+}
+
+/* SAVE SOCIAL DATA */
+function saveSocial(){
+  localStorage.setItem("friends", JSON.stringify(friends));
+  localStorage.setItem("requests", JSON.stringify(requests));
+}
+
+/* ============================================
+        OPEN FRIEND PROFILE
+============================================ */
+function openFriend(code){
+  let box = document.getElementById("friendProfile");
+  box.style.display = "block";
+
+  box.innerHTML = `
+    <div class='profileBanner'></div>
+    <img class='profileAvatar' src='https://i.imgur.com/1X5Rz.png'>
+
+    <div style="margin-left:150px;margin-top:10px;">
+      <h2>${code}</h2>
+      <p>Status: Online</p>
+      <p>Friend since: Today</p>
+
+      <button onclick="removeFriend('${code}')"
+        style='padding:8px;border:none;border-radius:8px;background:#c0392b;color:white;margin-right:5px;'>
+        Remove Friend
+      </button>
+
+      <button onclick="openDM('${code}')"
+        style='padding:8px;border:none;border-radius:8px;background:var(--accent);color:white;'>
+        Message
+      </button>
+    </div>
+
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <button class='tabBtn' onclick="switchFriendTab('${code}','overview')">Overview</button>
+      <button class='tabBtn' onclick="switchFriendTab('${code}','activity')">Activity</button>
+      <button class='tabBtn' onclick="switchFriendTab('${code}','recent')">Recent</button>
+      <button class='tabBtn' onclick="switchFriendTab('${code}','mutual')">Mutual Favorites</button>
+    </div>
+
+    <div id="friendTabContent" style="margin-top:20px;"></div>
+  `;
+
+  switchFriendTab(code, "overview");
+}
+
+/* ============================================
+      FRIEND PROFILE TABS
+============================================ */
+function switchFriendTab(code, tab){
+  let box = document.getElementById("friendTabContent");
+
+  if(tab === "overview"){
+    box.innerHTML = "<p>This is the overview for your friend.</p>";
+  }
+
+  if(tab === "activity"){
+    let html = "<h3>Activity</h3>";
+    activity.forEach(a=>{
+      if(a.detail.includes(code)){
+        html += `
+          <div style='background:#222;padding:10px;margin:5px 0;border-radius:10px;'>
+            <b>${a.type}</b>: ${a.detail}<br>
+            <span style="font-size:11px;opacity:.6;">${a.time}</span>
+          </div>
+        `;
+      }
+    });
+    box.innerHTML = html;
+  }
+
+  if(tab === "recent"){
+    let html = "<h3>Recent Games</h3>";
+    recent.forEach(r=>{
+      let g = games.find(x=>x.name===r);
+      if(!g) return;
+
+      html += `
+        <div class='card' onclick="openGameDetails('${g.name}')">
+          <img src="${g.img}">
+          <button>${g.name}</button>
+        </div>
+      `;
+    });
+    box.innerHTML = html;
+  }
+
+  if(tab === "mutual"){
+    let html = "<h3>Mutual Favorites</h3>";
+    favorites.forEach(f=>{
+      let g = games.find(x=>x.name===f);
+      if(g){
+        html += `
+          <div class='card' onclick="openGameDetails('${g.name}')">
+            <img src="${g.img}">
+            <button>${g.name}</button>
+          </div>
+        `;
+      }
+    });
+    if(html.trim()==="<h3>Mutual Favorites</h3>") html += "<p>No mutual favorites.</p>";
+    box.innerHTML = html;
+  }
+}
+
+/* ============================================
+        REMOVE FRIEND
+============================================ */
+function removeFriend(code){
+  friends = friends.filter(f=>f !== code);
+  saveSocial();
+  loadFriends();
+  document.getElementById("friendProfile").style.display = "none";
+  alert("Friend removed.");
+}
+
+/* ============================================================
+        DIRECT MESSAGING (1:1 CHAT)
+============================================================ */
+
+let dmHistory = JSON.parse(localStorage.getItem("dmHistory") || "{}");
+
+/* OPEN DM WINDOW */
+function openDM(code){
+  let box = document.getElementById("friendProfile");
+
+  if(!dmHistory[code]) dmHistory[code] = [];
+
+  box.innerHTML = `
+    <h2>Chat with ${code}</h2>
+
+    <div id="dmLog"
+      style="height:260px;overflow-y:auto;background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;">
+    </div>
+
+    <textarea id="dmInput"
+      placeholder="Type a message..."
+      style="width:100%;height:60px;background:#222;color:white;border:none;border-radius:10px;padding:10px;"></textarea>
+
+    <button onclick="sendDM('${code}')"
+      style="padding:10px;width:100%;margin-top:6px;border:none;border-radius:8px;background:var(--accent);color:white;">
+      Send
+    </button>
+  `;
+
+  renderDM(code);
+}
+
+/* RENDER DM HISTORY */
+function renderDM(code){
+  let log = document.getElementById("dmLog");
+  log.innerHTML = "";
+
+  dmHistory[code].forEach(m=>{
+    log.innerHTML += `
+      <div style='margin-bottom:10px;'>
+        <b style="color:var(--accent)">${m.from}:</b> ${m.text}<br>
+        <span style='font-size:10px;opacity:.6;'>${m.time}</span>
+      </div>
+    `;
+  });
+
+  log.scrollTop = log.scrollHeight;
+}
+
+/* SEND MESSAGE */
+function sendDM(code){
+  let text = document.getElementById("dmInput").value.trim();
+  if(!text) return;
+
+  let entry = {
+    from: profile.username || "You",
+    text: text,
+    time: new Date().toLocaleTimeString()
+  };
+
+  dmHistory[code].push(entry);
+  localStorage.setItem("dmHistory", JSON.stringify(dmHistory));
+
+  renderDM(code);
+  document.getElementById("dmInput").value = "";
+}
+
+/* ============================================================
+     PART 5 — PROFILE ENGINE + XP + ACHIEVEMENTS + PLAYTIME
+============================================================ */
+
+/* LOAD PROFILE */
+let profile = JSON.parse(localStorage.getItem("profile") || `{
+  "username": "Player",
+  "bio": "",
+  "status": "Online",
+  "avatar": "https://i.imgur.com/1X5Rz.png"
+}`);
+
+/* RICH PRESENCE STORAGE */
+let statusData = JSON.parse(localStorage.getItem("statusData") || `{
+  "customStatus": "Available",
+  "rich": ""
+}`);
+
+/* ================================
+      RENDER PROFILE PAGE
+================================ */
+function renderProfile(){
+  let sec = document.getElementById("profile");
+
+  sec.innerHTML = `
+    <h1>Your Profile</h1>
+
+    <div class="profileBanner"></div>
+    <img class="profileAvatar" src="${profile.avatar}">
+
+    <div style="margin-left:150px;margin-top:10px;">
+      <h2>${profile.username}</h2>
+      <p>Status: ${profile.status}</p>
+      <p>Custom Status: ${statusData.customStatus}</p>
+      <p>Rich Presence: <span style="color:var(--accent);">${statusData.rich || "None"}</span></p>
+      <p>Bio: ${profile.bio || "No bio set."}</p>
+
+      <h3>Edit Profile</h3>
+
+      <input id="usernameInput" placeholder="Username" value="${profile.username}"
+        style="padding:10px;width:260px;border-radius:8px;border:none;background:#222;color:white;"><br><br>
+
+      <textarea id="bioInput" placeholder="Bio..."
+        style="padding:10px;width:260px;height:70px;border:none;border-radius:8px;background:#222;color:white;">${profile.bio}</textarea><br><br>
+
+      <select id="statusInput" style="padding:10px;width:260px;border-radius:8px;background:#222;color:white;border:none;">
+        <option ${profile.status==="Online"?"selected":""}>Online</option>
+        <option ${profile.status==="Busy"?"selected":""}>Busy</option>
+        <option ${profile.status==="Offline"?"selected":""}>Offline</option>
+      </select><br><br>
+
+      <input id="avatarInput" value="${profile.avatar}" placeholder="Avatar URL"
+        style="padding:10px;width:260px;border-radius:8px;background:#222;color:white;border:none;"><br><br>
+
+      <button onclick="saveProfileFull()" 
+        style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;">
+        Save
+      </button>
+    </div>
+
+    <div id="xpBox" style="margin-top:20px;"></div>
+    <div id="achList" style="margin-top:20px;"></div>
+  `;
+
+  updateProfileXP();
+}
+
+function saveProfileFull(){
+  profile.username = document.getElementById("usernameInput").value;
+  profile.bio = document.getElementById("bioInput").value;
+  profile.status = document.getElementById("statusInput").value;
+  profile.avatar = document.getElementById("avatarInput").value;
+
+  localStorage.setItem("profile", JSON.stringify(profile));
+  alert("Profile updated!");
+  renderProfile();
+}
+
+/* ============================================================
+          RICH PRESENCE SYSTEM
+============================================================ */
+
+function setPresence(text){
+  statusData.rich = text;
+  localStorage.setItem("statusData", JSON.stringify(statusData));
+}
+
+/* Update presence when switching pages */
+const oldNavP = nav;
+nav = function(id){
+  oldNavP(id);
+
+  if(id === "homeDashboard") setPresence("On Home Screen");
+  if(id === "games") setPresence("Browsing Games");
+  if(id === "friends") setPresence("Viewing Friends");
+  if(id === "profile") setPresence("Editing Profile");
+  if(id === "settingsPage") setPresence("Changing Settings");
+}
+
+/* ============================================================
+           XP + LEVEL SYSTEM
+============================================================ */
+
+let xpData = JSON.parse(localStorage.getItem("xpData") || `{
+  "xp": 0,
+  "level": 1,
+  "achievements": []
+}`);
+
+function gainXP(amount){
+  xpData.xp += amount;
+
+  while(xpData.xp >= xpData.level * 100){
+    xpData.xp -= xpData.level * 100;
+    xpData.level++;
+    unlockAchievement("Level Up " + xpData.level);
+  }
+
+  saveXP();
+  updateProfileXP();
+}
+
+function saveXP(){
+  localStorage.setItem("xpData", JSON.stringify(xpData));
+}
+
+/* DISPLAY XP BAR */
+function updateProfileXP(){
+  let box = document.getElementById("xpBox");
+  if(!box) return;
+
+  let percent = (xpData.xp / (xpData.level * 100)) * 100;
+
+  box.innerHTML = `
+    <h3>Level ${xpData.level}</h3>
+    <div style="width:260px;height:24px;background:#333;border-radius:10px;overflow:hidden;">
+      <div style="width:${percent}%;height:24px;background:var(--accent);"></div>
+    </div>
+    <p>${xpData.xp} / ${xpData.level * 100} XP</p>
+  `;
+
+  /* Render Achievements */
+  let achBox = document.getElementById("achList");
+  achBox.innerHTML = "<h3>Achievements</h3>";
+
+  xpData.achievements.forEach(a=>{
+    achBox.innerHTML += `
+      <div style="padding:8px;background:#222;border-radius:8px;margin:5px 0;">
+        🏆 ${a}
+      </div>
+    `;
+  });
+}
+
+/* ACHIEVEMENTS */
+function unlockAchievement(name){
+  if(xpData.achievements.includes(name)) return;
+
+  xpData.achievements.push(name);
+  saveXP();
+  showAchievementPopup(name);
+}
+
+/* POPUP */
+function showAchievementPopup(name){
+  let box = document.createElement("div");
+
+  box.style = `
+    position:fixed;bottom:20px;right:20px;
+    background:#4caf50;color:white;padding:14px 20px;
+    border-radius:10px;font-size:16px;
+    box-shadow:0 0 15px #000;opacity:0;
+    transition:.3s;
+  `;
+  box.innerHTML = `🏆 Achievement Unlocked:<br>${name}`;
+
+  document.body.append(box);
+
+  setTimeout(()=>box.style.opacity=1, 50);
+  setTimeout(()=>{
+    box.style.opacity=0;
+    setTimeout(()=>box.remove(), 300);
+  }, 2500);
+}
+
+/* ============================================================
+           PLAYTIME TRACKING (Steam-like)
+============================================================ */
+
+let playtime = JSON.parse(localStorage.getItem("playtime") || "{}");
+let activeGame = null;
+let activeStart = null;
+
+function startPlayTimer(game){
+  activeGame = game;
+  activeStart = Date.now();
+}
+
+function stopPlayTimer(){
+  if(!activeGame) return;
+
+  let mins = Math.round((Date.now() - activeStart)/60000);
+
+  if(!playtime[activeGame]){
+    playtime[activeGame] = {
+      totalMinutes: 0,
+      sessions: 0,
+      lastPlayed: "Never"
+    };
+  }
+
+  playtime[activeGame].totalMinutes += mins;
+  playtime[activeGame].sessions++;
+  playtime[activeGame].lastPlayed = new Date().toLocaleString();
+
+  localStorage.setItem("playtime", JSON.stringify(playtime));
+
+  activeGame = null;
+  activeStart = null;
+}
+
+/* Hook into play() */
+const oldPlayP = play;
+play = function(url){
+  let g = games.find(x=>enc(x.url)===url);
+  if(g){
+    startPlayTimer(g.name);
+    setPresence("Playing " + g.name);
+    gainXP(20);
+  }
+  oldPlayP(url);
+};
+
+/* Stop timer on ESC */
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape") stopPlayTimer();
+});
+
+/* INTEGRATE PLAYTIME INTO MODAL */
+const oldOpenDetailP = openGameDetails;
+openGameDetails = function(name){
+  oldOpenDetailP(name);
+
+  let g = games.find(x=>x.name===name);
+  if(!g) return;
+
+  let data = playtime[name] || {
+    totalMinutes: 0,
+    sessions: 0,
+    lastPlayed: "Never"
+  };
+
+  let hours = (data.totalMinutes / 60).toFixed(1);
+
+  document.getElementById("modalBox").innerHTML += `
+    <h3>Playtime</h3>
+    <p><b>Total:</b> ${hours} hours (${data.totalMinutes} minutes)</p>
+    <p><b>Sessions:</b> ${data.sessions}</p>
+    <p><b>Last Played:</b> ${data.lastPlayed}</p>
+  `;
+};
+
+/* ============================================================
+   PART 6 — THEME ENGINE + ANIMATED BACKGROUND + SFX + UI FX
+============================================================ */
+
+/* LOAD THEMES */
+let themes = JSON.parse(localStorage.getItem("themes") || "{}");
+let currentTheme = localStorage.getItem("currentTheme") || "default";
+
+/* PRESET THEMES */
+const presetThemes = {
+  "default": { bg:"#0f0f0f", bg2:"#1a1a1a", text:"#ffffff", accent:"#4caf50" },
+  "vaporwave": { bg:"#2b004f", bg2:"#3b006f", text:"#ffb3ff", accent:"#ff00ff" },
+  "midnight": { bg:"#000814", bg2:"#001d3d", text:"#e0e0e0", accent:"#1e90ff" },
+  "forest": { bg:"#001f0f", bg2:"#00391c", text:"#c8ffc8", accent:"#00cc66" },
+  "sunset": { bg:"#2a0000", bg2:"#4a0a0a", text:"#ffcccc", accent:"#ff5500" }
+};
+
+/* APPLY THEME */
+function applyTheme(name){
+  let t = themes[name] || presetThemes[name];
+  if(!t) return;
+
+  document.documentElement.style.setProperty("--bg", t.bg);
+  document.documentElement.style.setProperty("--bg2", t.bg2);
+  document.documentElement.style.setProperty("--text", t.text);
+  document.documentElement.style.setProperty("--accent", t.accent);
+
+  currentTheme = name;
+  localStorage.setItem("currentTheme", name);
+}
+
+/* OPEN THEME PANEL */
+function openThemePanel(){
+  let sec = document.getElementById("profile");
+
+  sec.innerHTML = `
+    <h1>Themes</h1>
+
+    <h3>Preset Themes</h3>
+  `;
+
+  for(let name in presetThemes){
+    sec.innerHTML += `
+      <button onclick="applyTheme('${name}')"
+        style="padding:10px;margin:5px;border:none;border-radius:8px;background:var(--accent);color:white;">
+        ${name}
+      </button>
+    `;
+  }
+
+  sec.innerHTML += `
+    <h3>Create Custom Theme</h3>
+
+    <label>Background</label><br>
+    <input id="c_bg" type="color"><br><br>
+
+    <label>Secondary Background</label><br>
+    <input id="c_bg2" type="color"><br><br>
+
+    <label>Text Color</label><br>
+    <input id="c_text" type="color"><br><br>
+
+    <label>Accent Color</label><br>
+    <input id="c_acc" type="color"><br><br>
+
+    <button onclick="saveCustomTheme()"
+      style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;">
+      Save Theme
+    </button>
+  `;
+}
+
+function saveCustomTheme(){
+  themes["custom"] = {
+    bg: document.getElementById("c_bg").value,
+    bg2: document.getElementById("c_bg2").value,
+    text: document.getElementById("c_text").value,
+    accent: document.getElementById("c_acc").value
+  };
+
+  localStorage.setItem("themes", JSON.stringify(themes));
+  applyTheme("custom");
+  alert("Custom theme applied!");
+}
+
+/* Add Theme Icon to Sidebar */
+document.getElementById("sidebar").innerHTML += `
+  <div onclick="openThemePanel()">🎨</div>
+`;
+
+/* AUTO APPLY ON LOAD */
+applyTheme(currentTheme);
+
+/* ============================================================
+           ANIMATED BACKGROUND ENGINE
+============================================================ */
+
+document.getElementById("sidebar").innerHTML += `
+  <div onclick="openBGMenu()">🌀</div>
+`;
+
+let bgCanvas = document.createElement("canvas");
+bgCanvas.id = "bgAnim";
+bgCanvas.style = `
+  position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;
+`;
+document.body.append(bgCanvas);
+
+let ctx = bgCanvas.getContext("2d");
+function resizeBG(){
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+}
+resizeBG();
+window.addEventListener("resize", resizeBG);
+
+let bgMode = localStorage.getItem("bgMode") || "none";
+
+/* OPEN MENU */
+function openBGMenu(){
+  let sec = document.getElementById("profile");
+
+  sec.innerHTML = `
+    <h1>Background Effects</h1>
+    <button onclick="setBG('none')" style="padding:10px;width:260px;border-radius:8px;background:#333;color:white;">Disable</button><br><br>
+    <button onclick="setBG('matrix')" style="padding:10px;width:260px;border-radius:8px;background:var(--accent);color:white;">Matrix Rain</button><br><br>
+    <button onclick="setBG('stars')" style="padding:10px;width:260px;border-radius:8px;background:var(--accent);color:white;">Particle Stars</button><br><br>
+    <button onclick="setBG('vaporwave')" style="padding:10px;width:260px;border-radius:8px;background:var(--accent);color:white;">Vaporwave Grid</button><br><br>
+  `;
+}
+
+function setBG(mode){
+  bgMode = mode;
+  localStorage.setItem("bgMode", mode);
+
+  alert("Background updated!");
+}
+
+/* MATRIX RAIN */
+let matrixChars = "アァカサタナ0123456789";
+let matrixDrops = [];
+
+/* STARS */
+let stars = [];
+
+/* VAPORWAVE GRID */
+let gridOffset = 0;
+
+/* MAIN ANIMATION LOOP */
+function animateBG(){
+  requestAnimationFrame(animateBG);
+  ctx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+
+  if(bgMode === "matrix"){
+    if(matrixDrops.length === 0){
+      let cols = Math.floor(bgCanvas.width / 20);
+      matrixDrops = Array(cols).fill(0);
+    }
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
+    ctx.fillStyle = "#0f0";
+    ctx.font = "16px monospace";
+
+    matrixDrops.forEach((y,i)=>{
+      let char = matrixChars[Math.floor(Math.random()*matrixChars.length)];
+      ctx.fillText(char, i*20, y*20);
+      if(y*20 > bgCanvas.height && Math.random() > 0.975) matrixDrops[i] = 0;
+      matrixDrops[i]++;
+    });
+  }
+
+  else if(bgMode === "stars"){
+    if(stars.length === 0){
+      for(let i=0; i<200; i++){
+        stars.push({
+          x: Math.random()*bgCanvas.width,
+          y: Math.random()*bgCanvas.height,
+          s: Math.random()*2+1
+        });
+      }
+    }
+    ctx.fillStyle = "white";
+    stars.forEach(st=>{
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.s, 0, Math.PI*2);
+      ctx.fill();
+    });
+  }
+
+  else if(bgMode === "vaporwave"){
+    gridOffset += 0.03;
+    ctx.strokeStyle = "#ff00ff";
+    ctx.lineWidth = 1;
+
+    for(let y=0; y<bgCanvas.height; y+=40){
+      ctx.beginPath();
+      ctx.moveTo(0, y + (gridOffset*10)%40);
+      ctx.lineTo(bgCanvas.width, y + (gridOffset*10)%40);
+      ctx.stroke();
+    }
+    for(let x=0; x<bgCanvas.width; x+=40){
+      ctx.beginPath();
+      ctx.moveTo(x + (gridOffset*10)%40, 0);
+      ctx.lineTo(x + (gridOffset*10)%40, bgCanvas.height);
+      ctx.stroke();
+    }
+  }
+}
+
+animateBG();
+
+/* ============================================================
+                CUSTOM BACKGROUND CREATOR
+============================================================ */
+
+document.getElementById("sidebar").innerHTML += `
+  <div onclick="openCustomBGCreator()">✨</div>
+`;
+
+let customParticles = [];
+let customBGEnabled = false;
+
+function openCustomBGCreator(){
+  let sec = document.getElementById("profile");
+
+  sec.innerHTML = `
+    <h1>Create Custom Background</h1>
+
+    <p>Particle Color</p>
+    <input type="color" id="cbg_color" value="#ff00ff"><br><br>
+
+    <p>Particle Count</p>
+    <input type="number" id="cbg_count" value="120" min="10" max="500"
+      style="padding:8px;border:none;border-radius:8px;background:#222;color:white;"><br><br>
+
+    <p>Particle Speed</p>
+    <input type="range" id="cbg_speed" min="1" max="10" value="4"><br><br>
+
+    <button onclick="applyCustomBG()"
+      style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;">
+      Apply Background
+    </button>
+  `;
+}
+
+function applyCustomBG(){
+  customBGEnabled = true;
+  localStorage.setItem("customBG", "true");
+  localStorage.setItem("cbg_color", document.getElementById("cbg_color").value);
+  localStorage.setItem("cbg_count", document.getElementById("cbg_count").value);
+  localStorage.setItem("cbg_speed", document.getElementById("cbg_speed").value);
+
+  initCustomParticles();
+  alert("Custom animated background applied!");
+}
+
+function initCustomParticles(){
+  customParticles = [];
+  let count = Number(localStorage.getItem("cbg_count") || 100);
+
+  for(let i=0; i<count; i++){
+    customParticles.push({
+      x: Math.random()*bgCanvas.width,
+      y: Math.random()*bgCanvas.height,
+      dx: (Math.random()-0.5) * (localStorage.getItem("cbg_speed") || 3),
+      dy: (Math.random()-0.5) * (localStorage.getItem("cbg_speed") || 3),
+      size: Math.random()*3+1
+    });
+  }
+}
+
+/* Inject into animation loop */
+const oldBGLoop = animateBG;
+animateBG = function(){
+  oldBGLoop();
+
+  if(customBGEnabled){
+    let color = localStorage.getItem("cbg_color") || "#ff00ff";
+    ctx.fillStyle = color;
+
+    customParticles.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+
+      p.x += p.dx;
+      p.y += p.dy;
+
+      if(p.x < 0 || p.x > bgCanvas.width) p.dx *= -1;
+      if(p.y < 0 || p.y > bgCanvas.height) p.dy *= -1;
+    });
+  }
+};
+
+if(localStorage.getItem("customBG") === "true"){
+  customBGEnabled = true;
+  initCustomParticles();
+}
+
+/* ============================================================
+                    SOUND EFFECTS ENGINE
+============================================================ */
+
+let smeSounds = {
+  click: new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"),
+  hover: new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg"),
+  message: new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"),
+  achievement: new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"),
+  notify: new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg")
+};
+
+for(let s in smeSounds) smeSounds[s].volume = 0.4;
+
+function playSound(name){
+  if(smeSounds[name]) smeSounds[name].play();
+}
+
+document.addEventListener("click", e=>{
+  if(e.target.tagName === "BUTTON")
+    playSound("click");
+});
+document.addEventListener("mouseover", e=>{
+  if(e.target.closest(".card") || e.target.closest("#sidebar div"))
+    playSound("hover");
+});
+
+/* ============================================================
+                        UI TRANSITIONS
+============================================================ */
+
+const styleFX = document.createElement("style");
+styleFX.innerHTML = `
+  .fadeSlide { opacity:0; transform:translateY(8px); transition:.25s; }
+  .fadeSlide.show { opacity:1; transform:translateY(0); }
+`;
+document.head.append(styleFX);
+
+function smoothSwap(elem, callback){
+  elem.classList.remove("show");
+  setTimeout(()=>{
+    callback();
+    setTimeout(()=>elem.classList.add("show"), 20);
+  }, 200);
+}
+
+/* ============================================================
+   PART 7 — MOD MANAGER + UPDATE CHECKER + FINAL INTEGRATION
+============================================================ */
+
+/* ============================================================
+              MOD & ADD-ON MANAGER (Phase 24)
+============================================================ */
+
+document.getElementById("sidebar").innerHTML += `
+  <div onclick="openModManager()">🧩</div>
+`;
+
+let mods = JSON.parse(localStorage.getItem("mods") || "[]");
+
+/* OPEN MOD MANAGER */
+function openModManager(){
+  nav("settingsPage");
+
+  document.getElementById("settingsContent").innerHTML = `
+    <h1>Mod & Add-On Manager</h1>
+
+    <p>Install local HTML/JS/CSS mods. They appear inside SME Launcher.</p>
+    <input type="file" id="modFile" accept=".zip,.html,.js,.css"
+      style="margin:10px 0;padding:10px;border-radius:8px;background:#222;color:white;border:none;">
+
+    <button onclick="installMod()"
+      style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;">
+      Install Mod
+    </button>
+
+    <h3 style="margin-top:20px;">Installed Mods</h3>
+    <div id="modList"></div>
+  `;
+
+  renderMods();
+}
+
+/* INSTALL MOD */
+function installMod(){
+  let file = document.getElementById("modFile").files[0];
+  if(!file) return alert("No file selected.");
+
+  let mod = {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    time: new Date().toLocaleString()
+  };
+
+  mods.push(mod);
+  localStorage.setItem("mods", JSON.stringify(mods));
+  renderMods();
+  alert("Mod installed!");
+}
+
+/* RENDER MOD LIST */
+function renderMods(){
+  let box = document.getElementById("modList");
+  box.innerHTML = "";
+
+  if(mods.length === 0){
+    box.innerHTML = "<p>No mods installed yet.</p>";
+    return;
+  }
+
+  mods.forEach((m,i)=>{
+    box.innerHTML += `
+      <div style='padding:10px;background:#222;border-radius:8px;margin:5px 0;'>
+        <b>${m.name}</b> (${Math.round(m.size/1024)} KB)<br>
+        Installed: ${m.time}<br><br>
+        <button onclick="removeMod(${i})"
+          style="padding:6px;border:none;border-radius:6px;background:#c0392b;color:white;">
+          Remove
+        </button>
+      </div>
+    `;
+  });
+}
+
+function removeMod(i){
+  mods.splice(i,1);
+  localStorage.setItem("mods", JSON.stringify(mods));
+  renderMods();
+}
+
+/* ============================================================
+               GN-MATH SCRAPER AUTO-SYNC
+============================================================ */
+
+/* SAME WARNING: GN-Math may block CORS. If blocked, scraper skips safely. */
+
+async function scrapeGNMath(){
+  let url = "https://gn-math.github.io/";
+
+  try{
+    let res = await fetch(url, {mode:"cors"});
+    let txt = await res.text();
+    let doc = new DOMParser().parseFromString(txt, "text/html");
+    let links = [...doc.querySelectorAll("a")];
+
+    let scraped = [];
+
+    links.forEach(a=>{
+      if(
+        a.href.endsWith("/") &&
+        !a.innerText.includes("..") &&
+        a.innerText.trim().length > 0 &&
+        a.innerText.trim().length < 30
+      ){
+        scraped.push({
+          name: a.innerText.trim(),
+          img: "thumb_default.png",
+          url: a.href,
+          cat: "GN-Math"
+        });
+      }
+    });
+
+    if(scraped.length){
+      let newOnes = scraped.filter(s=>!games.some(g=>g.name===s.name));
+      games = games.concat(newOnes);
+      if(newOnes.length > 0){
+        notify(`🆕 ${newOnes.length} GN-Math games found!`,"success");
+      }
+      renderGames();
+      renderCategories();
+    }
+  }catch(e){
+    console.log("GN-Math scraper blocked:",e);
+  }
+}
+
+scrapeGNMath();
+
+/* ============================================================
+                 UPDATE CHECK ENGINE (Phase 22)
+============================================================ */
+
+let updateConfig = JSON.parse(localStorage.getItem("updateConfig") || `{
+  "interval": 0,
+  "customInterval": 5,
+  "lastCheck": "Never"
+}`);
+
+let lastGameList = JSON.parse(localStorage.getItem("lastGameList") || "[]");
+
+function openSettings(){
+  nav("settingsPage");
+
+  document.getElementById("settingsContent").innerHTML = `
+    <h1>Settings</h1>
+
+    <h3>Update Checker</h3>
+
+    <label><input type="radio" name="upint" value="0" ${updateConfig.interval==0?"checked":""}> Off</label><br>
+    <label><input type="radio" name="upint" value="1" ${updateConfig.interval==1?"checked":""}> Every 1 min</label><br>
+    <label><input type="radio" name="upint" value="2" ${updateConfig.interval==2?"checked":""}> Every 2 min</label><br>
+    <label><input type="radio" name="upint" value="5" ${updateConfig.interval==5?"checked":""}> Every 5 min</label><br>
+    <label><input type="radio" name="upint" value="10" ${updateConfig.interval==10?"checked":""}> Every 10 min</label><br>
+
+    <label>
+      <input type="radio" name="upint" value="custom" ${updateConfig.interval=="custom"?"checked":""}>
+      Custom (minutes):
+    </label>
+    <input id="customUpInt" type="number" style="width:60px;padding:5px;background:#222;color:white;border:none;"
+      value="${updateConfig.customInterval}"><br><br>
+
+    <button onclick="saveUpdateSettings()"
+      style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;">Save</button>
+
+    <h3 style="margin-top:20px;">Manual Check</h3>
+    <button onclick="manualCheckUpdates()"
+      style="padding:10px;border:none;border-radius:8px;background:#444;color:white;">
+      Check Now
+    </button>
+
+    <p style="opacity:.6;margin-top:10px;">Last checked: ${updateConfig.lastCheck}</p>
+  `;
+}
+
+function saveUpdateSettings(){
+  let val = [...document.getElementsByName("upint")].find(r=>r.checked).value;
+  updateConfig.interval = (val==="custom") ? "custom" : Number(val);
+  updateConfig.customInterval = Number(document.getElementById("customUpInt").value);
+
+  localStorage.setItem("updateConfig", JSON.stringify(updateConfig));
+
+  notify("Update settings saved!", "success");
+
+  setupAutoChecker();
+}
+
+function manualCheckUpdates(){
+  runUpdateCheck(true);
+}
+
+let autoChecker = null;
+
+function setupAutoChecker(){
+  if(autoChecker) clearInterval(autoChecker);
+  let mins = 0;
+
+  if(updateConfig.interval===0) return;
+  if(updateConfig.interval==="custom") mins = updateConfig.customInterval;
+  else mins = updateConfig.interval;
+
+  autoChecker = setInterval(()=>runUpdateCheck(false), mins*60000);
+}
+
+function runUpdateCheck(manual){
+  let list = games.map(g=>g.name);
+  let newOnes = list.filter(x=>!lastGameList.includes(x));
+
+  updateConfig.lastCheck = new Date().toLocaleTimeString();
+  localStorage.setItem("updateConfig", JSON.stringify(updateConfig));
+
+  if(newOnes.length > 0){
+    notify(`🆕 ${newOnes.length} new game(s) detected!`,"success");
+    lastGameList = list;
+    localStorage.setItem("lastGameList", JSON.stringify(lastGameList));
+  }
+  else if(manual){
+    notify("No new games found.","info");
+  }
+}
+
+setupAutoChecker();
+
+/* ============================================================
+               FINAL HOME RENDER HOOK
+============================================================ */
+
+setInterval(()=>renderHome(), 4000);
+
+/* ============================================================
+                 END OF FULL SYSTEM
+============================================================ */
+
+</script>
+
+</body>
+</html>
