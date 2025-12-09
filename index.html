@@ -1296,35 +1296,37 @@
       });
     }
 
-    function renderCategories() {
-      const sec = document.getElementById("games");
-      if (!sec) return;
+   function renderCategories() {
+  const sec = document.getElementById("games");
+  if (!sec) return;
 
-      const cats = [...new Set(games.map((g) => g.cat))];
-      let html = "<h3>Categories:</h3>";
+  const cats = [...new Set(games.map((g) => g.cat))];
+  
+  let html = `<h3>Categories:</h3>`;
 
-      cats.forEach((c) => {
-        html += `
-          <button
-            onclick="filterCategory('${c}')"
-            style="padding:6px;margin:5px;border-radius:8px;background:#333;color:white;border:none;"
-          >
-            ${c}
-          </button>
-        `;
-      });
+  cats.forEach((c) => {
+    html += `
+      <button
+        onclick="filterCategory('${c}')"
+        style="padding:6px;margin:5px;border-radius:8px;background:#333;color:white;border:none;"
+      >
+        ${c}
+      </button>
+    `;
+  });
 
-      html += `
-        <button
-          onclick="renderGames()"
-          style="padding:6px;margin:5px;border-radius:8px;background:var(--accent);color:white;border:none;"
-        >
-          All
-        </button>
-      `;
+  html += `
+    <button
+      onclick="renderGames()"
+      style="padding:6px;margin:5px;border-radius:8px;background:var(--accent);color:white;border:none;"
+    >
+      All
+    </button>
+  `;
 
-      sec.innerHTML = html + sec.innerHTML;
-    }
+  // FIXED — this no longer overwrites the search bar!
+  sec.insertAdjacentHTML("afterbegin", html);
+}
 
     function filterCategory(cat) {
       const sec = document.getElementById("games");
