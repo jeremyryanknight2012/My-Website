@@ -2803,5 +2803,92 @@ play = function (url) {
       `;
     }
   </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getDatabase, ref, set, get, push, onValue, update }
+    from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBxXsXA1aoOLzDD-yNaZnHETgxPAJ-mbjw",
+    authDomain: "sme-loader.firebaseapp.com",
+    projectId: "sme-loader",
+    storageBucket: "sme-loader.firebasestorage.app",
+    messagingSenderId: "427113600756",
+    appId: "1:427113600756:web:73227a309d4a2e6c51b0a1",
+    databaseURL: "https://sme-loader-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.db = getDatabase(app);
+</script>
+
+<script>
+/* ============================================
+      USERNAME LOGIN SYSTEM
+============================================ */
+
+async function finishUsernameLogin() {
+  const name = document.getElementById("usernameInputLogin").value.trim();
+
+  if (!name) {
+    alert("Please enter a username.");
+    return;
+  }
+
+  // Save locally
+  profile.username = name;
+  localStorage.setItem("profile", JSON.stringify(profile));
+
+  // Save to Firebase
+  const userRef = ref(window.db, "users/" + name);
+  await set(userRef, {
+    username: name,
+    createdAt: Date.now()
+  });
+
+  // Hide popup
+  document.getElementById("loginPopup").style.display = "none";
+
+  alert("Welcome, " + name + "!");
+}
+
+window.addEventListener("load", () => {
+  if (!profile.username || profile.username === "Player") {
+    document.getElementById("loginPopup").style.display = "flex";
+  } else {
+    document.getElementById("loginPopup").style.display = "none";
+  }
+});
+</script>
+
+<!-- SIMPLE USERNAME LOGIN POPUP -->
+<div id="loginPopup" 
+     style="
+       position:fixed; inset:0; background:#000a; display:flex;
+       align-items:center; justify-content:center; z-index:999999;
+     ">
+  <div style="
+        background:#1a1a1a; padding:25px; border-radius:12px; width:300px;
+        box-shadow:0 0 20px #000; text-align:center; color:white;
+      ">
+    <h2>Create Username</h2>
+    <p style="opacity:.7;font-size:14px;margin-bottom:10px;">
+      This will be your online name.
+    </p>
+
+    <input id="usernameInputLogin" 
+      placeholder="Enter username..."
+      style="width:100%;padding:10px;border-radius:8px;border:none;
+             background:#222;color:white;margin-bottom:10px;"
+    >
+
+    <button onclick="finishUsernameLogin()"
+      style="padding:10px;width:100%;border:none;border-radius:8px;
+             background:#4caf50;color:white;">
+      Continue
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
