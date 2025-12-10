@@ -481,7 +481,7 @@
     let profile = storedProfile
       ? JSON.parse(storedProfile)
       : {
-          username: "Player",
+          username: "",
           bio: "",
           status: "Online",
           avatar: "https://i.imgur.com/1X5Rz.png",
@@ -2853,7 +2853,7 @@ async function finishUsernameLogin() {
 }
 
 window.addEventListener("load", () => {
-  if (!profile.username || profile.username === "Player") {
+  if (!profile.username || profile.username === "") {
     document.getElementById("loginPopup").style.display = "flex";
   } else {
     document.getElementById("loginPopup").style.display = "none";
