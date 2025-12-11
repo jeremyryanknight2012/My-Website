@@ -1,2894 +1,1912 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>SME Launcher</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <title>SME Launcher</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    @font-face {
-      font-family: "Comic Sans MS";
-      src: local("Comic Sans MS");
-    }
+    <style>
+        @font-face {
+            font-family: "Comic Sans MS";
+            src: local("Comic Sans MS");
+        }
 
-    :root {
-      --bg: #0f0f0f;
-      --bg2: #1a1a1a;
-      --text: #fff;
-      --accent: #4caf50;
-      --sidebar: #000;
-      --banner1: #000;
-      --banner2: #0f0f0f;
-    }
+        :root {
+            --bg: #0f0f0f;
+            --bg2: #1a1a1a;
+            --text: #fff;
+            --accent: #4caf50;
+            --sidebar: #000;
+            --banner1: #000;
+            --banner2: #0f0f0f;
+        }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Comic Sans MS";
-      overflow-x: hidden;
-    }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Comic Sans MS";
+            overflow-x: hidden;
+        }
 
-    body.light {
-      --bg: #f5f5f5;
-      --bg2: #ffffff;
-      --text: #111;
-      --accent: #2196f3;
-      --sidebar: #222;
-    }
+        body.light {
+            --bg: #f5f5f5;
+            --bg2: #ffffff;
+            --text: #111;
+            --accent: #2196f3;
+            --sidebar: #222;
+        }
 
-    /* SIDEBAR */
-    #sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 75px;
-      height: 100%;
-      background: var(--sidebar);
-      padding-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 1000;
-    }
+        /* SIDEBAR */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 75px;
+            height: 100%;
+            background: var(--sidebar);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
 
-    #sidebar div {
-      padding: 15px;
-      cursor: pointer;
-      text-align: center;
-      font-size: 24px;
-      transition: 0.2s;
-    }
+        #sidebar div {
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 24px;
+            transition: 0.2s;
+        }
 
-    #sidebar div:hover {
-      transform: scale(1.2);
-    }
+        #sidebar div:hover {
+            transform: scale(1.2);
+        }
 
-    /* MAIN */
-    #main {
-      margin-left: 90px;
-      padding: 20px;
-    }
+        /* MAIN */
+        #main {
+            margin-left: 90px;
+            padding: 20px;
+        }
 
-    .section {
-      display: none;
-    }
+        .section {
+            display: none;
+        }
 
-    .section.active {
-      display: block;
-    }
+        .section.active {
+            display: block;
+        }
 
-    #homeDashboard {
-      padding: 20px;
-      animation: fadeIn 0.4s ease;
-    }
+        #homeDashboard {
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
 
-    .homeCard {
-      background: var(--bg2);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 10px #0005;
-    }
+        .homeCard {
+            background: var(--bg2);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px #0005;
+        }
 
-    .postBox {
-      background: #222;
-      padding: 12px;
-      border-radius: 10px;
-      margin: 10px 0;
-    }
+        .postBox {
+            background: #222;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
 
-    body.light .postBox {
-      background: #ddd;
-    }
+        body.light .postBox {
+            background: #ddd;
+        }
 
-    .postAuthor {
-      font-weight: bold;
-      color: var(--accent);
-    }
+        .postAuthor {
+            font-weight: bold;
+            color: var(--accent);
+        }
 
-    .postTime {
-      opacity: 0.6;
-      font-size: 11px;
-    }
+        .postTime {
+            opacity: 0.6;
+            font-size: 11px;
+        }
 
-    .postActions {
-      margin-top: 5px;
-      font-size: 13px;
-      opacity: 0.8;
-      display: flex;
-      gap: 15px;
-    }
+        .postActions {
+            margin-top: 5px;
+            font-size: 13px;
+            opacity: 0.8;
+            display: flex;
+            gap: 15px;
+        }
 
-    /* GAME CARDS */
-    .card {
-      background: var(--bg2);
-      width: 260px;
-      height: 380px;
-      border-radius: 12px;
-      padding: 12px;
-      display: inline-flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      margin: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-      position: relative;
-      vertical-align: top;
-    }
+        /* GAME CARDS */
+        .card {
+            background: var(--bg2);
+            width: 260px;
+            height: 380px;
+            border-radius: 12px;
+            padding: 12px;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            vertical-align: top;
+        }
 
-    .card:hover {
-      transform: translateY(-6px) scale(1.05);
-    }
+        .card:hover {
+            transform: translateY(-6px) scale(1.05);
+        }
 
-    .card img {
-  width: 100%;
-  height: auto;
-  max-height: 260px; /* keeps them from getting too tall */
-  object-fit: contain; /* shows full PNG without cropping */
-  border-radius: 10px;
-  display: block;
-}
-    .star {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      font-size: 20px;
-      cursor: pointer;
-      color: #777;
-    }
+        .card img {
+            width: 100%;
+            height: auto;
+            max-height: 260px;
+            /* keeps them from getting too tall */
+            object-fit: contain;
+            /* shows full PNG without cropping */
+            border-radius: 10px;
+            display: block;
+        }
 
-    .star.fav {
-      color: gold;
-      text-shadow: 0 0 10px gold;
-    }
+        .star {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #777;
+        }
 
-    #embedWin {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #000d;
-      z-index: 9999;
-    }
+        .star.fav {
+            color: gold;
+            text-shadow: 0 0 10px gold;
+        }
 
-    #embedFrame {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+        #embedWin {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000d;
+            z-index: 9999;
+        }
 
-    .profileBanner {
-      width: 100%;
-      height: 90px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      border-radius: 12px;
-    }
+        #embedFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-    .profileAvatar {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      border: 3px solid var(--bg2);
-      margin-top: -48px;
-      margin-left: 15px;
-      background: #333;
-    }
+        .profileBanner {
+            width: 100%;
+            height: 90px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            border-radius: 12px;
+        }
 
-    .tabBtn {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: none;
-      background: #222;
-      color: var(--text);
-      cursor: pointer;
-    }
+        .profileAvatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 3px solid var(--bg2);
+            margin-top: -48px;
+            margin-left: 15px;
+            background: #333;
+            background-size: cover; /* Added for friend modal */
+        }
 
-    .tabBtn:hover {
-      background: var(--accent);
-    }
+        .tabBtn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            background: #222;
+            color: var(--text);
+            cursor: pointer;
+        }
 
-    #settingsContent {
-      background: var(--bg2);
-      padding: 15px;
-      border-radius: 10px;
-    }
+        .tabBtn:hover {
+            background: var(--accent);
+        }
 
-    .sme-toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #333;
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #000;
-      font-size: 14px;
-      opacity: 0;
-      transition: 0.25s;
-      z-index: 10000;
-    }
+        #settingsContent {
+            background: var(--bg2);
+            padding: 15px;
+            border-radius: 10px;
+        }
 
-    .sme-toast.success {
-      background: #2e7d32;
-    }
+        .sme-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #000;
+            font-size: 14px;
+            opacity: 0;
+            transition: 0.25s;
+            z-index: 10000;
+        }
 
-    .sme-toast.info {
-      background: #1976d2;
-    }
+        .sme-toast.success {
+            background: #2e7d32;
+        }
 
-    .sme-toast.error {
-      background: #c62828;
-    }
+        .sme-toast.info {
+            background: #1976d2;
+        }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  #homeBtn {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 55px;
-  height: 55px;
-  background: var(--accent);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 26px;
-  cursor: pointer;
-  z-index: 5000;
-  box-shadow: 0 0 10px #0008;
-  transition: 0.2s;
-}
-#homeBtn:hover {
-  transform: scale(1.15);
-}
-  </style>
+        .sme-toast.error {
+            background: #c62828;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #homeBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 55px;
+            height: 55px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            cursor: pointer;
+            z-index: 5000;
+            box-shadow: 0 0 10px #0008;
+            transition: 0.2s;
+        }
+
+        #homeBtn:hover {
+            transform: scale(1.15);
+        }
+    </style>
 </head>
 
 <body>
-  <!-- SIDEBAR -->
-  <div id="sidebar">
-    <div onclick="nav('homeDashboard')">🏠</div>
-    <div onclick="nav('games')">🎮</div>
-    <div onclick="nav('downloads')">⬇</div>
-    <div onclick="nav('favorites')">⭐</div>
-    <div onclick="nav('theater')">🎬</div>
-    <div onclick="nav('friends')">👥</div>
-    <div onclick="nav('profile')">👤</div>
-    <div onclick="openSettings()">⚙️</div>
-    <div onclick="toggleTheme()">🌗</div>
-    <div onclick="panic()">⚠</div>
-  </div>
-
-<!-- HOME BUTTON -->
-<div id="homeBtn" onclick="goHome()">🏠</div>
-  
-  <!-- MAIN -->
-  <div id="main">
-    <h1 id="pageTitle">Home</h1>
-
-    <!-- HOME -->
-    <div id="homeDashboard" class="section active">
-      <div class="homeCard">
-        <h2>Welcome back!</h2>
-        <p>To exit a game refresh the page or click esc</p>
-      </div>
-
-      <div id="continuePlaying" class="homeCard">
-        <h3>Continue Playing</h3>
-        <div id="continueList"></div>
-      </div>
-
-      <div id="socialFeed" class="homeCard">
-        <h3>Social Feed</h3>
-        <div id="feedPosts"></div>
-        <textarea
-          id="feedInput"
-          placeholder="Share something..."
-          style="width:100%;height:60px;padding:10px;border:none;border-radius:8px;background:#222;color:white;margin-top:10px;"
-        ></textarea>
-        <button
-          onclick="postToFeed()"
-          style="padding:10px;margin-top:8px;width:100%;border:none;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Post
-        </button>
-      </div>
-
-      <div id="friendsOnline" class="homeCard">
-        <h3>Friends Online</h3>
-        <div id="onlineList"></div>
-      </div>
-
-      <div id="activityLog" class="homeCard">
-        <h3>Recent Activity</h3>
-        <div id="activityList"></div>
-      </div>
+    <div id="sidebar">
+        <div onclick="nav('homeDashboard')">🏠</div>
+        <div onclick="nav('games')">🎮</div>
+        <div onclick="nav('downloads')">⬇</div>
+        <div onclick="nav('favorites')">⭐</div>
+        <div onclick="nav('theater')">🎬</div>
+        <div onclick="nav('friends')">👥</div>
+        <div onclick="nav('profile')">👤</div>
+        <div onclick="openSettings()">⚙️</div>
+        <div onclick="toggleTheme()">🌗</div>
+        <div onclick="panic()">⚠</div>
     </div>
 
-    <!-- OTHER SECTIONS -->
-    <div id="games" class="section"></div>
-    <div id="downloads" class="section"></div>
-    <div id="favorites" class="section"></div>
-    <div id="theater" class="section"></div>
-    <div id="friends" class="section"></div>
-    <div id="profile" class="section"></div>
-    <div id="settingsPage" class="section">
-      <div id="settingsContent"></div>
-    </div>
-  </div>
+    <div id="homeBtn" onclick="goHome()">🏠</div>
 
-  <!-- EMBED WINDOW -->
-  <div id="embedWin">
-    <iframe id="embedFrame"></iframe>
-  </div>
+    <div id="main">
+        <h1 id="pageTitle">Home</h1>
 
-  <!-- GAME MODAL -->
-  <div
-    id="gameModal"
-    style="
-      display:none;
-      position:fixed;
-      inset:0;
-      background:#000a;
-      z-index:9999;
-      align-items:center;
-      justify-content:center;
-    "
-  >
-    <div
-      id="modalBox"
-      style="
-        width:420px;
-        background:var(--bg2);
-        padding:20px;
-        border-radius:15px;
-        box-shadow:0 0 20px #000;
-        color:white;
-      "
-    >
-      <img id="modalImg" src="" style="width:100%;border-radius:10px;" />
-      <h2 id="modalTitle"></h2>
-      <p id="modalDesc"></p>
-      <div id="playtimeBox" style="margin-top:10px;"></div>
-
-      <button
-        id="playBtn"
-        style="
-          padding:10px;
-          width:100%;
-          border:none;
-          border-radius:8px;
-          background:var(--accent);
-          color:white;
-          margin-top:10px;
-        "
-      >
-        Play
-      </button>
-
-      <button
-        onclick="closeGameModal()"
-        style="
-          padding:10px;
-          width:100%;
-          border:none;
-          border-radius:8px;
-          background:#333;
-          color:white;
-          margin-top:10px;
-        "
-      >
-        Close
-      </button>
-    </div>
-  </div>
-
-  <script>
-    /* ============================
-          GLOBAL NAV + BASICS
-    ============================ */
-
-    function nav(id) {
-      document.querySelectorAll(".section").forEach((s) =>
-        s.classList.remove("active")
-      );
-      const target = document.getElementById(id);
-      if (target) target.classList.add("active");
-
-      const titleMap = {
-        homeDashboard: "Home",
-        games: "",
-        downloads: "SME Downloads",
-        favorites: "",
-        theater: "",
-        friends: "",
-        profile: "",
-        settingsPage: "",
-      };
-
-      document.getElementById("pageTitle").textContent =
-        titleMap[id] || "SME";
-
-      if (id === "theater") loadTheater();
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle("light");
-    }
-
-    function panic() {
-      location.href = "https://classroom.google.com";
-    }
-
-    function enc(u) {
-      return u;
-    }
-
-    function notify(msg, type = "info") {
-      const t = document.createElement("div");
-      t.className = "sme-toast " + type;
-      t.textContent = msg;
-      document.body.appendChild(t);
-      requestAnimationFrame(() => {
-        t.style.opacity = 1;
-      });
-      setTimeout(() => {
-        t.style.opacity = 0;
-        setTimeout(() => t.remove(), 250);
-      }, 2500);
-    }
-
-    /* ============================
-          BASIC DATA LOAD
-    ============================ */
-
-    let recent = JSON.parse(localStorage.getItem("recent") || "[]");
-    let activity = JSON.parse(localStorage.getItem("activity") || "[]");
-    let friends = JSON.parse(localStorage.getItem("friends") || "[]");
-
-    let storedProfile = localStorage.getItem("profile");
-    let profile = storedProfile
-      ? JSON.parse(storedProfile)
-      : {
-          username: "",
-          bio: "",
-          status: "Online",
-          avatar: "https://i.imgur.com/1X5Rz.png",
-        };
-
-    let friendCode = localStorage.getItem("friendCode");
-    if (!friendCode) {
-      friendCode =
-        "SME-" +
-        Math.random().toString(36).substring(2, 8).toUpperCase();
-      localStorage.setItem("friendCode", friendCode);
-    }
-
-    function addRecent(name) {
-      const idx = recent.indexOf(name);
-      if (idx !== -1) recent.splice(idx, 1);
-      recent.unshift(name);
-      if (recent.length > 20) recent.pop();
-      localStorage.setItem("recent", JSON.stringify(recent));
-    }
-
-    /* ============================
-            HOME RENDER
-    ============================ */
-
-    function renderContinuePlaying() {
-      const box = document.getElementById("continueList");
-      if (!box) return;
-
-      if (recent.length === 0) {
-        box.innerHTML = "<p>No recent games.</p>";
-        return;
-      }
-
-      box.innerHTML = "";
-      recent.slice(0, 3).forEach((name) => {
-        const g = games.find((x) => x.name === name);
-        if (!g) return;
-        box.innerHTML += `
-          <div class="card" style="width:150px;" onclick="launchGame('${g.name}')">
-            <img src="${g.img}" alt="${g.name}">
-            <button>${g.name}</button>
-          </div>
-        `;
-      });
-    }
-
-    let feed = JSON.parse(localStorage.getItem("feed") || "[]");
-
-    function postToFeed() {
-      const input = document.getElementById("feedInput");
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-
-      const entry = {
-        id: Date.now(),
-        user: profile.username || "You",
-        text,
-        time: new Date().toLocaleTimeString(),
-        likes: 0,
-        comments: [],
-      };
-
-      feed.unshift(entry);
-      localStorage.setItem("feed", JSON.stringify(feed));
-      input.value = "";
-      renderFeed();
-    }
-
-    function likePost(id) {
-      const p = feed.find((x) => x.id === id);
-      if (!p) return;
-      p.likes++;
-      localStorage.setItem("feed", JSON.stringify(feed));
-      renderFeed();
-    }
-
-    function commentPost(id) {
-      const msg = prompt("Write a comment:");
-      if (!msg) return;
-
-      const p = feed.find((x) => x.id === id);
-      if (!p) return;
-
-      p.comments.push({
-        user: profile.username || "You",
-        text: msg,
-        time: new Date().toLocaleTimeString(),
-      });
-
-      localStorage.setItem("feed", JSON.stringify(feed));
-      renderFeed();
-    }
-
-    function renderFeed() {
-      const box = document.getElementById("feedPosts");
-      if (!box) return;
-
-      box.innerHTML = "";
-      if (feed.length === 0) {
-        box.innerHTML = "<p>No posts yet. Be the first!</p>";
-        return;
-      }
-
-      feed.forEach((p) => {
-        let commentHTML = "";
-        p.comments.forEach((c) => {
-          commentHTML += `
-            <div style="margin-left:10px;opacity:.8;">
-              <b style="color:var(--accent)">${c.user}:</b> ${c.text}
-              <span style="font-size:10px;opacity:.5;">${c.time}</span>
+        <div id="homeDashboard" class="section active">
+            <div class="homeCard">
+                <h2>Welcome back!</h2>
+                <p>To exit a game refresh the page or click esc</p>
             </div>
-          `;
-        });
 
-        box.innerHTML += `
-          <div class="postBox">
-            <div class="postAuthor">${p.user}</div>
-            <div class="postTime">${p.time}</div>
-            <p>${p.text}</p>
-            <div class="postActions">
-              <span onclick="likePost(${p.id})">❤️ ${p.likes}</span>
-              <span onclick="commentPost(${p.id})">💬 Comment</span>
+            <div id="continuePlaying" class="homeCard">
+                <h3>Continue Playing</h3>
+                <div id="continueList"></div>
             </div>
-            ${commentHTML}
-          </div>
-        `;
-      });
-    }
 
-    function renderFriendsOnline() {
-      const box = document.getElementById("onlineList");
-      if (!box) return;
+            <div id="socialFeed" class="homeCard">
+                <h3>Social Feed</h3>
+                <div id="feedPosts"></div>
+                <textarea
+                    id="feedInput"
+                    placeholder="Share something..."
+                    style="width:100%;height:60px;padding:10px;border:none;border-radius:8px;background:#222;color:white;margin-top:10px;"
+                ></textarea>
+                <button
+                    onclick="postToFeed()"
+                    style="padding:10px;margin-top:8px;width:100%;border:none;border-radius:8px;background:var(--accent);color:white;"
+                >
+                    Post
+                </button>
+            </div>
 
-      box.innerHTML = "";
-      if (friends.length === 0) {
-        box.innerHTML = "<p>No friends added.</p>";
-        return;
-      }
+            <div id="friendsOnline" class="homeCard">
+                <h3>Friends Online</h3>
+                <div id="onlineList"></div>
+            </div>
 
-      friends.forEach((code) => {
-        box.innerHTML += `
-          <div style="padding:8px;background:#222;border-radius:8px;margin:5px 0;">
-            <b>${code}</b> — <span style="color:#4caf50;">Online</span>
-          </div>
-        `;
-      });
-    }
+            <div id="activityLog" class="homeCard">
+                <h3>Recent Activity</h3>
+                <div id="activityList"></div>
+            </div>
+        </div>
 
-    function renderActivityHome() {
-      const box = document.getElementById("activityList");
-      if (!box) return;
+        <div id="games" class="section"></div>
+        <div id="downloads" class="section"></div>
+        <div id="favorites" class="section"></div>
+        <div id="theater" class="section"></div>
 
-      box.innerHTML = "";
-      if (activity.length === 0) {
-        box.innerHTML = "<p>No recent activity.</p>";
-        return;
-      }
+        <div id="friends" class="section">
+            <h2>Friends & Messages</h2>
 
-      activity.slice(0, 5).forEach((a) => {
-        box.innerHTML += `
-          <div style="padding:10px;background:#222;margin:8px 0;border-radius:10px;">
-            <b>${a.type}:</b> ${a.detail}<br>
-            <span style="font-size:10px;opacity:.6;">${a.time}</span>
-          </div>
-        `;
-      });
-    }
+            <div class="homeCard">
+                <h3>Your Friend Code</h3>
+                <p>Share this code to be added by others. Your ID is needed to send friend requests.</p>
+                <code id="displayFriendCode" style="font-size:1.2em; color:var(--accent);">Loading...</code>
+                <button onclick="copyFriendCode()" class="tabBtn" style="margin-left:10px;">Copy Code</button>
+                <div id="authStatus" style="margin-top:10px; font-size:12px; color:red;">Not Logged In. Cannot use online features.</div>
+            </div>
 
-    function renderHome() {
-      renderContinuePlaying();
-      renderFeed();
-      renderFriendsOnline();
-      renderActivityHome();
-    }
+            <div class="homeCard">
+                <h3>Send Friend Request</h3>
+                <input type="text" id="friendCodeInput" placeholder="Enter Friend Code (e.g., SME-A1B2C3)"
+                    style="padding:10px; width:200px; border-radius:8px; border:1px solid #444; background:var(--bg); color:var(--text);"
+                >
+                <button onclick="sendFriendRequest()" class="tabBtn">Send Request</button>
+            </div>
+            
+            <div class="homeCard">
+                <h3>Pending Requests (<span id="requestCount">0</span>)</h3>
+                <div id="requestsList">
+                    </div>
+            </div>
 
-    /* ============================
-                GAMES
-    ============================ */
+            <div class="homeCard">
+                <h3>My Friends (<span id="friendCount">0</span>)</h3>
+                <div id="friendListContainer">
+                    </div>
+            </div>
 
-    let games = [
-      {
-        name: "Water (Password is funni)",
-        img: "thumbnails/water.png",
-        url: "https://cgxlyxnlynjpbmdiywnrc3rhcnrtewvkdwnhdglvbml0d2fzc29zawdtv2.familyguy.in/signin.html",
-        cat: "Action",
-      },
-      {
-        name: "3D Tuning",
-        img: "thumbnails/3dtuning.png",
-        url: "https://www.3dtuning.com/en-US/",
-        cat: "Action",
-      },
-      {
-        name: "Slime Rancher",
-        img: "thumbnails/slimerancher.png",
-        url: "https://jeremy4401.github.io/SME/games/slimerancher.html",
-        cat: "Action",
-      },
-      {
-      name: "Jacksmith",
-        img: "thumbnails/jacksmith.png",
-        url: "https://jeremy4401.github.io/jacksmith/",
-        cat: "Action",
-      },
-      {
-        name: "Mario Kart",
-        img: "thumbnails/mariokart.png",
-        url: "https://turbowarp.org/581185386/embed",
-        cat: "Action",
-     },
-      {
-  name: "Lego Star Wars Trilogy",
-  img: "thumbnails/starwars.png",
-  url: "https://realtherealer.github.io/GBA/launcher.html#lsw",
-  cat: "Action",
-},
-      {
-        name: "Minecraft",
-        img: "thumbnails/minecraft.png",
-        url: "https://jeremy4401.github.io/SME/games/minecraft.html",
-        cat: "Survival",
-      },
-      {
-        name: "Buckshot Roulette",
-        img: "thumbnails/buckshotroulette.png",
-        url: "https://jeremy4401.github.io/SME/games/buckshotroulette.html",
-        cat: "Horror",
-      },
-      {
-        name: "Schoolboy Runaway",
-        img: "thumbnails/schoolboyrunaway.png",
-        url: "https://jeremy4401.github.io/SME/games/schoolboyrunaway.html",
-        cat: "Survival",
-      },
-      {
-        name: "Hollow Knight",
-        img: "thumbnails/hollowknight.png",
-        url: "https://jeremy4401.github.io/SME/games/hollowknight.html",
-        cat: "Action",
-      },
-      {
-        name: "10 Minutes Till Dawn",
-        img: "thumbnails/10minutestilldawn.png",
-        url: "https://jeremy4401.github.io/SME/games/10minutestilldawn.html",
-        cat: "Action",
-      },
-      {
-        name: "1v1.LOL",
-        img: "thumbnails/1v1lol.png",
-        url: "https://jeremy4401.github.io/SME/games/1v1lol.html",
-        cat: "Action",
-      },
-     {
-  name: "Amanda the Adventurer",
-  img: "thumbnails/amandatheadventurer.png",
-  url: "https://jeremy4401.github.io/SME/games/amandatheadventurer.html",
-  cat: "Action",
-      },
-      {
-        name: "Baseball Bros",
-        img: "thumbnails/baseballbros.png",
-        url: "https://Jeremy4401.github.io/SME/games/baseballbros.html",
-        cat: "Action",
-      },
-      {
-         name: "Basket Bros",
-        img: "thumbnails/basketbros.png",
-        url: "https://Jeremy4401.github.io/SME/games/basketbros.html",
-        cat: "Action",
-      },
-      {
-        name: "Football Bros",
-        img: "thumbnails/footballbros.png",
-        url: "https://Jeremy4401.github.io/SME/games/footballbros.html",
-        cat: "Action",
-      },
-      {
-        name: "Escape Road",
-        img: "thumbnails/escaperoad.png",
-        url: "https://Jeremy4401.github.io/SME/games/escaperoad.html",
-        cat: "Action",
-      },
-      {
-         name: "Fallout",
-        img: "thumbnails/fallout.png",
-        url: "https://Jeremy4401.github.io/SME/games/fallout.html",
-        cat: "Action",
-      },
-      {
-         name: "Flappy Bird",
-        img: "thumbnails/flappybird.png",
-        url: "https://Jeremy4401.github.io/SME/games/flappybird.html",
-        cat: "Action",
-      },
-      {
-        name: "FNAF 1",
-        img: "thumbnails/fnaf1.png",
-        url: "https://Jeremy4401.github.io/SME/games/fnaf1.html",
-        cat: "Action",
-      },
-      {
-        name: "FNAF 2",
-        img: "thumbnails/fnaf2.png",
-        url: "https://Jeremy4401.github.io/SME/games/fnaf2.html",
-        cat: "Action",
-      },
-      {
-        name: "FNAF 3",
-        img: "thumbnails/fnaf3.png",
-        url: "https://Jeremy4401.github.io/SME/games/fnaf3.html",
-        cat: "Action",
-      },
-      {
-        name: "FNAF 4",
-        img: "thumbnails/fnaf4.png",
-        url: "https://Jeremy4401.github.io/SME/games/fnaf4.html",
-        cat: "Action",
-      },
-      {
-         name: "FNAF 4 Halloween Edition",
-        img: "thumbnails/fnaf4halloween.png",
-        url: "https://Jeremy4401.github.io/SME/games/fnaf4halloween.html",
-        cat: "Action",
-      },
-      {
-        name: "Sister Location",
-        img: "thumbnails/sisterlocation.png",
-        url: "https://Jeremy4401.github.io/SME/games/sisterlocation.html",
-        cat: "Action",
-      },
-      {
-        name: "Freddy Fazbear's Pizzeria Simulator",
-        img: "thumbnails/pizzeriasimulator.png",
-        url: "https://Jeremy4401.github.io/SME/games/pizzeriasimulator.html",
-        cat: "Action",
-      },
-      {
-        name: "Ultimate Custom Night",
-        img: "thumbnails/ultimatecustomnight.png",
-        url: "https://Jeremy4401.github.io/SME/games/ultimatecustomnight.html",
-        cat: "Action",
-      },
-      {
-        name: "Endoparasitic",
-        img: "thumbnails/endoparasitic.png",
-        url: "https://Jeremy4401.github.io/SME/games/endoparasitic.html",
-        cat: "Action",
-      },
-      {
-        name: "Drive Mad",
-        img: "thumbnails/drivemad.png",
-        url: "https://Jeremy4401.github.io/SME/games/drivemad.html",
-        cat: "Action",
-      },
-      {
-        name: "Drift Hunters",
-        img: "thumbnails/drifthunters.png",
-        url: "https://Jeremy4401.github.io/SME/games/drifthunters.html",
-        cat: "Action",
-      },
-      {
-        name: "The Binding of Isaac",
-        img: "thumbnails/bindingofisaac.png",
-        url: "https://Jeremy4401.github.io/SME/games/bindingofisaac.html",
-        cat: "Action",
-      },
-      {
-   name: "DOOM",
-        img: "thumbnails/doom.png",
-        url: "https://Jeremy4401.github.io/SME/games/doom.html",
-        cat: "Action",
-      },
-      {
-         name: "DOOM 2",
-        img: "thumbnails/doom2.png",
-        url: "https://Jeremy4401.github.io/SME/games/doom2.html",
-        cat: "Action",
-      },
-      {
-         name: "Fruit Ninja",
-        img: "thumbnails/fruitninja.png",
-        url: "https://Jeremy4401.github.io/SME/games/fruitninja.html",
-        cat: "Action",
-      },
-      {
-        name: "Geometry Dash",
-        img: "thumbnails/geometrydash.png",
-        url: "https://Jeremy4401.github.io/SME/games/geometrydash.html",
-        cat: "Action",
-      },
-      {
-        name: "Getting Over It",
-        img: "thumbnails/gettingoverit.png",
-        url: "https://Jeremy4401.github.io/SME/games/gettingoverit.html",
-        cat: "Action",
-      },
-      {
-        name: "Granny",
-        img: "thumbnails/granny1.png",
-        url: "https://Jeremy4401.github.io/SME/games/granny1.html",
-        cat: "Action",
-      },
-      {
-        name: "Granny Chapter 2",
-        img: "thumbnails/granny2.png",
-        url: "https://Jeremy4401.github.io/SME/games/granny2.html",
-        cat: "Action",
-      },
-      {
-        name: "Granny Chapter 3",
-        img: "thumbnails/granny3.png",
-        url: "https://Jeremy4401.github.io/SME/games/granny3.html",
-        cat: "Action",
-      },
-      {
-      name: "Controlled Flight",
-        img: "thumbnails/controlledflight.png",
-        url: "https://howthingsfly.si.edu/sites/default/files/unity/ControlledFlight_new/index.html",
-        cat: "Action",
-      },
-      {
-        name: "Jetpack Joyride",
-        img: "thumbnails/jetpackjoyride.png",
-        url: "https://Jeremy4401.github.io/SME/games/jetpackjoyride.html",
-        cat: "Action",
-      },
-      {
-        name: "Johnny Trigger",
-        img: "thumbnails/johnnytrigger.png",
-        url: "https://Jeremy4401.github.io/SME/games/johnnytrigger.html",
-        cat: "Action",
-      },
-      {
-        name: "Kindergarten",
-        img: "thumbnails/kindergarten.png",
-        url: "https://Jeremy4401.github.io/SME/games/kindergarten.html",
-        cat: "Action",
-      },
-      {
-         name: "Kindergarten 2",
-        img: "thumbnails/kindergarten2.png",
-        url: "https://Jeremy4401.github.io/SME/games/kindergarten2.html",
-        cat: "Action",
-      },
-      {
-         name: "Kindergarten 3",
-        img: "thumbnails/kindergarten3.png",
-        url: "https://Jeremy4401.github.io/SME/games/kindergarten3.html",
-        cat: "Action",
-      },
-      {
-        name: "Learn to Fly",
-        img: "thumbnails/learntofly.png",
-        url: "https://Jeremy4401.github.io/SME/games/learntofly.html",
-        cat: "Action",
-      },
-      {
-        name: "Melon Playground",
-        img: "thumbnails/melonplayground.png",
-        url: "https://Jeremy4401.github.io/SME/games/melonplayground.html",
-        cat: "Action",
-      },
-      {
-        name: "Doodle Jump",
-        img: "thumbnails/doodlejump.png",
-        url: "https://Jeremy4401.github.io/SME/games/doodlejump.html",
-        cat: "Action",
-      },
-      {
-       name: "Nazi Zombies Portable",
-        img: "thumbnails/nazizombies.png",
-        url: "https://Jeremy4401.github.io/SME/games/nazizombies.html",
-        cat: "Action",
-      },
-      {
-       name: "Papers, Please",
-        img: "thumbnails/papersplease.png",
-        url: "https://Jeremy4401.github.io/SME/games/papersplease.html",
-        cat: "Action",
-      },
-      {
-       name: "Pixel Gun 3D",
-        img: "thumbnails/pixelgun.png",
-        url: "https://Jeremy4401.github.io/SME/games/pixelgun.html",
-        cat: "Action",
-      },
-      {
-        name: "Plants vs Zombies",
-        img: "thumbnails/plantsvszombies.png",
-        url: "https://Jeremy4401.github.io/SME/games/plantsvszombies.html",
-        cat: "Action",
-      },
-      {
-        name: "Plants vs Zombies 2 Gardenless",
-        img: "thumbnails/plantsvszombies2.png",
-        url: "https://Jeremy4401.github.io/SME/games/plantsvszombies2.html",
-        cat: "Action",
-      },
-      {
-        name: "Pokemon",
-        img: "thumbnails/pokemon.png",
-        url: "https://Jeremy4401.github.io/SME/games/pokemon.html",
-        cat: "Action",
-      },
-      {
-        name: "Raft",
-        img: "thumbnails/raft.png",
-        url: "https://Jeremy4401.github.io/SME/games/raft.html",
-        cat: "Action",
-      },
-      {
-        name: "Ragdoll Archers",
-        img: "thumbnails/ragdollarchers.png",
-        url: "https://Jeremy4401.github.io/SME/games/ragdollarchers.html",
-        cat: "Action",
-      },
-      {
-        name: "Two Player Battle",
-        img: "thumbnails/2playerbattle.png",
-        url: "https://turbowarp.org/292728003/embed",
-        cat: "Action",
-      },
-      {
-     name: "Retro Bowl",
-        img: "thumbnails/retrobowl.png",
-        url: "https://Jeremy4401.github.io/SME/games/retrobowl.html",
-        cat: "Action",
-      },
-      {   
-       name: "Retro Bowl College",
-        img: "thumbnails/retrobowlcollege.png",
-        url: "https://Jeremy4401.github.io/SME/games/retrobowlcollege.html",
-        cat: "Action",
-      },
-      {
-       name: "Slither.io",
-        img: "thumbnails/slitherio.png",
-        url: "https://Jeremy4401.github.io/SME/games/slitherio.html",
-        cat: "Action",
-      },
-      {
-        name: "Slope",
-        img: "thumbnails/slope.png",
-        url: "https://Jeremy4401.github.io/SME/games/slope.html",
-        cat: "Action",
-      },
-      {
-       name: "Smash Karts",
-        img: "thumbnails/smashkarts.png",
-        url: "https://Jeremy4401.github.io/SME/games/smashkarts.html",
-        cat: "Action",
-      },
-      {
-       name: "Snow Rider 3D",
-        img: "thumbnails/snowrider.png",
-        url: "https://Jeremy4401.github.io/SME/games/snowrider.html",
-        cat: "Action",
-      },
-      {
-       name: "Steal a Brainrot",
-        img: "thumbnails/stealabrainrot.png",
-        url: "https://Jeremy4401.github.io/SME/games/stealabrainrot.html",
-        cat: "Action",
-      },
-      {
-        name: "Subway Surfers",
-        img: "thumbnails/subwaysurfers.png",
-        url: "https://Jeremy4401.github.io/SME/games/subwaysurfers.html",
-        cat: "Action",
-      },
-      {
-       name: "SUPERHOT",
-        img: "thumbnails/superhot.png",
-        url: "https://Jeremy4401.github.io/SME/games/superhot.html",
-        cat: "Action",
-      },
-      {
-      name: "Super Mario 64",
-        img: "thumbnails/supermario64.png",
-        url: "https://Jeremy4401.github.io/SME/games/supermario64.html",
-        cat: "Action",
-      },
-      {
-        name: "Super Mario Bros",
-        img: "thumbnails/supermariobros.png",
-        url: "https://Jeremy4401.github.io/SME/games/supermariobros.html",
-        cat: "Action",
-      },
-      {
-       name: "Survival Race",
-        img: "thumbnails/survivalrace.png",
-        url: "https://Jeremy4401.github.io/SME/games/survivalrace.html",
-        cat: "Action",
-      },
-      {
-     name: "Temple Run 2",
-        img: "thumbnails/templerun2.png",
-        url: "https://Jeremy4401.github.io/SME/games/templerun2.html",
-        cat: "Action",
-      },
-      {
-       name: "They are Coming",
-        img: "thumbnails/theyarecoming.png",
-        url: "https://Jeremy4401.github.io/SME/games/theyarecoming.html",
-        cat: "Action",
-      },
-      {
-   name: "Baldi's Basics",
-        img: "thumbnails/baldisbasics.png",
-        url: "https://Jeremy4401.github.io/SME/games/baldisbasics.html",
-        cat: "Action",
-      },
-      {
-        name: "Tiny Fishing",
-        img: "thumbnails/tinyfishing.png",
-        url: "https://Jeremy4401.github.io/SME/games/tinyfishing.html",
-        cat: "Action",
-      },
-      {
-      name: "Tomb of the Mask",
-        img: "thumbnails/tombofthemask.png",
-        url: "https://Jeremy4401.github.io/SME/games/tombofthemask.html",
-        cat: "Action",
-      },
-      {
-        name: "Cut the Rope",
-        img: "thumbnails/cuttherope.png",
-        url: "https://Jeremy4401.github.io/SME/games/cuttherope.html",
-        cat: "Action",
-      },
-      {
-        name: "Crossy Road",
-        img: "thumbnails/crossyroad.png",
-        url: "https://Jeremy4401.github.io/SME/games/crossyroad.html",
-        cat: "Action",
-      },
-      {
-        name: "Cookie Clicker",
-        img: "thumbnails/cookieclicker.png",
-        url: "https://Jeremy4401.github.io/SME/games/cookieclicker.html",
-        cat: "Action",
-      },
-      {
-        name: "Buildnow GG",
-        img: "thumbnails/buildnow.png",
-        url: "https://Jeremy4401.github.io/SME/games/buildnow.html",
-        cat: "Action",
-      },
-      {
-        name: "Bouncemasters",
-        img: "thumbnails/bouncemasters.png",
-        url: "https://Jeremy4401.github.io/SME/games/bouncemasters.html",
-        cat: "Action",
-      },
-      {
-        name: "Bitlife",
-        img: "thumbnails/bitlife.png",
-        url: "https://Jeremy4401.github.io/SME/games/bitlife.html",
-        cat: "Action",
-      },
-      {
-        name: "Bank Robbery 2",
-        img: "thumbnails/bankrobbery2.png",
-        url: "https://jeremy4401.github.io/SME/games/bankrobbery2.html",
-        cat: "Action",
-      },
-      {
-       name: "Basket Random",
-        img: "thumbnails/basketrandom.png",
-        url: "https://jeremy4401.github.io/SME/games/basketrandom.html",
-        cat: "Action",
-      },
-      {
-        name: "ULTRAKILL",
-        img: "thumbnails/ultrakill.png",
-        url: "https://jeremy4401.github.io/SME/games/ultrakill.html",
-        cat: "Action",
-      },
-      {
-       name: "Bendy & The Ink Machine",
-        img: "thumbnails/bendy.png",
-        url: "https://jeremy4401.github.io/SME/games/bendy.html",
-        cat: "Action",
-      },
-      {
-        name: "Cuphead",
-        img: "thumbnails/cuphead.png",
-        url: "https://jeremy4401.github.io/SME/games/cuphead.html",
-        cat: "Action",
-      },
-      {
-         name: "Half Life",
-        img: "thumbnails/halflife.png",
-        url: "https://jeremy4401.github.io/SME/games/halflife.html",
-        cat: "Action",
-      },
-      {
-        name: "R.E.P.O.",
-        img: "thumbnails/repo.png",
-        url: "https://jeremy4401.github.io/SME/games/repo.html",
-        cat: "Action",
-      },
-      {
-        name: "Bad Parenting",
-        img: "thumbnails/badparenting.png",
-        url: "https://jeremy4401.github.io/SME/games/badparenting.html",
-        cat: "Horror",
-      }
-      ];
+            <div id="chatWindow" class="homeCard" style="display:none;">
+                <h3 id="chatRecipient">Chat with [Friend Name]</h3>
+                <div id="messagesContainer" style="height:300px; overflow-y:scroll; background:var(--bg); padding:10px; border-radius:8px; margin-bottom:10px;">
+                    </div>
+                <input type="text" id="messageInput" placeholder="Type a message..."
+                    style="padding:10px; width:calc(100% - 70px); border-radius:8px; border:1px solid #444; background:var(--bg); color:var(--text);"
+                >
+                <button onclick="sendMessage()" class="tabBtn" style="width:60px;">Send</button>
+            </div>
+        </div>
         
-    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-
-    function renderGames() {
-      const sec = document.getElementById("games");
-      if (!sec) return;
-
-      const searchVal =
-        (document.getElementById("gameSearch")?.value || "")
-          .toLowerCase()
-          .trim();
-      const sortVal =
-        document.getElementById("sortSelect")?.value || "none";
-
-      let list = games.filter((g) =>
-        g.name.toLowerCase().includes(searchVal)
-      );
-
-      if (sortVal === "az") list.sort((a, b) => a.name.localeCompare(b.name));
-      if (sortVal === "za") list.sort((a, b) => b.name.localeCompare(a.name));
-      if (sortVal === "fav")
-        list = list.filter((g) => favorites.includes(g.name));
-      if (sortVal === "recent")
-        list = list.filter((g) => recent.includes(g.name));
-
-      let html = `
-        <h1>Games</h1>
-        <div style="margin-bottom:15px;">
-          <input
-            id="gameSearch"
-            placeholder="Search games..."
-            style="padding:10px;width:240px;border-radius:8px;background:#222;border:none;color:white;"
-            oninput="renderGames()"
-          >
-          <select
-            id="sortSelect"
-            style="padding:10px;border-radius:8px;background:#222;color:white;border:none;"
-            onchange="renderGames()"
-          >
-            <option value="none">Sort: None</option>
-            <option value="az">A → Z</option>
-            <option value="za">Z → A</option>
-            <option value="fav">Favorites</option>
-            <option value="recent">Recently Played</option>
-          </select>
+        <div id="profile" class="section"></div>
+        <div id="settingsPage" class="section">
+            <div id="settingsContent"></div>
         </div>
-        <div
-          id="gameCards"
-          style="white-space:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:10px;"
-        >
-      `;
+    </div>
 
-      list.forEach((g) => {
-        const isFav = favorites.includes(g.name) ? "fav" : "";
-        html += `
-          <div class="card" onclick="launchGame('${g.name}')" style="position:relative;">
-            <div
-              class="star ${isFav}"
-              onclick="toggleFav('${g.name}');event.stopPropagation();"
-            >
-              ★
-            </div>
-            <img src="${g.img}" alt="${g.name}">
-            <button>${g.name}</button>
-          </div>
-        `;
-      });
+    <div id="embedWin">
+        <iframe id="embedFrame"></iframe>
+    </div>
 
-      html += `</div>`;
-      sec.innerHTML = html;
-    }
-
-    function launchGame(name) {
-      const g = games.find((x) => x.name === name);
-      if (!g) return;
-      play(enc(g.url));
-      addRecent(g.name);
-      renderHome();
-    }
-
-    function toggleFav(name) {
-      if (favorites.includes(name)) {
-        favorites = favorites.filter((x) => x !== name);
-      } else {
-        favorites.push(name);
-      }
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-      renderGames();
-      renderFavorites();
-      renderHome();
-    }
-
-    function renderFavorites() {
-      const sec = document.getElementById("favorites");
-      if (!sec) return;
-
-      sec.innerHTML = "<h1>Favorites</h1>";
-
-      if (favorites.length === 0) {
-        sec.innerHTML += "<p>No favorites yet.</p>";
-        return;
-      }
-
-      favorites.forEach((f) => {
-        const g = games.find((x) => x.name === f);
-        if (!g) return;
-        sec.innerHTML += `
-          <div class="card" onclick="launchGame('${g.name}')">
-            <img src="${g.img}" alt="${g.name}">
-            <button>${g.name}</button>
-          </div>
-        `;
-      });
-    }
-
-   function renderCategories() {
-  const sec = document.getElementById("games");
-  if (!sec) return;
-
-  const cats = [...new Set(games.map((g) => g.cat))];
-  
-  let html = `<h3>Categories:</h3>`;
-
-  cats.forEach((c) => {
-    html += `
-      <button
-        onclick="filterCategory('${c}')"
-        style="padding:6px;margin:5px;border-radius:8px;background:#333;color:white;border:none;"
-      >
-        ${c}
-      </button>
-    `;
-  });
-
-  html += `
-    <button
-      onclick="renderGames()"
-      style="padding:6px;margin:5px;border-radius:8px;background:var(--accent);color:white;border:none;"
+    <div
+        id="gameModal"
+        style="
+            display:none;
+            position:fixed;
+            inset:0;
+            background:#000a;
+            z-index:9999;
+            align-items:center;
+            justify-content:center;
+        "
     >
-      All
-    </button>
-  `;
-
-  // FIXED — this no longer overwrites the search bar!
-  sec.insertAdjacentHTML("afterbegin", html);
-}
-
-    function filterCategory(cat) {
-      const sec = document.getElementById("games");
-      if (!sec) return;
-
-      const list = games.filter((g) => g.cat === cat);
-      let html = `<h1>Games — ${cat}</h1>`;
-
-      list.forEach((g) => {
-        const isFav = favorites.includes(g.name) ? "fav" : "";
-        html += `
-          <div class="card" onclick="launchGame('${g.name}')">
-            <div
-              class="star ${isFav}"
-              onclick="toggleFav('${g.name}');event.stopPropagation();"
-            >
-              ★
-            </div>
-            <img src="${g.img}" alt="${g.name}">
-            <button>${g.name}</button>
-          </div>
-        `;
-      });
-
-      sec.innerHTML = html;
-    }
-
-    function openGameDetails(name) {
-      const g = games.find((x) => x.name === name);
-      if (!g) return;
-
-      document.getElementById("modalImg").src = g.img;
-      document.getElementById("modalTitle").innerText = g.name;
-      document.getElementById("modalDesc").innerText = "Category: " + g.cat;
-      document.getElementById("playtimeBox").innerHTML = "";
-      document.getElementById("gameModal").style.display = "flex";
-
-      document.getElementById("playBtn").onclick = () => {
-        play(enc(g.url));
-        addRecent(g.name);
-        renderHome();
-        closeGameModal();
-      };
-    }
-
-    function closeGameModal() {
-      document.getElementById("gameModal").style.display = "none";
-    }
-
-    function play(url) {
-      document.getElementById("embedWin").style.display = "block";
-      document.getElementById("embedFrame").src = url;
-    }
-
-   document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-
-    // Force iframe to give back keyboard focus
-    document.getElementById("embedFrame").blur();
-    window.focus();
-
-    // Close embed
-    const win = document.getElementById("embedWin");
-    const frame = document.getElementById("embedFrame");
-
-    win.style.display = "none";
-    frame.src = "";
-
-    // Stop timers + rich presence
-    stopPlayTimer();
-    setPresence("Browsing Games");
-
-    // Navigate back to games page
-    nav("games");
-  }
-});
-
-// ============================
-// HOME BUTTON LOGIC
-// ============================
-
-function goHome() {
-  const win = document.getElementById("embedWin");
-  const frame = document.getElementById("embedFrame");
-
-  // If a game is open, close it
-  if (win.style.display === "block") {
-    win.style.display = "none";
-    frame.src = "";
-
-    stopPlayTimer();
-    setPresence("Browsing Games");
-    nav("games");
-    window.focus();
-    return;
-  }
-
-  // Otherwise go to home dashboard
-  nav("homeDashboard");
-}
-
-    /* Initial game renders */
-    renderGames();
-    renderFavorites();
-    renderCategories();
-
-    /* ============================
-              FRIEND SYSTEM
-    ============================ */
-
-    let requests = JSON.parse(localStorage.getItem("requests") || "[]");
-
-    function renderFriends() {
-      const sec = document.getElementById("friends");
-      if (!sec) return;
-
-      sec.innerHTML = `
-        <h1>Friends</h1>
-
-        <h3>Your Friend Code:</h3>
-        <div style="background:#222;padding:10px;border-radius:10px;margin-bottom:10px;">
-          ${friendCode}
-        </div>
-
-        <h3>Pending Requests</h3>
-        <div id="reqList"></div>
-
-        <h3>Your Friends</h3>
-        <div id="friendList"></div>
-
-        <h3>Add Friend</h3>
-        <input
-          id="addFriendCode"
-          placeholder="Enter code"
-          style="padding:10px;width:200px;border:none;border-radius:8px;background:#222;color:white;"
-        >
-        <button
-          onclick="sendFriendRequest()"
-          style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;margin-left:5px;"
-        >
-          Add
-        </button>
-
-        <div id="friendProfile" style="margin-top:25px;display:none;"></div>
-      `;
-
-      loadRequests();
-      loadFriends();
-    }
-
-    renderFriends();
-
-    function sendFriendRequest() {
-      const input = document.getElementById("addFriendCode");
-      const code = input.value.trim();
-      if (!code) {
-        alert("Enter a friend code.");
-        return;
-      }
-      if (code === friendCode) {
-        alert("You cannot add yourself.");
-        return;
-      }
-
-      requests.push({ from: code });
-      saveSocial();
-      loadRequests();
-      alert("Friend request sent!");
-    }
-
-    function loadRequests() {
-      const box = document.getElementById("reqList");
-      if (!box) return;
-
-      box.innerHTML = "";
-      if (requests.length === 0) {
-        box.innerHTML = "<p>No pending requests.</p>";
-        return;
-      }
-
-      requests.forEach((r) => {
-        box.innerHTML += `
-          <div style="background:#222;padding:10px;border-radius:8px;margin:5px 0;">
-            Request from <b>${r.from}</b><br>
-            <button
-              onclick="acceptReq('${r.from}')"
-              style="padding:6px;border:none;border-radius:6px;background:#4caf50;color:white;margin-right:5px;"
-            >
-              Accept
-            </button>
-            <button
-              onclick="declineReq('${r.from}')"
-              style="padding:6px;border:none;border-radius:6px;background:#c0392b;color:white;"
-            >
-              Decline
-            </button>
-          </div>
-        `;
-      });
-    }
-
-    function acceptReq(code) {
-      if (!friends.includes(code)) friends.push(code);
-      requests = requests.filter((r) => r.from !== code);
-      saveSocial();
-      loadRequests();
-      loadFriends();
-    }
-
-    function declineReq(code) {
-      requests = requests.filter((r) => r.from !== code);
-      saveSocial();
-      loadRequests();
-    }
-
-    function loadFriends() {
-      const box = document.getElementById("friendList");
-      if (!box) return;
-
-      box.innerHTML = "";
-      if (friends.length === 0) {
-        box.innerHTML = "<p>No friends added.</p>";
-        return;
-      }
-
-      friends.forEach((code) => {
-        box.innerHTML += `
-          <div
-            class="friendCard"
-            onclick="openFriend('${code}')"
-            style="padding:10px;background:#222;border-radius:8px;margin:5px 0;cursor:pointer;"
-          >
-            <b>${code}</b>
-            <div style="font-size:12px;color:var(--accent);opacity:.8;">Online</div>
-          </div>
-        `;
-      });
-    }
-
-    function saveSocial() {
-      localStorage.setItem("friends", JSON.stringify(friends));
-      localStorage.setItem("requests", JSON.stringify(requests));
-    }
-
-    function openFriend(code) {
-      const box = document.getElementById("friendProfile");
-      if (!box) return;
-      box.style.display = "block";
-
-      box.innerHTML = `
-        <div class="profileBanner"></div>
-        <img class="profileAvatar" src="https://i.imgur.com/1X5Rz.png">
-
-        <div style="margin-left:150px;margin-top:10px;">
-          <h2>${code}</h2>
-          <p>Status: Online</p>
-          <p>Friend since: Today</p>
-          <button
-            onclick="removeFriend('${code}')"
-            style="padding:8px;border:none;border-radius:8px;background:#c0392b;color:white;margin-right:5px;"
-          >
-            Remove Friend
-          </button>
-          <button
-            onclick="openDM('${code}')"
-            style="padding:8px;border:none;border-radius:8px;background:var(--accent);color:white;"
-          >
-            Message
-          </button>
-        </div>
-
-        <div style="margin-top:20px;display:flex;gap:10px;">
-          <button class="tabBtn" onclick="switchFriendTab('${code}','overview')">Overview</button>
-          <button class="tabBtn" onclick="switchFriendTab('${code}','activity')">Activity</button>
-          <button class="tabBtn" onclick="switchFriendTab('${code}','recent')">Recent</button>
-          <button class="tabBtn" onclick="switchFriendTab('${code}','mutual')">Mutual Favorites</button>
-        </div>
-
-        <div id="friendTabContent" style="margin-top:20px;"></div>
-      `;
-
-      switchFriendTab(code, "overview");
-    }
-
-    function switchFriendTab(code, tab) {
-      const box = document.getElementById("friendTabContent");
-      if (!box) return;
-
-      if (tab === "overview") {
-        box.innerHTML = "<p>This is the overview for your friend.</p>";
-        return;
-      }
-
-      if (tab === "activity") {
-        let html = "<h3>Activity</h3>";
-        activity.forEach((a) => {
-          if (
-            a.detail &&
-            a.detail.includes &&
-            a.detail.includes(code)
-          ) {
-            html += `
-              <div style="background:#222;padding:10px;margin:5px 0;border-radius:10px;">
-                <b>${a.type}</b>: ${a.detail}<br>
-                <span style="font-size:11px;opacity:.6;">${a.time}</span>
-              </div>
-            `;
-          }
-        });
-        box.innerHTML = html;
-        return;
-      }
-
-      if (tab === "recent") {
-        let html = "<h3>Recent Games</h3>";
-        recent.forEach((r) => {
-          const g = games.find((x) => x.name === r);
-          if (!g) return;
-          html += `
-            <div class="card" onclick="launchGame('${g.name}')">
-              <img src="${g.img}" alt="${g.name}">
-              <button>${g.name}</button>
-            </div>
-          `;
-        });
-        box.innerHTML = html;
-        return;
-      }
-
-      if (tab === "mutual") {
-        let html = "<h3>Mutual Favorites</h3>";
-        favorites.forEach((f) => {
-          const g = games.find((x) => x.name === f);
-          if (g) {
-            html += `
-              <div class="card" onclick="launchGame('${g.name}')">
-                <img src="${g.img}" alt="${g.name}">
-                <button>${g.name}</button>
-              </div>
-            `;
-          }
-        });
-        if (html.trim() === "<h3>Mutual Favorites</h3>") {
-          html += "<p>No mutual favorites.</p>";
-        }
-        box.innerHTML = html;
-      }
-    }
-
-    function removeFriend(code) {
-      friends = friends.filter((f) => f !== code);
-      saveSocial();
-      loadFriends();
-      const fp = document.getElementById("friendProfile");
-      if (fp) fp.style.display = "none";
-      alert("Friend removed.");
-    }
-
-    /* ============================
-              DIRECT MESSAGING
-    ============================ */
-
-    let dmHistory = JSON.parse(localStorage.getItem("dmHistory") || "{}");
-
-    function openDM(code) {
-      const box = document.getElementById("friendProfile");
-      if (!box) return;
-
-      if (!dmHistory[code]) dmHistory[code] = [];
-
-      box.innerHTML = `
-        <h2>Chat with ${code}</h2>
         <div
-          id="dmLog"
-          style="height:260px;overflow-y:auto;background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;"
-        ></div>
-
-        <textarea
-          id="dmInput"
-          placeholder="Type a message..."
-          style="width:100%;height:60px;background:#222;color:white;border:none;border-radius:10px;padding:10px;"
-        ></textarea>
-
-        <button
-          onclick="sendDM('${code}')"
-          style="padding:10px;width:100%;margin-top:6px;border:none;border-radius:8px;background:var(--accent);color:white;"
+            id="modalBox"
+            style="
+                width:420px;
+                background:var(--bg2);
+                padding:20px;
+                border-radius:15px;
+                box-shadow:0 0 20px #000;
+                color:white;
+            "
         >
-          Send
-        </button>
-      `;
+            <img id="modalImg" src="" style="width:100%;border-radius:10px;" />
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <div id="playtimeBox" style="margin-top:10px;"></div>
 
-      renderDM(code);
-    }
-
-    function renderDM(code) {
-      const log = document.getElementById("dmLog");
-      if (!log) return;
-
-      log.innerHTML = "";
-      dmHistory[code].forEach((m) => {
-        log.innerHTML += `
-          <div style="margin-bottom:10px;">
-            <b style="color:var(--accent)">${m.from}:</b> ${m.text}<br>
-            <span style="font-size:10px;opacity:.6;">${m.time}</span>
-          </div>
-        `;
-      });
-
-      log.scrollTop = log.scrollHeight;
-    }
-
-    function sendDM(code) {
-      const input = document.getElementById("dmInput");
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-
-      const entry = {
-        from: profile.username || "You",
-        text,
-        time: new Date().toLocaleTimeString(),
-      };
-
-      dmHistory[code].push(entry);
-      localStorage.setItem("dmHistory", JSON.stringify(dmHistory));
-      renderDM(code);
-      input.value = "";
-    }
-
-    /* ============================
-             PROFILE + XP
-    ============================ */
-
-    let statusData =
-      JSON.parse(localStorage.getItem("statusData") || "null") || {
-        customStatus: "Available",
-        rich: "",
-      };
-
-    function renderProfile() {
-      const sec = document.getElementById("profile");
-      if (!sec) return;
-
-      sec.innerHTML = `
-        <h1>Your Profile</h1>
-
-        <div class="profileBanner"></div>
-        <img class="profileAvatar" src="${profile.avatar}">
-
-        <div style="margin-left:150px;margin-top:10px;">
-          <h2>${profile.username}</h2>
-          <p>Status: ${profile.status}</p>
-          <p>Custom Status: ${statusData.customStatus}</p>
-          <p>Rich Presence: <span style="color:var(--accent);">${statusData.rich || "None"}</span></p>
-          <p>Bio: ${profile.bio || "No bio set."}</p>
-
-          <h3>Edit Profile</h3>
-
-          <input
-            id="usernameInput"
-            placeholder="Username"
-            value="${profile.username}"
-            style="padding:10px;width:260px;border-radius:8px;border:none;background:#222;color:white;"
-          ><br><br>
-
-          <textarea
-            id="bioInput"
-            placeholder="Bio..."
-            style="padding:10px;width:260px;height:70px;border:none;border-radius:8px;background:#222;color:white;"
-          >${profile.bio}</textarea><br><br>
-
-          <select
-            id="statusInput"
-            style="padding:10px;width:260px;border-radius:8px;background:#222;color:white;border:none;"
-          >
-            <option ${profile.status === "Online" ? "selected" : ""}>Online</option>
-            <option ${profile.status === "Busy" ? "selected" : ""}>Busy</option>
-            <option ${profile.status === "Offline" ? "selected" : ""}>Offline</option>
-          </select><br><br>
-
-          <input
-            id="avatarInput"
-            value="${profile.avatar}"
-            placeholder="Avatar URL"
-            style="padding:10px;width:260px;border-radius:8px;background:#222;color:white;border:none;"
-          ><br><br>
-
-          <button
-            onclick="saveProfileFull()"
-            style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;"
-          >
-            Save
-          </button>
-        </div>
-
-        <div id="xpBox" style="margin-top:20px;"></div>
-        <div id="achList" style="margin-top:20px;"></div>
-      `;
-
-      updateProfileXP();
-    }
-
-    function saveProfileFull() {
-      profile.username = document.getElementById("usernameInput").value;
-      profile.bio = document.getElementById("bioInput").value;
-      profile.status = document.getElementById("statusInput").value;
-      profile.avatar = document.getElementById("avatarInput").value;
-
-      localStorage.setItem("profile", JSON.stringify(profile));
-      alert("Profile updated!");
-      renderProfile();
-    }
-
-    function setPresence(text) {
-      statusData.rich = text;
-      localStorage.setItem("statusData", JSON.stringify(statusData));
-    }
-
-    const oldNavP = nav;
-    nav = function (id) {
-      oldNavP(id);
-
-      if (id === "homeDashboard") setPresence("On Home Screen");
-      if (id === "games") setPresence("Browsing Games");
-      if (id === "friends") setPresence("Viewing Friends");
-      if (id === "profile") setPresence("Editing Profile");
-      if (id === "settingsPage") setPresence("Changing Settings");
-    };
-
-    let xpData =
-      JSON.parse(localStorage.getItem("xpData") || "null") || {
-        xp: 0,
-        level: 1,
-        achievements: [],
-      };
-
-    function gainXP(amount) {
-      xpData.xp += amount;
-
-      while (xpData.xp >= xpData.level * 100) {
-        xpData.xp -= xpData.level * 100;
-        xpData.level++;
-        unlockAchievement("Level Up " + xpData.level);
-      }
-
-      saveXP();
-      updateProfileXP();
-    }
-
-    function saveXP() {
-      localStorage.setItem("xpData", JSON.stringify(xpData));
-    }
-
-    function updateProfileXP() {
-      const box = document.getElementById("xpBox");
-      if (!box) return;
-
-      const percent = (xpData.xp / (xpData.level * 100)) * 100;
-
-      box.innerHTML = `
-        <h3>Level ${xpData.level}</h3>
-        <div style="width:260px;height:24px;background:#333;border-radius:10px;overflow:hidden;">
-          <div style="width:${percent}%;height:24px;background:var(--accent);"></div>
-        </div>
-        <p>${xpData.xp} / ${xpData.level * 100} XP</p>
-      `;
-
-      const achBox = document.getElementById("achList");
-      if (!achBox) return;
-
-      achBox.innerHTML = "<h3>Achievements</h3>";
-      xpData.achievements.forEach((a) => {
-        achBox.innerHTML += `
-          <div style="padding:8px;background:#222;border-radius:8px;margin:5px 0;">
-            🏆 ${a}
-          </div>
-        `;
-      });
-    }
-
-    function unlockAchievement(name) {
-      if (xpData.achievements.includes(name)) return;
-      xpData.achievements.push(name);
-      saveXP();
-      showAchievementPopup(name);
-    }
-
-    function showAchievementPopup(name) {
-      const box = document.createElement("div");
-      box.style.cssText = `
-        position:fixed;
-        bottom:20px;
-        right:20px;
-        background:#4caf50;
-        color:white;
-        padding:14px 20px;
-        border-radius:10px;
-        font-size:16px;
-        box-shadow:0 0 15px #000;
-        opacity:0;
-        transition:.3s;
-      `;
-      box.innerHTML = `🏆 Achievement Unlocked:<br>${name}`;
-      document.body.append(box);
-
-      setTimeout(() => (box.style.opacity = 1), 50);
-      setTimeout(() => {
-        box.style.opacity = 0;
-        setTimeout(() => box.remove(), 300);
-      }, 2500);
-    }
-
-    /* ============================
-             PLAYTIME SYSTEM
-    ============================ */
-
-    let playtime = JSON.parse(localStorage.getItem("playtime") || "{}");
-    let activeGame = null;
-    let activeStart = null;
-
-    function startPlayTimer(game) {
-      activeGame = game;
-      activeStart = Date.now();
-    }
-
-    function stopPlayTimer() {
-      if (!activeGame || !activeStart) return;
-
-      const mins = Math.max(
-        1,
-        Math.round((Date.now() - activeStart) / 60000)
-      );
-
-      if (!playtime[activeGame]) {
-        playtime[activeGame] = {
-          totalMinutes: 0,
-          sessions: 0,
-          lastPlayed: "Never",
-        };
-      }
-
-      playtime[activeGame].totalMinutes += mins;
-      playtime[activeGame].sessions++;
-      playtime[activeGame].lastPlayed = new Date().toLocaleString();
-
-      localStorage.setItem("playtime", JSON.stringify(playtime));
-
-      activeGame = null;
-      activeStart = null;
-    }
-
-const oldPlayP = play;
-play = function (url) {
-  const g = games.find((x) => enc(x.url) === url);
-  if (g) {
-    startPlayTimer(g.name);
-    setPresence("Playing " + g.name);
-    gainXP(20);
-  }
-
-  oldPlayP(url);
-
-  setTimeout(() => {
-    const frame = document.getElementById("embedFrame");
-
-    // Fix for Lego Star Wars + all GBA games
-    if (url.includes("GBA") || url.includes("lsw")) {
-      try { frame.contentWindow.focus(); } catch (e) {}
-    } else {
-      // Original behavior for everything else
-      frame.blur();
-      window.focus();
-    }
-  }, 300);
-};
-
-    const oldOpenDetailP = openGameDetails;
-    openGameDetails = function (name) {
-      oldOpenDetailP(name);
-
-      const g = games.find((x) => x.name === name);
-      if (!g) return;
-
-      const data =
-        playtime[name] || {
-          totalMinutes: 0,
-          sessions: 0,
-          lastPlayed: "Never",
-        };
-
-      const hours = (data.totalMinutes / 60).toFixed(1);
-
-      const pt = document.getElementById("playtimeBox");
-      if (!pt) return;
-
-      pt.innerHTML = `
-        <h3>Playtime</h3>
-        <p><b>Total:</b> ${hours} hours (${data.totalMinutes} minutes)</p>
-        <p><b>Sessions:</b> ${data.sessions}</p>
-        <p><b>Last Played:</b> ${data.lastPlayed}</p>
-      `;
-    };
-
-    /* ============================
-          THEMES + BACKGROUND
-    ============================ */
-
-    let themes = JSON.parse(localStorage.getItem("themes") || "{}");
-    let currentTheme =
-      localStorage.getItem("currentTheme") || "default";
-
-    const presetThemes = {
-      default: {
-        bg: "#0f0f0f",
-        bg2: "#1a1a1a",
-        text: "#ffffff",
-        accent: "#4caf50",
-      },
-      vaporwave: {
-        bg: "#2b004f",
-        bg2: "#3b006f",
-        text: "#ffb3ff",
-        accent: "#ff00ff",
-      },
-      midnight: {
-        bg: "#000814",
-        bg2: "#001d3d",
-        text: "#e0e0e0",
-        accent: "#1e90ff",
-      },
-      forest: {
-        bg: "#001f0f",
-        bg2: "#00391c",
-        text: "#c8ffc8",
-        accent: "#00cc66",
-      },
-      sunset: {
-        bg: "#2a0000",
-        bg2: "#4a0a0a",
-        text: "#ffcccc",
-        accent: "#ff5500",
-      },
-    };
-
-    function applyTheme(name) {
-      const t = themes[name] || presetThemes[name];
-      if (!t) return;
-
-      document.documentElement.style.setProperty("--bg", t.bg);
-      document.documentElement.style.setProperty("--bg2", t.bg2);
-      document.documentElement.style.setProperty("--text", t.text);
-      document.documentElement.style.setProperty("--accent", t.accent);
-
-      currentTheme = name;
-      localStorage.setItem("currentTheme", name);
-    }
-
-    function openThemePanel() {
-      const sec = document.getElementById("profile");
-      if (!sec) return;
-
-      sec.innerHTML = `
-        <h1>Themes</h1>
-        <h3>Preset Themes</h3>
-      `;
-
-      for (const name in presetThemes) {
-        sec.innerHTML += `
-          <button
-            onclick="applyTheme('${name}')"
-            style="padding:10px;margin:5px;border:none;border-radius:8px;background:var(--accent);color:white;"
-          >
-            ${name}
-          </button>
-        `;
-      }
-
-      sec.innerHTML += `
-        <h3>Create Custom Theme</h3>
-
-        <label>Background</label><br>
-        <input id="c_bg" type="color"><br><br>
-
-        <label>Secondary Background</label><br>
-        <input id="c_bg2" type="color"><br><br>
-
-        <label>Text Color</label><br>
-        <input id="c_text" type="color"><br><br>
-
-        <label>Accent Color</label><br>
-        <input id="c_acc" type="color"><br><br>
-
-        <button
-          onclick="saveCustomTheme()"
-          style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Save Theme
-        </button>
-      `;
-    }
-
-    function saveCustomTheme() {
-      themes["custom"] = {
-        bg: document.getElementById("c_bg").value,
-        bg2: document.getElementById("c_bg2").value,
-        text: document.getElementById("c_text").value,
-        accent: document.getElementById("c_acc").value,
-      };
-
-      localStorage.setItem("themes", JSON.stringify(themes));
-      applyTheme("custom");
-      alert("Custom theme applied!");
-    }
-
-    document.getElementById("sidebar").innerHTML += `
-      <div onclick="openThemePanel()">🎨</div>
-    `;
-
-    const bgCanvas = document.createElement("canvas");
-    bgCanvas.id = "bgAnim";
-    bgCanvas.style.position = "fixed";
-    bgCanvas.style.top = "0";
-    bgCanvas.style.left = "0";
-    bgCanvas.style.width = "100%";
-    bgCanvas.style.height = "100%";
-    bgCanvas.style.zIndex = "-1";
-    document.body.append(bgCanvas);
-
-    const ctx = bgCanvas.getContext("2d");
-
-    function resizeBG() {
-      bgCanvas.width = window.innerWidth;
-      bgCanvas.height = window.innerHeight;
-    }
-    resizeBG();
-    window.addEventListener("resize", resizeBG);
-
-    let bgMode = localStorage.getItem("bgMode") || "none";
-    let perfMode =
-      JSON.parse(localStorage.getItem("perfMode") || "false");
-
-    function openBGMenu() {
-      const sec = document.getElementById("profile");
-      if (!sec) return;
-
-      sec.innerHTML = `
-        <h1>Background Effects</h1>
-
-        <button
-          onclick="setBG('none')"
-          style="padding:10px;width:260px;border-radius:8px;background:#333;color:white;"
-        >
-          Disable
-        </button><br><br>
-
-        <button
-          onclick="setBG('matrix')"
-          style="padding:10px;width:260px;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Matrix Rain
-        </button><br><br>
-
-        <button
-          onclick="setBG('stars')"
-          style="padding:10px;width:260px;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Particle Stars
-        </button><br><br>
-
-        <button
-          onclick="setBG('vaporwave')"
-          style="padding:10px;width:260px;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Vaporwave Grid
-        </button><br><br>
-
-        <p style="opacity:.7;margin-top:10px;">
-          Tip: enable Performance Mode in Settings to reduce animation load.
-        </p>
-      `;
-    }
-
-    function setBG(mode) {
-      bgMode = mode;
-      localStorage.setItem("bgMode", mode);
-      alert("Background updated!");
-    }
-
-    const matrixChars = "アァカサタナ0123456789";
-    let matrixDrops = [];
-    let stars = [];
-    let gridOffset = 0;
-    let customParticles = [];
-    let customBGEnabled = false;
-
-    function openCustomBGCreator() {
-      const sec = document.getElementById("profile");
-      if (!sec) return;
-
-      sec.innerHTML = `
-        <h1>Create Custom Background</h1>
-
-        <p>Particle Color</p>
-        <input type="color" id="cbg_color" value="#ff00ff"><br><br>
-
-        <p>Particle Count</p>
-        <input
-          type="number"
-          id="cbg_count"
-          value="120"
-          min="10"
-          max="500"
-          style="padding:8px;border:none;border-radius:8px;background:#222;color:white;"
-        ><br><br>
-
-        <p>Particle Speed</p>
-        <input type="range" id="cbg_speed" min="1" max="10" value="4"><br><br>
-
-        <button
-          onclick="applyCustomBG()"
-          style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Apply Background
-        </button>
-      `;
-    }
-
-    function applyCustomBG() {
-      customBGEnabled = true;
-      localStorage.setItem("customBG", "true");
-      localStorage.setItem(
-        "cbg_color",
-        document.getElementById("cbg_color").value
-      );
-      localStorage.setItem(
-        "cbg_count",
-        document.getElementById("cbg_count").value
-      );
-      localStorage.setItem(
-        "cbg_speed",
-        document.getElementById("cbg_speed").value
-      );
-      initCustomParticles();
-      alert("Custom animated background applied!");
-    }
-
-    function initCustomParticles() {
-      customParticles = [];
-      const count = Number(localStorage.getItem("cbg_count") || 100);
-      const speed = Number(localStorage.getItem("cbg_speed") || 3);
-
-      for (let i = 0; i < count; i++) {
-        customParticles.push({
-          x: Math.random() * bgCanvas.width,
-          y: Math.random() * bgCanvas.height,
-          dx: (Math.random() - 0.5) * speed,
-          dy: (Math.random() - 0.5) * speed,
-          size: Math.random() * 3 + 1,
-        });
-      }
-    }
-
-    function animateBG() {
-      requestAnimationFrame(animateBG);
-      ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-      if (perfMode) return;
-
-      if (bgMode === "matrix") {
-        if (matrixDrops.length === 0) {
-          const cols = Math.floor(bgCanvas.width / 20);
-          matrixDrops = Array(cols).fill(0);
-        }
-
-        ctx.fillStyle = "rgba(0,0,0,0.05)";
-        ctx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-        ctx.fillStyle = "#0f0";
-        ctx.font = "16px monospace";
-
-        matrixDrops.forEach((y, i) => {
-          const char =
-            matrixChars[Math.floor(Math.random() * matrixChars.length)];
-          ctx.fillText(char, i * 20, y * 20);
-          if (y * 20 > bgCanvas.height && Math.random() > 0.975) {
-            matrixDrops[i] = 0;
-          }
-          matrixDrops[i]++;
-        });
-      } else if (bgMode === "stars") {
-        if (stars.length === 0) {
-          for (let i = 0; i < 200; i++) {
-            stars.push({
-              x: Math.random() * bgCanvas.width,
-              y: Math.random() * bgCanvas.height,
-              s: Math.random() * 2 + 1,
-            });
-          }
-        }
-
-        ctx.fillStyle = "white";
-        stars.forEach((st) => {
-          ctx.beginPath();
-          ctx.arc(st.x, st.y, st.s, 0, Math.PI * 2);
-          ctx.fill();
-        });
-      } else if (bgMode === "vaporwave") {
-        gridOffset += 0.03;
-        ctx.strokeStyle = "#ff00ff";
-        ctx.lineWidth = 1;
-
-        for (let y = 0; y < bgCanvas.height; y += 40) {
-          ctx.beginPath();
-          ctx.moveTo(0, y + ((gridOffset * 10) % 40));
-          ctx.lineTo(bgCanvas.width, y + ((gridOffset * 10) % 40));
-          ctx.stroke();
-        }
-
-        for (let x = 0; x < bgCanvas.width; x += 40) {
-          ctx.beginPath();
-          ctx.moveTo(x + ((gridOffset * 10) % 40), 0);
-          ctx.lineTo(x + ((gridOffset * 10) % 40), bgCanvas.height);
-          ctx.stroke();
-        }
-      }
-
-      if (customBGEnabled && !perfMode) {
-        const color = localStorage.getItem("cbg_color") || "#ff00ff";
-        ctx.fillStyle = color;
-
-        customParticles.forEach((p) => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-
-          p.x += p.dx;
-          p.y += p.dy;
-
-          if (p.x < 0 || p.x > bgCanvas.width) p.dx *= -1;
-          if (p.y < 0 || p.y > bgCanvas.height) p.dy *= -1;
-        });
-      }
-    }
-
-    document.getElementById("sidebar").innerHTML += `
-      <div onclick="openBGMenu()">🌀</div>
-      <div onclick="openCustomBGCreator()">✨</div>
-    `;
-
-    if (localStorage.getItem("customBG") === "true") {
-      customBGEnabled = true;
-      initCustomParticles();
-    }
-
-    applyTheme(currentTheme);
-    animateBG();
-
-    /* ============================
-                  SFX
-    ============================ */
-
-    const smeSounds = {
-      click: new Audio(
-        "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
-      ),
-      hover: new Audio(
-        "https://actions.google.com/sounds/v1/cartoon/pop.ogg"
-      ),
-      message: new Audio(
-        "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-      ),
-      achievement: new Audio(
-        "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-      ),
-      notify: new Audio(
-        "https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg"
-      ),
-    };
-
-    for (const s in smeSounds) {
-      smeSounds[s].volume = 0.4;
-    }
-
-    function playSound(name) {
-      if (perfMode) return;
-      if (smeSounds[name]) smeSounds[name].play();
-    }
-
-    document.addEventListener("click", (e) => {
-      if (e.target.tagName === "BUTTON") playSound("click");
-    });
-
-    document.addEventListener("mouseover", (e) => {
-      if (
-        e.target.closest(".card") ||
-        e.target.closest("#sidebar div")
-      ) {
-        playSound("hover");
-      }
-    });
-
-    /* ============================
-              UI TRANSITIONS
-    ============================ */
-
-    const styleFX = document.createElement("style");
-    styleFX.innerHTML = `
-      .fadeSlide {
-        opacity: 0;
-        transform: translateY(8px);
-        transition: .25s;
-      }
-      .fadeSlide.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    `;
-    document.head.append(styleFX);
-
-    function smoothSwap(elem, callback) {
-      elem.classList.remove("show");
-      setTimeout(() => {
-        callback();
-        setTimeout(() => elem.classList.add("show"), 20);
-      }, 200);
-    }
-
-    /* ============================
-         MOD MANAGER + UPDATES
-    ============================ */
-
-    document.getElementById("sidebar").innerHTML += `
-      <div onclick="openModManager()">🧩</div>
-    `;
-
-    let mods = JSON.parse(localStorage.getItem("mods") || "[]");
-
-    function openModManager() {
-      nav("settingsPage");
-      const sc = document.getElementById("settingsContent");
-      if (!sc) return;
-
-      sc.innerHTML = `
-        <h1>Mod & Add-On Manager</h1>
-        <p>Install local HTML/JS/CSS mods. They appear inside SME Launcher.</p>
-
-        <input
-          type="file"
-          id="modFile"
-          accept=".zip,.html,.js,.css"
-          style="margin:10px 0;padding:10px;border-radius:8px;background:#222;color:white;border:none;"
-        >
-
-        <button
-          onclick="installMod()"
-          style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Install Mod
-        </button>
-
-        <h3 style="margin-top:20px;">Installed Mods</h3>
-        <div id="modList"></div>
-      `;
-
-      renderMods();
-    }
-
-    function installMod() {
-      const input = document.getElementById("modFile");
-      const file = input.files[0];
-      if (!file) {
-        alert("No file selected.");
-        return;
-      }
-
-      const mod = {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        time: new Date().toLocaleString(),
-      };
-
-      mods.push(mod);
-      localStorage.setItem("mods", JSON.stringify(mods));
-      renderMods();
-      alert("Mod installed!");
-    }
-
-    function renderMods() {
-      const box = document.getElementById("modList");
-      if (!box) return;
-
-      box.innerHTML = "";
-      if (mods.length === 0) {
-        box.innerHTML = "<p>No mods installed yet.</p>";
-        return;
-      }
-
-      mods.forEach((m, i) => {
-        box.innerHTML += `
-          <div style="padding:10px;background:#222;border-radius:8px;margin:5px 0;">
-            <b>${m.name}</b> (${Math.round(m.size / 1024)} KB)<br>
-            Installed: ${m.time}<br><br>
             <button
-              onclick="removeMod(${i})"
-              style="padding:6px;border:none;border-radius:6px;background:#c0392b;color:white;"
+                id="playBtn"
+                style="
+                    padding:10px;
+                    width:100%;
+                    border:none;
+                    border-radius:8px;
+                    background:var(--accent);
+                    color:white;
+                    margin-top:10px;
+                "
             >
-              Remove
+                Play
             </button>
-          </div>
-        `;
-      });
-    }
 
-    function removeMod(i) {
-      mods.splice(i, 1);
-      localStorage.setItem("mods", JSON.stringify(mods));
-      renderMods();
-    }
+            <button
+                onclick="closeGameModal()"
+                style="
+                    padding:10px;
+                    width:100%;
+                    border:none;
+                    border-radius:8px;
+                    background:#333;
+                    color:white;
+                    margin-top:10px;
+                "
+            >
+                Close
+            </button>
+        </div>
+    </div>
 
-    async function scrapeGNMath() {
-      const url = "https://gn-math.github.io/";
-      try {
-        const res = await fetch(url, { mode: "cors" });
-        const txt = await res.text();
-        const doc = new DOMParser().parseFromString(txt, "text/html");
-        const links = [...doc.querySelectorAll("a")];
+    <div id="friendProfileModal" style="display:none; position:fixed; inset:0; background:#000c; z-index:9999; align-items:center; justify-content:center;">
+        <div style="width:350px; background:var(--bg2); padding:20px; border-radius:15px; box-shadow:0 0 20px #000; color:var(--text);">
+            <button onclick="closeFriendProfileModal()" style="float:right; background:none; border:none; color:var(--text); font-size:1.5em; cursor:pointer;">&times;</button>
+            <div class="profileBanner" style="height:60px;"></div>
+            <div id="modalFriendAvatar" class="profileAvatar" style="margin-top:-30px; background-size:cover;"></div>
+            <h2 id="modalFriendUsername" style="margin-top:10px;"></h2>
+            <p id="modalFriendStatus" style="color:var(--accent);">Online</p>
+            <p id="modalFriendBio" style="margin-top:10px; opacity:0.8;"></p>
+            <button id="modalMessageBtn" onclick="openChatFromProfile()" class="tabBtn" style="margin-top:15px; width:100%;">Message</button>
+        </div>
+    </div>
+    <script type="module">
+        /* ============================
+               GLOBAL FIREBASE INIT (UPDATED FOR V12 MODULES)
+        ============================ */
 
-        const scraped = [];
-        links.forEach((a) => {
-          if (
-            a.href.endsWith("/") &&
-            !a.innerText.includes("..") &&
-            a.innerText.trim().length > 0 &&
-            a.innerText.trim().length < 30
-          ) {
-            scraped.push({
-              name: a.innerText.trim(),
-              img: "thumb_default.png",
-              url: a.href,
-              cat: "GN-Math",
-            });
-          }
+        // 1. New Imports (MUST use the type="module" script)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, deleteDoc, collection, query, where, limit, getDocs, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        // 2. >>> YOUR FIREBASE CONFIGURATION (PASTED FROM CONSOLE) <<<
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxXsXA1aoOLzDD-yNaZnHETgxPAJ-mbjw",
+            authDomain: "sme-loader.firebaseapp.com",
+            databaseURL: "https://sme-loader-default-rtdb.firebaseio.com",
+            projectId: "sme-loader",
+            storageBucket: "sme-loader.firebasestorage.app",
+            messagingSenderId: "427113600756",
+            appId: "1:427113600756:web:73227a309d4a2e6c51b0a1"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUserId = null;
+        let friendCode = localStorage.getItem("friendCode");
+
+        // 3. Setup Authentication Listener (Crucial for identifying the user)
+        onAuthStateChanged(auth, async (user) => { 
+            if (user) {
+                currentUserId = user.uid;
+                
+                // Ensure user profile exists in Firestore and set friendCode
+                await setDoc(doc(db, "users", currentUserId), { 
+                    username: profile.username || `User-${currentUserId.substring(0, 4)}`,
+                    friendCode: friendCode,
+                    avatar: profile.avatar,
+                    status: profile.status,
+                    lastOnline: serverTimestamp(),
+                    bio: profile.bio || "A new SME Launcher user."
+                }, { merge: true });
+                
+                document.getElementById("authStatus").textContent = `Logged in as: ${user.email || 'Anonymous'}`;
+                document.getElementById("authStatus").style.color = 'lime';
+                document.getElementById("displayFriendCode").textContent = friendCode;
+
+                // Start listeners for friends and requests
+                setupFriendsListener();
+                setupRequestsListener();
+
+            } else {
+                currentUserId = null;
+                document.getElementById("authStatus").textContent = 'Not Logged In. Cannot use online features.';
+                document.getElementById("authStatus").style.color = 'red';
+                document.getElementById("displayFriendCode").textContent = 'N/A';
+                
+                // Implement anonymous login to give the user a unique ID/FriendCode
+                try {
+                    const anonUserCredential = await signInAnonymously(auth); 
+                    console.log("Signed in anonymously:", anonUserCredential.user.uid);
+                    // Generate friendCode based on user ID if not present
+                    if (!friendCode) {
+                        friendCode =
+                            "SME-" +
+                            anonUserCredential.user.uid.substring(0, 6).toUpperCase();
+                        localStorage.setItem("friendCode", friendCode);
+                    }
+                } catch (error) {
+                    console.error("Anonymous sign-in failed:", error);
+                    notify("Failed to connect to online services.", "error");
+                }
+            }
         });
 
-        if (scraped.length) {
-          const newOnes = scraped.filter(
-            (s) => !games.some((g) => g.name === s.name)
-          );
-          games = games.concat(newOnes);
-          if (newOnes.length > 0) {
-            notify(
-              `🆕 ${newOnes.length} GN-Math games found!`,
-              "success"
+
+        /* ============================
+               GLOBAL NAV + BASICS
+        ============================ */
+
+        function nav(id) {
+            document.querySelectorAll(".section").forEach((s) =>
+                s.classList.remove("active")
             );
-          }
-          renderGames();
-          renderCategories();
+            const target = document.getElementById(id);
+            if (target) target.classList.add("active");
+
+            const titleMap = {
+                homeDashboard: "Home",
+                games: "Games Library",
+                downloads: "SME Downloads",
+                favorites: "Favorites",
+                theater: "Theater",
+                friends: "Friends & Messaging", 
+                profile: "Profile",
+                settingsPage: "Settings",
+            };
+
+            document.getElementById("pageTitle").textContent =
+                titleMap[id] || "SME";
+
+            if (id === "theater") loadTheater();
+            if (id === "games") renderGames();
+            if (id === "favorites") renderFavorites();
+            if (id === "profile") renderProfile();
+            if (id === "settingsPage") renderSettings();
+            
+            if (id === "friends") {
+                renderFriendsPage(); // Trigger render, listeners handle updates
+                closeChatWindow();
+            }
         }
-      } catch (e) {
-        console.log("GN-Math scraper blocked:", e);
-      }
-    }
 
-    scrapeGNMath();
+        function goHome() {
+            nav('homeDashboard');
+        }
 
-    let updateConfig =
-      JSON.parse(localStorage.getItem("updateConfig") || "null") || {
-        interval: 0,
-        customInterval: 5,
-        lastCheck: "Never",
-      };
+        function toggleTheme() {
+            document.body.classList.toggle("light");
+        }
 
-    let lastGameList = JSON.parse(
-      localStorage.getItem("lastGameList") || "[]"
-    );
-    let autoChecker = null;
+        function panic() {
+            location.href = "https://classroom.google.com";
+        }
 
-    function openSettings() {
-      nav("settingsPage");
-      const sc = document.getElementById("settingsContent");
-      if (!sc) return;
+        function enc(u) {
+            return u;
+        }
 
-      sc.innerHTML = `
-        <h1>Settings</h1>
+        function notify(msg, type = "info") {
+            const t = document.createElement("div");
+            t.className = "sme-toast " + type;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            requestAnimationFrame(() => {
+                t.style.opacity = 1;
+            });
+            setTimeout(() => {
+                t.style.opacity = 0;
+                setTimeout(() => t.remove(), 250);
+            }, 2500);
+        }
+        
+        /* ============================
+               FIREBASE FRIENDS SYSTEM (Updated with V12 Functions)
+        ============================ */
 
-        <h3>Update Checker</h3>
+        let friends = []; 
+        let requests = []; 
+        let currentChat = null; 
+        let messageUnsubscribe = null; 
+        let friendsUnsubscribe = null;
+        let requestsUnsubscribe = null;
 
-        <label>
-          <input type="radio" name="upint" value="0" ${
-            updateConfig.interval == 0 ? "checked" : ""
-          }>
-          Off
-        </label><br>
+        // --- FRIENDS LISTENERS ---
+        function setupFriendsListener() {
+            if (!currentUserId) return;
+            if (friendsUnsubscribe) friendsUnsubscribe();
 
-        <label>
-          <input type="radio" name="upint" value="1" ${
-            updateConfig.interval == 1 ? "checked" : ""
-          }>
-          Every 1 min
-        </label><br>
+            friendsUnsubscribe = onSnapshot(collection(db, "users", currentUserId, "friends"), 
+                async (snapshot) => {
+                    const friendIDs = snapshot.docs.map(doc => doc.id);
+                    friends = [];
+                    document.getElementById("friendCount").textContent = friendIDs.length;
 
-        <label>
-          <input type="radio" name="upint" value="2" ${
-            updateConfig.interval == 2 ? "checked" : ""
-          }>
-          Every 2 min
-        </label><br>
+                    if (friendIDs.length > 0) {
+                        // Fetch details for all friends
+                        const friendDetailsPromises = friendIDs.map(id => 
+                            getDocs(doc(db, "users", id)).then(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+                        );
+                        
+                        friends = (await Promise.all(friendDetailsPromises)).filter(f => f.friendCode);
+                    }
+                    renderFriendsPage();
+                    renderFriendsOnline(); // Update Home section
+                }, error => console.error("Error setting up friends listener:", error)
+            );
+        }
 
-        <label>
-          <input type="radio" name="upint" value="5" ${
-            updateConfig.interval == 5 ? "checked" : ""
-          }>
-          Every 5 min
-        </label><br>
+        function setupRequestsListener() {
+            if (!currentUserId) return;
+            if (requestsUnsubscribe) requestsUnsubscribe();
 
-        <label>
-          <input type="radio" name="upint" value="10" ${
-            updateConfig.interval == 10 ? "checked" : ""
-          }>
-          Every 10 min
-        </label><br>
+            requestsUnsubscribe = onSnapshot(collection(db, "users", currentUserId, "requests"),
+                async (snapshot) => {
+                    requests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    document.getElementById("requestCount").textContent = requests.length;
+                    renderRequestsList();
+                }, error => console.error("Error setting up requests listener:", error)
+            );
+        }
 
-        <label>
-          <input
-            type="radio"
-            name="upint"
-            value="custom"
-            ${updateConfig.interval === "custom" ? "checked" : ""}
-          >
-          Custom (minutes):
-        </label>
-        <input
-          id="customUpInt"
-          type="number"
-          style="width:60px;padding:5px;background:#222;color:white;border:none;"
-          value="${updateConfig.customInterval}"
-        ><br><br>
 
-        <h3>Performance Mode</h3>
-        <label>
-          <input
-            type="checkbox"
-            id="perfToggle"
-            ${perfMode ? "checked" : ""}
-          >
-          Enable Performance Mode (reduce animations & sounds)
-        </label><br><br>
+        // --- FRIEND REQUESTS & ACTIONS ---
+        async function sendFriendRequest() {
+            if (!currentUserId) { notify("Please wait for login or check online status.", "error"); return; }
+            
+            const input = document.getElementById("friendCodeInput");
+            const targetCode = input.value.trim().toUpperCase();
+            if (targetCode === friendCode) { notify("You cannot add yourself.", "error"); return; }
+            if (!targetCode || !targetCode.startsWith("SME-")) { notify("Invalid Friend Code format (e.g., SME-A1B2C3).", "error"); return; }
 
-        <button
-          onclick="saveUpdateSettings()"
-          style="padding:10px;border:none;border-radius:8px;background:var(--accent);color:white;"
-        >
-          Save
-        </button>
+            // 1. Find the target user by their Friend Code
+            const targetQuery = query(collection(db, "users"), where("friendCode", "==", targetCode), limit(1));
+            const targetQuerySnapshot = await getDocs(targetQuery);
 
-        <h3 style="margin-top:20px;">Manual Check</h3>
-        <button
-          onclick="manualCheckUpdates()"
-          style="padding:10px;border:none;border-radius:8px;background:#444;color:white;"
-        >
-          Check Now
-        </button>
+            if (targetQuerySnapshot.empty) {
+                notify("User not found with that code.", "error");
+                return;
+            }
+            
+            const targetUserDoc = targetQuerySnapshot.docs[0];
+            const targetUserId = targetUserDoc.id;
+            const targetUserData = targetUserDoc.data();
 
-        <p style="opacity:.6;margin-top:10px;">
-          Last checked: ${updateConfig.lastCheck}
-        </p>
-      `;
-    }
+            // Check if already friends
+            const isFriend = await getDocs(doc(db, "users", currentUserId, "friends", targetUserId));
+            if (isFriend.exists) {
+                 notify(`You are already friends with ${targetUserData.username}.`, "info");
+                 return;
+            }
 
-    function saveUpdateSettings() {
-      const radios = [...document.getElementsByName("upint")];
-      const sel = radios.find((r) => r.checked);
-      const val = sel ? sel.value : "0";
+            // 2. Check if request already sent
+             const isPending = await getDocs(doc(db, "users", targetUserId, "requests", currentUserId));
+             if (isPending.exists) {
+                 notify(`Request already pending for ${targetUserData.username}.`, "info");
+                 return;
+             }
 
-      updateConfig.interval =
-        val === "custom" ? "custom" : Number(val);
-      updateConfig.customInterval = Number(
-        document.getElementById("customUpInt").value
-      );
+            // 3. Send the request to the target user's 'requests' subcollection
+            await setDoc(doc(db, "users", targetUserId, "requests", currentUserId), {
+                senderCode: friendCode,
+                senderUsername: profile.username || `User-${friendCode.split('-')[1]}`,
+                timestamp: serverTimestamp()
+            });
 
-      const perfInput = document.getElementById("perfToggle");
-      if (perfInput) {
-        perfMode = perfInput.checked;
-        localStorage.setItem("perfMode", JSON.stringify(perfMode));
-      }
+            input.value = "";
+            notify(`Request sent to ${targetUserData.username}!`, "success");
+        }
+        
+        async function acceptRequest(senderId) {
+            if (!currentUserId) return;
 
-      localStorage.setItem(
-        "updateConfig",
-        JSON.stringify(updateConfig)
-      );
-      notify("Settings saved!", "success");
-      setupAutoChecker();
-    }
+            // 1. Add sender to current user's friends list
+            await setDoc(doc(db, "users", currentUserId, "friends", senderId), {});
+            
+            // 2. Add current user to sender's friends list
+            await setDoc(doc(db, "users", senderId, "friends", currentUserId), {});
+            
+            // 3. Remove the request from current user's requests list
+            await deleteDoc(doc(db, "users", currentUserId, "requests", senderId));
 
-    function manualCheckUpdates() {
-      runUpdateCheck(true);
-    }
+            notify("Friend request accepted!", "success");
+        }
 
-    function setupAutoChecker() {
-      if (autoChecker) clearInterval(autoChecker);
+        async function rejectRequest(senderId) {
+            if (!currentUserId) return;
+            
+            await deleteDoc(doc(db, "users", currentUserId, "requests", senderId));
+            notify("Friend request declined.", "info");
+        }
 
-      let mins = 0;
-      if (updateConfig.interval === 0) return;
-      if (updateConfig.interval === "custom") {
-        mins = updateConfig.customInterval;
-      } else {
-        mins = updateConfig.interval;
-      }
 
-      autoChecker = setInterval(
-        () => runUpdateCheck(false),
-        mins * 60000
-      );
-    }
+        // --- RENDERING ---
+        function renderRequestsList() {
+            const list = document.getElementById("requestsList");
+            list.innerHTML = "";
 
-    function runUpdateCheck(manual) {
-      const list = games.map((g) => g.name);
-      const newOnes = list.filter((x) => !lastGameList.includes(x));
+            if (requests.length === 0) {
+                list.innerHTML = "<p>No pending friend requests.</p>";
+                return;
+            }
 
-      updateConfig.lastCheck = new Date().toLocaleTimeString();
-      localStorage.setItem(
-        "updateConfig",
-        JSON.stringify(updateConfig)
-      );
+            requests.forEach(req => {
+                const reqDiv = document.createElement('div');
+                reqDiv.style.cssText = `
+                    display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--bg);
+                    border-radius: 8px; margin-bottom: 8px;
+                `;
+                reqDiv.innerHTML = `
+                    <div>
+                        <strong style="color:var(--accent);">${req.senderUsername}</strong>
+                        <div style="font-size:12px; opacity:0.6;">Code: ${req.senderCode}</div>
+                    </div>
+                    <div>
+                        <button onclick="acceptRequest('${req.id}')" class="tabBtn" style="background:#4caf50; margin-right:5px;">Accept</button>
+                        <button onclick="rejectRequest('${req.id}')" class="tabBtn" style="background:#c62828;">Reject</button>
+                    </div>
+                `;
+                list.appendChild(reqDiv);
+            });
+        }
 
-      if (newOnes.length > 0) {
-        notify(
-          `🆕 ${newOnes.length} new game(s) detected!`,
-          "success"
-        );
-        lastGameList = list;
-        localStorage.setItem(
-          "lastGameList",
-          JSON.stringify(lastGameList)
-        );
-      } else if (manual) {
-        notify("No new games found.", "info");
-      }
-    }
 
-    setupAutoChecker();
+        function renderFriendsPage() {
+            document.getElementById("displayFriendCode").textContent = friendCode;
 
-    /* AUTO REFRESH HOME + INITIAL RENDERS */
+            const list = document.getElementById("friendListContainer");
+            if (!list) return;
+            list.innerHTML = "";
 
-    setInterval(() => renderHome(), 4000);
+            if (friends.length === 0) {
+                list.innerHTML = "<p>You have no friends. Add one with a friend code above!</p>";
+                return;
+            }
 
-    renderProfile();
-    renderHome();
+            friends.forEach(friend => {
+                const statusColor = (friend.status === "Online") ? '#4caf50' : '#777';
+                
+                const friendDiv = document.createElement('div');
+                friendDiv.style.cssText = `
+                    display: flex; align-items: center; padding: 10px; background: var(--bg);
+                    border-radius: 8px; margin-bottom: 8px; cursor: pointer;
+                `;
+                friendDiv.innerHTML = `
+                    <img src="${friend.avatar || 'https://i.imgur.com/1X5Rz.png'}" alt="Avatar" 
+                        style="width: 40px; height: 40px; border-radius: 50%; margin-right: 15px;"
+                        onclick="openFriendProfileModal('${friend.id}')">
+                    <div>
+                        <strong style="color:var(--accent);">${friend.username}</strong>
+                        <span style="font-size:12px; opacity:0.6;">(${friend.friendCode})</span>
+                        <div style="color:${statusColor}; font-size:12px;">${friend.status}</div>
+                    </div>
+                    <button onclick="openChatWindow('${friend.id}', '${friend.username}')" class="tabBtn" style="margin-left: auto;">Message</button>
+                `;
+                list.appendChild(friendDiv);
+            });
+        }
 
-    /* THEATER EMBED */
+        function copyFriendCode() {
+            navigator.clipboard.writeText(friendCode).then(() => {
+                notify("Friend Code copied!", "success");
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                notify("Failed to copy code.", "error");
+            });
+        }
 
-    function loadTheater() {
-      const sec = document.getElementById("theater");
-      if (!sec) return;
+        // PROFILE MODAL FUNCTIONS (Uses fetched friend data)
+        function openFriendProfileModal(friendId) {
+            const friend = friends.find(f => f.id === friendId);
+            if (!friend) return;
 
-      sec.innerHTML = `
-        <h1>SME Theater</h1>
-        <iframe
-          src="https://jeremy4401.github.io/SME-Theater/"
-          style="width:100%;height:90vh;border:none;border-radius:12px;background:#000;"
-        ></iframe>
-      `;
-    }
-  </script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getDatabase, ref, set, get, push, onValue, update }
-    from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+            document.getElementById("modalFriendAvatar").style.backgroundImage = `url('${friend.avatar || 'https://i.imgur.com/1X5Rz.png'}')`;
+            document.getElementById("modalFriendUsername").textContent = friend.username;
+            document.getElementById("modalFriendStatus").textContent = friend.status;
+            document.getElementById("modalFriendBio").textContent = friend.bio;
+            document.getElementById("friendProfileModal").style.display = 'flex';
+            document.getElementById("friendProfileModal").setAttribute('data-target-friend-id', friendId);
+            document.getElementById("friendProfileModal").setAttribute('data-target-friend-name', friend.username);
+        }
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBxXsXA1aoOLzDD-yNaZnHETgxPAJ-mbjw",
-    authDomain: "sme-loader.firebaseapp.com",
-    projectId: "sme-loader",
-    storageBucket: "sme-loader.firebasestorage.app",
-    messagingSenderId: "427113600756",
-    appId: "1:427113600756:web:73227a309d4a2e6c51b0a1",
-    databaseURL: "https://sme-loader-default-rtdb.firebaseio.com"
-  };
+        function closeFriendProfileModal() {
+            document.getElementById("friendProfileModal").style.display = 'none';
+            document.getElementById("friendProfileModal").removeAttribute('data-target-friend-id');
+            document.getElementById("friendProfileModal").removeAttribute('data-target-friend-name');
+        }
 
-  const app = initializeApp(firebaseConfig);
-  window.db = getDatabase(app);
-</script>
+        function openChatFromProfile() {
+            const fId = document.getElementById("friendProfileModal").getAttribute('data-target-friend-id');
+            const fName = document.getElementById("friendProfileModal").getAttribute('data-target-friend-name');
+            closeFriendProfileModal();
+            openChatWindow(fId, fName);
+        }
 
-<script>
-/* ============================================
-      USERNAME LOGIN SYSTEM
-============================================ */
 
-async function finishUsernameLogin() {
-  const name = document.getElementById("usernameInputLogin").value.trim();
+        // CHAT WINDOW FUNCTIONS (Firebase Firestore Messaging)
+        function getChatId(user1Id, user2Id) {
+            // Ensures consistent chat ID regardless of who started the chat
+            return user1Id < user2Id ? `${user1Id}_${user2Id}` : `${user2Id}_${user1Id}`;
+        }
 
-  if (!name) {
-    alert("Please enter a username.");
-    return;
-  }
+        function openChatWindow(friendId, friendUsername) {
+            if (messageUnsubscribe) messageUnsubscribe(); // Stop previous listener
 
-  // Save locally
-  profile.username = name;
-  localStorage.setItem("profile", JSON.stringify(profile));
+            const chatWindow = document.getElementById("chatWindow");
+            currentChat = friendId;
+            document.getElementById("chatRecipient").textContent = `Chat with ${friendUsername}`;
+            chatWindow.style.display = 'block';
 
-  // Save to Firebase
-  const userRef = ref(window.db, "users/" + name);
-  await set(userRef, {
-    username: name,
-    createdAt: Date.now()
-  });
+            const chatId = getChatId(currentUserId, friendId);
+            const messagesRef = query(collection(db, "chats", chatId, "messages"), orderBy("timestamp"));
+            
+            // Set up real-time listener for messages
+            messageUnsubscribe = onSnapshot(messagesRef, snapshot => {
+                renderMessages(friendId, snapshot.docs.map(doc => doc.data()));
+            }, error => console.error("Message listener failed:", error));
+        }
 
-  // Hide popup
-  document.getElementById("loginPopup").style.display = "none";
+        function renderMessages(fId, messages) {
+            const container = document.getElementById("messagesContainer");
+            const shouldScroll = container.scrollTop + container.clientHeight >= container.scrollHeight - 50; // Check if near bottom
+            container.innerHTML = "";
+            
+            messages.forEach(msg => {
+                const isSelf = msg.senderId === currentUserId;
+                const msgDiv = document.createElement('div');
+                msgDiv.style.cssText = `
+                    padding: 8px; border-radius: 10px; margin: 5px 0; max-width: 80%;
+                    background: ${isSelf ? 'var(--accent)' : '#444'};
+                    color: ${isSelf ? 'white' : 'var(--text)'};
+                    margin-left: ${isSelf ? 'auto' : '0'};
+                `;
+                
+                // Convert Firestore Timestamp to readable time string
+                let timeStr = '...';
+                if (msg.timestamp && typeof msg.timestamp.toDate === 'function') {
+                    timeStr = new Date(msg.timestamp.toDate()).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                }
 
-  alert("Welcome, " + name + "!");
-}
 
-window.addEventListener("load", () => {
-  if (!profile.username || profile.username === "") {
-    document.getElementById("loginPopup").style.display = "flex";
-  } else {
-    document.getElementById("loginPopup").style.display = "none";
-  }
-});
-</script>
+                msgDiv.innerHTML = `
+                    <small style="opacity:0.8;">${isSelf ? 'You' : msg.senderUsername}:</small><br>
+                    ${msg.text}
+                    <small style="display:block; text-align:right; font-size:10px; opacity:0.6;">${timeStr}</small>
+                `;
+                container.appendChild(msgDiv);
+            });
 
-<!-- SIMPLE USERNAME LOGIN POPUP -->
-<div id="loginPopup" 
-     style="
-       position:fixed; inset:0; background:#000a; display:flex;
-       align-items:center; justify-content:center; z-index:999999;
-     ">
-  <div style="
-        background:#1a1a1a; padding:25px; border-radius:12px; width:300px;
-        box-shadow:0 0 20px #000; text-align:center; color:white;
-      ">
-    <h2>Create Username</h2>
-    <p style="opacity:.7;font-size:14px;margin-bottom:10px;">
-      This will be your online name.
-    </p>
+            // Scroll to the bottom if it was near the bottom before or it's the first render
+            if (shouldScroll || messages.length === 0) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
 
-    <input id="usernameInputLogin" 
-      placeholder="Enter username..."
-      style="width:100%;padding:10px;border-radius:8px;border:none;
-             background:#222;color:white;margin-bottom:10px;"
-    >
+        async function sendMessage() {
+            if (!currentChat || !currentUserId) return;
 
-    <button onclick="finishUsernameLogin()"
-      style="padding:10px;width:100%;border:none;border-radius:8px;
-             background:#4caf50;color:white;">
-      Continue
-    </button>
-  </div>
-</div>
+            const input = document.getElementById("messageInput");
+            const text = input.value.trim();
+            if (!text) return;
 
+            const chatId = getChatId(currentUserId, currentChat);
+            const senderUsername = profile.username || `User-${friendCode.split('-')[1]}`;
+
+            try {
+                await setDoc(doc(collection(db, "chats", chatId, "messages")), {
+                    senderId: currentUserId,
+                    senderUsername: senderUsername,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+
+                input.value = "";
+            } catch (error) {
+                console.error("Error sending message:", error);
+                notify("Failed to send message.", "error");
+            }
+        }
+        
+        function closeChatWindow() {
+            document.getElementById("chatWindow").style.display = 'none';
+            currentChat = null;
+            if (messageUnsubscribe) {
+                messageUnsubscribe(); // Stop listening
+                messageUnsubscribe = null;
+            }
+        }
+
+
+        /* ============================
+              BASIC DATA LOAD
+        ============================ */
+
+        let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+        let activity = JSON.parse(localStorage.getItem("activity") || "[]");
+        
+        let storedProfile = localStorage.getItem("profile");
+        let profile = storedProfile
+            ? JSON.parse(storedProfile)
+            : {
+                username: "New Player", 
+                bio: "Welcome to SME Launcher!",
+                status: "Online",
+                avatar: "https://i.imgur.com/1X5Rz.png",
+            };
+        
+        if (!friendCode) {
+            friendCode = "SME-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            localStorage.setItem("friendCode", friendCode);
+        }
+        
+        function addRecent(name) {
+            const idx = recent.indexOf(name);
+            if (idx !== -1) recent.splice(idx, 1);
+            recent.unshift(name);
+            if (recent.length > 20) recent.pop();
+            localStorage.setItem("recent", JSON.stringify(recent));
+        }
+        
+        function addActivity(type, detail) {
+            activity.unshift({
+                type,
+                detail,
+                time: new Date().toLocaleTimeString(),
+            });
+            if (activity.length > 10) activity.pop();
+            localStorage.setItem("activity", JSON.stringify(activity));
+            if (document.getElementById('homeDashboard').classList.contains('active')) {
+                renderActivityHome();
+            }
+        }
+
+        /* ============================
+                    HOME RENDER
+        ============================ */
+
+        function renderContinuePlaying() {
+            const box = document.getElementById("continueList");
+            if (!box) return;
+
+            if (recent.length === 0) {
+                box.innerHTML = "<p>No recent games.</p>";
+                return;
+            }
+
+            box.innerHTML = "";
+            recent.slice(0, 3).forEach((name) => {
+                const g = games.find((x) => x.name === name);
+                if (!g) return;
+                box.innerHTML += `
+                    <div class="card" style="width:150px;" onclick="launchGame('${g.name}')">
+                        <img src="${g.img}" alt="${g.name}">
+                        <button>${g.name}</button>
+                    </div>
+                `;
+            });
+        }
+
+        let feed = JSON.parse(localStorage.getItem("feed") || "[]");
+
+        function postToFeed() {
+            const input = document.getElementById("feedInput");
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            const entry = {
+                id: Date.now(),
+                user: profile.username || "You",
+                text,
+                time: new Date().toLocaleTimeString(),
+                likes: 0,
+                comments: [],
+            };
+
+            feed.unshift(entry);
+            localStorage.setItem("feed", JSON.stringify(feed));
+            input.value = "";
+            renderFeed();
+        }
+
+        function likePost(id) {
+            const p = feed.find((x) => x.id === id);
+            if (!p) return;
+            p.likes++;
+            localStorage.setItem("feed", JSON.stringify(feed));
+            renderFeed();
+        }
+
+        function commentPost(id) {
+            const msg = prompt("Write a comment:");
+            if (!msg) return;
+
+            const p = feed.find((x) => x.id === id);
+            if (!p) return;
+
+            p.comments.push({
+                user: profile.username || "You",
+                text: msg,
+                time: new Date().toLocaleTimeString(),
+            });
+
+            localStorage.setItem("feed", JSON.stringify(feed));
+            renderFeed();
+        }
+
+        function renderFeed() {
+            const box = document.getElementById("feedPosts");
+            if (!box) return;
+
+            box.innerHTML = "";
+            if (feed.length === 0) {
+                box.innerHTML = "<p>No posts yet. Be the first!</p>";
+                return;
+            }
+
+            feed.forEach((p) => {
+                let commentHTML = "";
+                p.comments.forEach((c) => {
+                    commentHTML += `
+                        <div style="margin-left:10px;opacity:.8;">
+                            <b style="color:var(--accent)">${c.user}:</b> ${c.text}
+                            <span style="font-size:10px;opacity:.5;">${c.time}</span>
+                        </div>
+                    `;
+                });
+
+                box.innerHTML += `
+                    <div class="postBox">
+                        <div class="postAuthor">${p.user}</div>
+                        <div class="postTime">${p.time}</div>
+                        <p>${p.text}</p>
+                        <div class="postActions">
+                            <span onclick="likePost(${p.id})">❤️ ${p.likes}</span>
+                            <span onclick="commentPost(${p.id})">💬 Comment</span>
+                        </div>
+                        ${commentHTML}
+                    </div>
+                `;
+            });
+        }
+
+        function renderFriendsOnline() {
+            const box = document.getElementById("onlineList");
+            if (!box) return;
+
+            box.innerHTML = "";
+            if (friends.length === 0) {
+                box.innerHTML = "<p>No friends added or loading...</p>";
+                return;
+            }
+
+            // Display up to 5 online friends
+            friends.slice(0, 5).forEach((friend) => {
+                const statusColor = (friend.status === "Online") ? '#4caf50' : '#777';
+                box.innerHTML += `
+                    <div style="padding:8px;background:#222;border-radius:8px;margin:5px 0;">
+                        <b>${friend.username}</b> — <span style="color:${statusColor};">${friend.status}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function renderActivityHome() {
+            const box = document.getElementById("activityList");
+            if (!box) return;
+
+            box.innerHTML = "";
+            if (activity.length === 0) {
+                box.innerHTML = "<p>No recent activity.</p>";
+                return;
+            }
+
+            activity.slice(0, 5).forEach((a) => {
+                box.innerHTML += `
+                    <div style="padding:10px;background:#222;margin:8px 0;border-radius:10px;">
+                        <b>${a.type}:</b> ${a.detail}<br>
+                        <span style="font-size:10px;opacity:.6;">${a.time}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function renderHome() {
+            renderContinuePlaying();
+            renderFeed();
+            renderFriendsOnline();
+            renderActivityHome();
+        }
+
+        /* ============================
+                    GAMES
+        ============================ */
+
+        let games = [
+            {
+                name: "Water (Password is funni)",
+                img: "thumbnails/water.png",
+                url: "https://cgxlyxnlynjpbmdiywnrc3RhcnRtewvkdwnhdglvbml0d2fzc29zawdtv2.familyguy.in/signin.html",
+                cat: "Action",
+            },
+            {
+                name: "3D Tuning",
+                img: "thumbnails/3dtuning.png",
+                url: "https://www.3dtuning.com/en-US/",
+                cat: "Action",
+            },
+            {
+                name: "Slime Rancher",
+                img: "thumbnails/slimerancher.png",
+                url: "https://jeremy4401.github.io/SME/games/slimerancher.html",
+                cat: "Action",
+            },
+            {
+                name: "Jacksmith",
+                img: "thumbnails/jacksmith.png",
+                url: "https://jeremy4401.github.io/jacksmith/",
+                cat: "Action",
+            },
+            {
+                name: "Mario Kart",
+                img: "thumbnails/mariokart.png",
+                url: "https://turbowarp.org/581185386/embed",
+                cat: "Action",
+            },
+            {
+                name: "Lego Star Wars Trilogy",
+                img: "thumbnails/starwars.png",
+                url: "https://realtherealer.github.io/GBA/launcher.html#lsw",
+                cat: "Action",
+            },
+            {
+                name: "Minecraft",
+                img: "thumbnails/minecraft.png",
+                url: "https://jeremy4401.github.io/SME/games/minecraft.html",
+                cat: "Survival",
+            },
+            {
+                name: "Buckshot Roulette",
+                img: "thumbnails/buckshotroulette.png",
+                url: "https://jeremy4401.github.io/SME/games/buckshotroulette.html",
+                cat: "Horror",
+            },
+            {
+                name: "Schoolboy Runaway",
+                img: "thumbnails/schoolboyrunaway.png",
+                url: "https://jeremy4401.github.io/SME/games/schoolboyrunaway.html",
+                cat: "Survival",
+            },
+            {
+                name: "Hollow Knight",
+                img: "thumbnails/hollowknight.png",
+                url: "https://jeremy4401.github.io/SME/games/hollowknight.html",
+                cat: "Action",
+            },
+            {
+                name: "10 Minutes Till Dawn",
+                img: "thumbnails/10minutestilldawn.png",
+                url: "https://jeremy4401.github.io/SME/games/10minutestilldawn.html",
+                cat: "Action",
+            },
+            {
+                name: "1v1.LOL",
+                img: "thumbnails/1v1lol.png",
+                url: "https://jeremy4401.github.io/SME/games/1v1lol.html",
+                cat: "Action",
+            },
+            {
+                name: "Amanda the Adventurer",
+                img: "thumbnails/amandatheadventurer.png",
+                url: "https://jeremy4401.github.io/SME/games/amandatheadventurer.html",
+                cat: "Action",
+            },
+            {
+                name: "Baseball Bros",
+                img: "thumbnails/baseballbros.png",
+                url: "https://Jeremy4401.github.io/SME/games/baseballbros.html",
+                cat: "Action",
+            },
+            {
+                name: "Basket Bros",
+                img: "thumbnails/basketbros.png",
+                url: "https://Jeremy4401.github.io/SME/games/basketbros.html",
+                cat: "Action",
+            },
+            {
+                name: "Football Bros",
+                img: "thumbnails/footballbros.png",
+                url: "https://Jeremy4401.github.io/SME/games/footballbros.html",
+                cat: "Action",
+            },
+            {
+                name: "Escape Road",
+                img: "thumbnails/escaperoad.png",
+                url: "https://Jeremy4401.github.io/SME/games/escaperoad.html",
+                cat: "Action",
+            },
+            {
+                name: "Fallout",
+                img: "thumbnails/fallout.png",
+                url: "https://Jeremy4401.github.io/SME/games/fallout.html",
+                cat: "Action",
+            },
+            {
+                name: "Flappy Bird",
+                img: "thumbnails/flappybird.png",
+                url: "https://Jeremy4401.github.io/SME/games/flappybird.html",
+                cat: "Action",
+            },
+            {
+                name: "FNAF 1",
+                img: "thumbnails/fnaf1.png",
+                url: "https://Jeremy4401.github.io/SME/games/fnaf1.html",
+                cat: "Action",
+            },
+            {
+                name: "FNAF 2",
+                img: "thumbnails/fnaf2.png",
+                url: "https://Jeremy4401.github.io/SME/games/fnaf2.html",
+                cat: "Action",
+            },
+            {
+                name: "FNAF 3",
+                img: "thumbnails/fnaf3.png",
+                url: "https://Jeremy4401.github.io/SME/games/fnaf3.html",
+                cat: "Action",
+            },
+            {
+                name: "FNAF 4",
+                img: "thumbnails/fnaf4.png",
+                url: "https://Jeremy4401.github.io/SME/games/fnaf4.html",
+                cat: "Action",
+            },
+            {
+                name: "FNAF 4 Halloween Edition",
+                img: "thumbnails/fnaf4halloween.png",
+                url: "https://Jeremy4401.github.io/SME/games/fnaf4halloween.html",
+                cat: "Action",
+            },
+            {
+                name: "Sister Location",
+                img: "thumbnails/sisterlocation.png",
+                url: "https://Jeremy4401.github.io/SME/games/sisterlocation.html",
+                cat: "Action",
+            },
+            {
+                name: "Freddy Fazbear's Pizzeria Simulator",
+                img: "thumbnails/pizzeriasimulator.png",
+                url: "https://Jeremy4401.github.io/SME/games/pizzeriasimulator.html",
+                cat: "Action",
+            },
+            {
+                name: "Ultimate Custom Night",
+                img: "thumbnails/ultimatecustomnight.png",
+                url: "https://Jeremy4401.github.io/SME/games/ultimatecustomnight.html",
+                cat: "Action",
+            },
+            {
+                name: "Endoparasitic",
+                img: "thumbnails/endoparasitic.png",
+                url: "https://Jeremy4401.github.io/SME/games/endoparasitic.html",
+                cat: "Action",
+            },
+            {
+                name: "Drive Mad",
+                img: "thumbnails/drivemad.png",
+                url: "https://Jeremy4401.github.io/SME/games/drivemad.html",
+                cat: "Action",
+            },
+            {
+                name: "Drift Hunters",
+                img: "thumbnails/drifthunters.png",
+                url: "https://Jeremy4401.github.io/SME/games/drifthunters.html",
+                cat: "Action",
+            },
+            {
+                name: "The Binding of Isaac",
+                img: "thumbnails/bindingofisaac.png",
+                url: "https://Jeremy4401.github.io/SME/games/bindingofisaac.html",
+                cat: "Action",
+            },
+            {
+                name: "DOOM",
+                img: "thumbnails/doom.png",
+                url: "https://Jeremy4401.github.io/SME/games/doom.html",
+                cat: "Action",
+            },
+            {
+                name: "DOOM 2",
+                img: "thumbnails/doom2.png",
+                url: "https://Jeremy4401.github.io/SME/games/doom2.html",
+                cat: "Action",
+            },
+            {
+                name: "Fruit Ninja",
+                img: "thumbnails/fruitninja.png",
+                url: "https://Jeremy4401.github.io/SME/games/fruitninja.html",
+                cat: "Action",
+            },
+            {
+                name: "Geometry Dash",
+                img: "thumbnails/geometrydash.png",
+                url: "https://Jeremy4401.github.io/SME/games/geometrydash.html",
+                cat: "Action",
+            },
+            {
+                name: "Getting Over It",
+                img: "thumbnails/gettingoverit.png",
+                url: "https://Jeremy4401.github.io/SME/games/gettingoverit.html",
+                cat: "Action",
+            },
+            {
+                name: "Granny",
+                img: "thumbnails/granny1.png",
+                url: "https://Jeremy4401.github.io/SME/games/granny1.html",
+                cat: "Action",
+            },
+            {
+                name: "Granny Chapter 2",
+                img: "thumbnails/granny2.png",
+                url: "https://Jeremy4401.github.io/SME/games/granny2.html",
+                cat: "Action",
+            },
+            {
+                name: "Granny Chapter 3",
+                img: "thumbnails/granny3.png",
+                url: "https://Jeremy4401.github.io/SME/games/granny3.html",
+                cat: "Action",
+            },
+            {
+                name: "Controlled Flight",
+                img: "thumbnails/controlledflight.png",
+                url: "https://howthingsfly.si.edu/sites/default/files/unity/ControlledFlight_new/index.html",
+                cat: "Action",
+            },
+            {
+                name: "Jetpack Joyride",
+                img: "thumbnails/jetpackjoyride.png",
+                url: "https://Jeremy4401.github.io/SME/games/jetpackjoyride.html",
+                cat: "Action",
+            },
+            {
+                name: "Johnny Trigger",
+                img: "thumbnails/johnnytrigger.png",
+                url: "https://Jeremy4401.github.io/SME/games/johnnytrigger.html",
+                cat: "Action",
+            },
+            {
+                name: "Kindergarten",
+                img: "thumbnails/kindergarten.png",
+                url: "https://Jeremy4401.github.io/SME/games/kindergarten.html",
+                cat: "Action",
+            },
+            {
+                name: "Kindergarten 2",
+                img: "thumbnails/kindergarten2.png",
+                url: "https://Jeremy4401.github.io/SME/games/kindergarten2.html",
+                cat: "Action",
+            },
+            {
+                name: "Kindergarten 3",
+                img: "thumbnails/kindergarten3.png",
+                url: "https://Jeremy4401.github.io/SME/games/kindergarten3.html",
+                cat: "Action",
+            },
+            {
+                name: "Learn to Fly",
+                img: "thumbnails/learntofly.png",
+                url: "https://Jeremy4401.github.io/SME/games/learntofly.html",
+                cat: "Action",
+            },
+            {
+                name: "Melon Playground",
+                img: "thumbnails/melonplayground.png",
+                url: "https://Jeremy4401.github.io/SME/games/melonplayground.html",
+                cat: "Action",
+            },
+            {
+                name: "Doodle Jump",
+                img: "thumbnails/doodlejump.png",
+                url: "https://Jeremy4401.github.io/SME/games/doodlejump.html",
+                cat: "Action",
+            },
+            {
+                name: "Nazi Zombies Portable",
+                img: "thumbnails/nazizombies.png",
+                url: "https://Jeremy4401.github.io/SME/games/nazizombies.html",
+                cat: "Action",
+            },
+            {
+                name: "Papers, Please",
+                img: "thumbnails/papersplease.png",
+                url: "https://Jeremy4401.github.io/SME/games/papersplease.html",
+                cat: "Action",
+            },
+            {
+                name: "Pixel Gun 3D",
+                img: "thumbnails/pixelgun.png",
+                url: "https://Jeremy4401.github.io/SME/games/pixelgun.html",
+                cat: "Action",
+            },
+            {
+                name: "Plants vs Zombies",
+                img: "thumbnails/plantsvszombies.png",
+                url: "https://Jeremy4401.github.io/SME/games/plantsvszombies.html",
+                cat: "Action",
+            },
+            {
+                name: "Plants vs Zombies 2 Gardenless",
+                img: "thumbnails/plantsvszombies2.png",
+                url: "https://Jeremy4401.github.io/SME/games/plantsvszombies2.html",
+                cat: "Action",
+            },
+            {
+                name: "Pokemon",
+                img: "thumbnails/pokemon.png",
+                url: "https://Jeremy4401.github.io/SME/games/pokemon.html",
+                cat: "Action",
+            },
+            {
+                name: "Raft",
+                img: "thumbnails/raft.png",
+                url: "https://Jeremy4401.github.io/SME/games/raft.html",
+                cat: "Action",
+            },
+            {
+                name: "Ragdoll Archers",
+                img: "thumbnails/ragdollarchers.png",
+                url: "https://Jeremy4401.github.io/SME/games/ragdollarchers.html",
+                cat: "Action",
+            },
+            {
+                name: "Two Player Battle",
+                img: "thumbnails/2playerbattle.png",
+                url: "https://turbowarp.org/292728003/embed",
+                cat: "Action",
+            },
+            {
+                name: "Retro Bowl",
+                img: "thumbnails/retrobowl.png",
+                url: "https://Jeremy4401.github.io/SME/games/retrobowl.html",
+                cat: "Action",
+            },
+            {
+                name: "Retro Bowl College",
+                img: "thumbnails/retrobowlcollege.png",
+                url: "https://Jeremy4401.github.io/SME/games/retrobowlcollege.html",
+                cat: "Action",
+            },
+            {
+                name: "Slither.io",
+                img: "thumbnails/slitherio.png",
+                url: "https://Jeremy4401.github.io/SME/games/slitherio.html",
+                cat: "Action",
+            },
+            {
+                name: "Slope",
+                img: "thumbnails/slope.png",
+                url: "https://Jeremy4401.github.io/SME/games/slope.html",
+                cat: "Action",
+            },
+            {
+                name: "Smash Karts",
+                img: "thumbnails/smashkarts.png",
+                url: "https://Jeremy4401.github.io/SME/games/smashkarts.html",
+                cat: "Action",
+            },
+            {
+                name: "Snow Rider 3D",
+                img: "thumbnails/snowrider.png",
+                url: "https://Jeremy4401.github.io/SME/games/snowrider.html",
+                cat: "Action",
+            },
+            {
+                name: "Steal a Brainrot",
+                img: "thumbnails/stealabrainrot.png",
+                url: "https://Jeremy4401.github.io/SME/games/stealabrainrot.html",
+                cat: "Action",
+            },
+            {
+                name: "Subway Surfers",
+                img: "thumbnails/subwaysurfers.png",
+                url: "https://Jeremy4401.github.io/SME/games/subwaysurfers.html",
+                cat: "Action",
+            },
+            {
+                name: "SUPERHOT",
+                img: "thumbnails/superhot.png",
+                url: "https://Jeremy4401.github.io/SME/games/superhot.html",
+                cat: "Action",
+            },
+            {
+                name: "Super Mario 64",
+                img: "thumbnails/supermario64.png",
+                url: "https://Jeremy4401.github.io/SME/games/supermario64.html",
+                cat: "Action",
+            },
+            {
+                name: "Super Mario Bros",
+                img: "thumbnails/supermariobros.png",
+                url: "https://Jeremy4401.github.io/SME/games/supermariobros.html",
+                cat: "Action",
+            },
+            {
+                name: "Survival Race",
+                img: "thumbnails/survivalrace.png",
+                url: "https://Jeremy4401.github.io/SME/games/survivalrace.html",
+                cat: "Action",
+            },
+            {
+                name: "Temple Run 2",
+                img: "thumbnails/templerun2.png",
+                url: "https://Jeremy4401.github.io/SME/games/templerun2.html",
+                cat: "Action",
+            },
+            {
+                name: "They are Coming",
+                img: "thumbnails/theyarecoming.png",
+                url: "https://Jeremy4401.github.io/SME/games/theyarecoming.html",
+                cat: "Action",
+            },
+            {
+                name: "Baldi's Basics",
+                img: "thumbnails/baldisbasics.png",
+                url: "https://Jeremy4401.github.io/SME/games/baldisbasics.html",
+                cat: "Action",
+            },
+            {
+                name: "Tiny Fishing",
+                img: "thumbnails/tinyfishing.png",
+                url: "https://Jeremy4401.github.io/SME/games/tinyfishing.html",
+                cat: "Action",
+            },
+            {
+                name: "Tomb of the Mask",
+                img: "thumbnails/tombofthemask.png",
+                url: "https://Jeremy4401.github.io/SME/games/tombofthemask.html",
+                cat: "Action",
+            },
+            {
+                name: "Cut the Rope",
+                img: "thumbnails/cuttherope.png",
+                url: "https://Jeremy4401.github.io/SME/games/cuttherope.html",
+                cat: "Action",
+            },
+            {
+                name: "Crossy Road",
+                img: "thumbnails/crossyroad.png",
+                url: "https://Jeremy4401.github.io/SME/games/crossyroad.html",
+                cat: "Action",
+            },
+            {
+                name: "Cookie Clicker",
+                img: "thumbnails/cookieclicker.png",
+                url: "https://Jeremy4401.github.io/SME/games/cookieclicker.html",
+                cat: "Action",
+            },
+            {
+                name: "Buildnow GG",
+                img: "thumbnails/buildnow.png",
+                url: "https://Jeremy4401.github.io/SME/games/buildnow.html",
+                cat: "Action",
+            },
+            {
+                name: "Bouncemasters",
+                img: "thumbnails/bouncemasters.png",
+                url: "https://Jeremy4401.github.io/SME/games/bouncemasters.html",
+                cat: "Action",
+            },
+            {
+                name: "Bitlife",
+                img: "thumbnails/bitlife.png",
+                url: "https://Jeremy4401.github.io/SME/games/bitlife.html",
+                cat: "Action",
+            },
+            {
+                name: "Bank Robbery 2",
+                img: "thumbnails/bankrobbery2.png",
+                url: "https://jeremy4401.github.io/SME/games/bankrobbery2.html",
+                cat: "Action",
+            },
+            {
+                name: "Basket Random",
+                img: "thumbnails/basketrandom.png",
+                url: "https://jeremy4401.github.io/SME/games/basketrandom.html",
+                cat: "Action",
+            },
+            {
+                name: "ULTRAKILL",
+                img: "thumbnails/ultrakill.png",
+                url: "https://jeremy4401.github.io/SME/games/ultrakill.html",
+                cat: "Action",
+            },
+            {
+                name: "Bendy & The Ink Machine",
+                img: "thumbnails/bendy.png",
+                url: "https://jeremy4401.github.io/SME/games/bendy.html",
+                cat: "Action",
+            },
+            {
+                name: "Cuphead",
+                img: "thumbnails/cuphead.png",
+                url: "https://jeremy4401.github.io/SME/games/cuphead.html",
+                cat: "Action",
+            },
+            {
+                name: "Half Life",
+                img: "thumbnails/halflife.png",
+                url: "https://jeremy4401.github.io/SME/games/halflife.html",
+                cat: "Action",
+            },
+            {
+                name: "R.E.P.O.",
+                img: "thumbnails/repo.png",
+                url: "https://jeremy4401.github.io/SME/games/repo.html",
+                cat: "Action",
+            },
+            {
+                name: "Bad Parenting",
+                img: "thumbnails/badparenting.png",
+                url: "https://jeremy4401.github.io/SME/games/badparenting.html",
+                cat: "Horror",
+            }
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+        let categories = [...new Set(games.map((g) => g.cat))];
+
+        function renderGames(filter = "All") {
+            const sec = document.getElementById("games");
+            if (!sec) return;
+
+            // Render category buttons
+            let categoryButtons = `<button class="tabBtn" onclick="renderGames('All')" style="margin-right:10px;">All</button>`;
+            categories.forEach(cat => {
+                categoryButtons += `<button class="tabBtn" onclick="renderGames('${cat}')" style="margin-right:10px;">${cat}</button>`;
+            });
+            
+            sec.innerHTML = `<h2>Games Library</h2><div style="margin-bottom:20px;">${categoryButtons}</div>`;
+
+            let filteredGames = filter === "All" ? games : games.filter(g => g.cat === filter);
+
+            if (filteredGames.length === 0) {
+                sec.innerHTML += `<p>No games found in the '${filter}' category.</p>`;
+                return;
+            }
+
+            filteredGames.forEach((game) => {
+                const isFav = favorites.includes(game.name) ? 'fav' : '';
+                sec.innerHTML += `
+                    <div class="card" onclick="openGameModal('${game.name}')">
+                        <span class="star ${isFav}" onclick="event.stopPropagation(); toggleFavorite('${game.name}')">★</span>
+                        <img src="${game.img}" alt="${game.name}">
+                        <h3>${game.name}</h3>
+                        <p>${game.cat}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleFavorite(name) {
+            if (favorites.includes(name)) {
+                favorites = favorites.filter(n => n !== name);
+                notify(`${name} removed from favorites.`, "info");
+            } else {
+                favorites.push(name);
+                notify(`${name} added to favorites!`, "success");
+            }
+            localStorage.setItem("favorites", JSON.stringify(favorites));
+            
+            // Re-render the current view if necessary
+            if (document.getElementById('games').classList.contains('active')) renderGames();
+            if (document.getElementById('favorites').classList.contains('active')) renderFavorites();
+        }
+
+        function renderFavorites() {
+            const sec = document.getElementById("favorites");
+            if (!sec) return;
+            sec.innerHTML = "<h2>Favorites</h2>";
+
+            if (favorites.length === 0) {
+                sec.innerHTML += "<p>You have no favorites yet. Click the star on a game to add it!</p>";
+                return;
+            }
+
+            favorites.forEach((name) => {
+                const game = games.find(g => g.name === name);
+                if (!game) return;
+
+                sec.innerHTML += `
+                    <div class="card" onclick="openGameModal('${game.name}')">
+                        <span class="star fav" onclick="event.stopPropagation(); toggleFavorite('${game.name}')">★</span>
+                        <img src="${game.img}" alt="${game.name}">
+                        <h3>${game.name}</h3>
+                        <p>${game.cat}</p>
+                    </div>
+                `;
+            });
+        }
+        
+        // --- GAME MODAL LOGIC ---
+        let selectedGame = null;
+        
+        function openGameModal(name) {
+            selectedGame = games.find(g => g.name === name);
+            if (!selectedGame) return;
+
+            document.getElementById("modalImg").src = selectedGame.img;
+            document.getElementById("modalTitle").textContent = selectedGame.name;
+            document.getElementById("modalDesc").textContent = `Category: ${selectedGame.cat}`;
+            document.getElementById("playBtn").onclick = () => launchGame(selectedGame.name);
+
+            // Mock Playtime display
+            const playtimeHours = (Math.random() * 50).toFixed(1);
+            document.getElementById("playtimeBox").innerHTML = `<em>Total Playtime: ${playtimeHours} hours (Mock)</em>`;
+
+            document.getElementById("gameModal").style.display = 'flex';
+        }
+
+        function closeGameModal() {
+            document.getElementById("gameModal").style.display = 'none';
+        }
+
+        function launchGame(name) {
+            const game = games.find(g => g.name === name);
+            if (!game) return;
+
+            closeGameModal();
+            addRecent(name);
+            addActivity("Game Played", `Started playing ${name}`);
+            
+            const embedFrame = document.getElementById("embedFrame");
+            embedFrame.src = enc(game.url);
+            document.getElementById("embedWin").style.display = 'block';
+
+            // Optional: Hide sidebar for better immersion
+            document.getElementById("sidebar").style.display = 'none';
+            document.getElementById("homeBtn").style.display = 'flex';
+
+            // Esc listener to exit game
+            document.addEventListener('keydown', handleEsc, true);
+        }
+
+        function handleEsc(e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                exitGame();
+            }
+        }
+
+        function exitGame() {
+            const embedFrame = document.getElementById("embedFrame");
+            const embedWin = document.getElementById("embedWin");
+
+            if (embedWin.style.display === 'block') {
+                embedWin.style.display = 'none';
+                embedFrame.src = 'about:blank'; // Stop audio/video playback
+
+                document.getElementById("sidebar").style.display = 'flex';
+                document.getElementById("homeBtn").style.display = 'none';
+                document.removeEventListener('keydown', handleEsc, true);
+                
+                addActivity("Game Closed", `Stopped playing ${selectedGame ? selectedGame.name : 'a game'}`);
+                selectedGame = null;
+                renderHome(); // Refresh home dashboard
+            }
+        }
+        
+        // --- PROFILE & SETTINGS ---
+        function renderProfile() {
+            const sec = document.getElementById("profile");
+            sec.innerHTML = `
+                <h2>My Profile</h2>
+                <div class="profileBanner"></div>
+                <div class="profileAvatar" style="background-image:url('${profile.avatar}');"></div>
+                <h1 style="margin-top:10px;">${profile.username}</h1>
+                <p style="color:var(--accent);">${profile.status}</p>
+                <p style="opacity:.8;">${profile.bio}</p>
+                <button onclick="openSettings('profile')" class="tabBtn">Edit Profile</button>
+            `;
+        }
+
+        function openSettings(tab = 'general') {
+            nav('settingsPage');
+            renderSettings(tab);
+        }
+        
+        function renderSettings(tab = 'general') {
+            const content = document.getElementById("settingsContent");
+            if (!content) return;
+
+            let tabContent = "";
+            let buttonBar = `
+                <div style="margin-bottom:15px; display:flex; gap:10px;">
+                    <button class="tabBtn" onclick="renderSettings('general')">General</button>
+                    <button class="tabBtn" onclick="renderSettings('profile')">Profile</button>
+                    <button class="tabBtn" onclick="renderSettings('security')">Security</button>
+                </div>
+            `;
+
+            if (tab === 'general') {
+                tabContent = `
+                    <h3>General Settings</h3>
+                    <p>Theme: <button onclick="toggleTheme()" class="tabBtn">Toggle Dark/Light</button></p>
+                    <p>Friend Code: <code style="color:var(--accent);">${friendCode}</code></p>
+                `;
+            } else if (tab === 'profile') {
+                tabContent = `
+                    <h3>Edit Profile</h3>
+                    <p>Username:</p>
+                    <input type="text" id="settingUsername" value="${profile.username}" style="padding:8px; width:250px; border-radius:4px; border:1px solid #444; background:var(--bg); color:var(--text);"><br><br>
+                    <p>Bio:</p>
+                    <textarea id="settingBio" style="width:100%; height:80px; padding:8px; border-radius:4px; border:1px solid #444; background:var(--bg); color:var(--text);">${profile.bio}</textarea><br><br>
+                    <p>Avatar URL:</p>
+                    <input type="text" id="settingAvatar" value="${profile.avatar}" style="padding:8px; width:100%; border-radius:4px; border:1px solid #444; background:var(--bg); color:var(--text);"><br><br>
+                    <button onclick="saveProfile()" class="tabBtn" style="background:var(--accent);">Save Profile</button>
+                `;
+            } else if (tab === 'security') {
+                tabContent = `
+                    <h3>Security Settings</h3>
+                    <p>Account Status: <b>${currentUserId ? 'Online (Anonymous/Authenticated)' : 'Offline'}</b></p>
+                    <p>To fully secure your account, you should implement a proper Firebase Email/Password or Google Sign-In.</p>
+                    <button onclick="if(confirm('Are you sure you want to erase all local data?')) resetLocalData()" class="tabBtn" style="background:#c62828;">Reset Local Data</button>
+                `;
+            }
+
+            content.innerHTML = buttonBar + tabContent;
+        }
+
+        async function saveProfile() {
+            profile.username = document.getElementById("settingUsername").value.trim();
+            profile.bio = document.getElementById("settingBio").value.trim();
+            profile.avatar = document.getElementById("settingAvatar").value.trim() || 'https://i.imgur.com/1X5Rz.png';
+            
+            localStorage.setItem("profile", JSON.stringify(profile));
+            
+            if (currentUserId) {
+                // Update Firebase profile
+                await updateDoc(doc(db, "users", currentUserId), {
+                    username: profile.username,
+                    bio: profile.bio,
+                    avatar: profile.avatar
+                });
+            }
+
+            notify("Profile saved!", "success");
+            renderProfile(); // Refresh profile page
+            renderSettings('profile'); // Keep settings tab open
+        }
+
+        function resetLocalData() {
+            localStorage.removeItem("recent");
+            localStorage.removeItem("activity");
+            localStorage.removeItem("favorites");
+            localStorage.removeItem("feed");
+            localStorage.removeItem("mockMessages"); // Remove old mock data
+            localStorage.removeItem("profile"); 
+            // Do NOT remove friendCode as it's tied to the Firebase anonymous ID
+            
+            // Reload the page to reset the entire state
+            location.reload();
+        }
+
+
+        // Call renderHome initially to populate the dashboard and Games
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHome();
+            // Start listeners after Firebase init in onAuthStateChanged
+        });
+    </script>
 </body>
-</html>  
+</html>
