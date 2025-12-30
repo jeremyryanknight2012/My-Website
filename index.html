@@ -3,41 +3,878 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>My Site</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <title>FusionHub — Steam × Discord × Netflix vibe</title>
+  <meta name="description" content="A single-file, 9-page SPA template with a top nav, embeds, and a game launcher overlay." />
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --panel: rgba(18, 24, 46, .62);
+      --panel2: rgba(18, 24, 46, .42);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.16);
+      --text:#EAF0FF;
+      --muted: rgba(234,240,255,.72);
+      --muted2: rgba(234,240,255,.52);
+      --good:#53F0C6;
+      --brand:#7C5CFF;
+      --brand2:#2DE2FF;
+      --hot:#FF4ECD;
+
+      --radius-xl: 22px;
+      --radius-lg: 18px;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --shadow2: 0 10px 26px rgba(0,0,0,.35);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(124,92,255,.18), transparent 55%),
+                  radial-gradient(900px 600px at 85% 20%, rgba(45,226,255,.14), transparent 55%),
+                  radial-gradient(900px 700px at 70% 90%, rgba(255,78,205,.10), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    .bg-sheen{
+      position:fixed; inset:-40%;
+      background: conic-gradient(from 180deg at 50% 50%,
+        rgba(124,92,255,.14),
+        rgba(45,226,255,.12),
+        rgba(255,78,205,.10),
+        rgba(124,92,255,.14));
+      filter: blur(70px);
+      opacity:.55;
+      animation: drift 18s linear infinite;
+      pointer-events:none;
+      z-index:-2;
+    }
+    @keyframes drift{
+      0%{ transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1.05); }
+      50%{ transform: translate3d(3%, 2%, 0) rotate(180deg) scale(1.08); }
+      100%{ transform: translate3d(-3%, -2%, 0) rotate(360deg) scale(1.05); }
+    }
+
+    .bg-grid{
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: radial-gradient(600px 400px at 50% 12%, rgba(0,0,0,1), transparent 70%);
+      opacity:.35;
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+
+    .topbar-wrap{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(7,10,18,.72), rgba(7,10,18,.35));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .topbar{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .brand .logo{
+      width:34px; height:34px; border-radius: 12px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(45,226,255,.95), transparent 55%),
+        radial-gradient(circle at 70% 30%, rgba(124,92,255,.95), transparent 55%),
+        radial-gradient(circle at 50% 80%, rgba(255,78,205,.85), transparent 55%),
+        rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      position:relative;
+      overflow:hidden;
+    }
+    .brand .logo::after{
+      content:"";
+      position:absolute; inset:-50%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      transform: rotate(25deg);
+      animation: shine 3.4s ease-in-out infinite;
+      opacity:.55;
+    }
+    @keyframes shine{
+      0%{ transform: translateX(-40%) rotate(25deg); }
+      55%{ transform: translateX(40%) rotate(25deg); }
+      100%{ transform: translateX(40%) rotate(25deg); }
+    }
+
+    .brand .title{ display:flex; flex-direction:column; line-height:1.05; }
+    .brand .title strong{ font-size:13px; letter-spacing:.2px; }
+    .brand .title span{ font-size:11px; color:var(--muted2); margin-top:2px; }
+
+    .nav{
+      display:flex;
+      gap:8px;
+      flex: 1 1 auto;
+      overflow:auto hidden;
+      padding: 0 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.18) transparent;
+    }
+    .nav::-webkit-scrollbar{ height:8px; }
+    .nav::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.14); border-radius: 999px; }
+
+    .nav a{
+      display:flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      color: rgba(234,240,255,.88);
+      white-space:nowrap;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .nav a:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
+    .nav a.active{
+      background:
+        radial-gradient(200px 70px at 30% 30%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(180px 60px at 70% 30%, rgba(45,226,255,.18), transparent 60%),
+        rgba(255,255,255,.05);
+      border-color: rgba(124,92,255,.35);
+      box-shadow: 0 10px 20px rgba(0,0,0,.25);
+    }
+
+    .top-actions{ display:flex; align-items:center; gap:10px; flex: 0 0 auto; }
+    .search{
+      min-width: 220px;
+      max-width: 320px;
+      flex: 0 1 260px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .search input{
+      width:100%;
+      background: transparent;
+      border:none;
+      outline:none;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .search .hint{
+      font-size: 11px;
+      color: var(--muted2);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 2px 8px;
+      border-radius: 999px;
+      user-select:none;
+    }
+
+    .pill{
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(234,240,255,.92);
+      display:flex; align-items:center; gap:8px;
+      user-select:none;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(83,240,198,1), rgba(83,240,198,.2));
+      box-shadow: 0 0 18px rgba(83,240,198,.25);
+    }
+
+    .shell{ max-width: 1200px; margin: 0 auto; padding: 18px 16px 34px; }
+    .page{ display:none; animation: fadeIn .18s ease; }
+    .page.active{ display:block; }
+    @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform: translateY(0);} }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+      .search{ display:none; }
+    }
+
+    .card{
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+    .card .inner{ padding: 18px; }
+    .card h2{ margin: 0 0 8px; font-size: 18px; letter-spacing: .2px; }
+    .card p{ margin: 0; color: var(--muted); }
+
+    .glow{ position:relative; overflow:hidden; }
+    .glow::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(500px 220px at 20% 10%, rgba(124,92,255,.20), transparent 55%),
+                  radial-gradient(500px 220px at 80% 20%, rgba(45,226,255,.16), transparent 55%),
+                  radial-gradient(500px 220px at 60% 90%, rgba(255,78,205,.12), transparent 55%);
+      filter: blur(12px);
+      opacity: .9;
+      pointer-events:none;
+    }
+    .glow > *{ position:relative; z-index:1; }
+
+    .cta-row{ margin-top: 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: rgba(234,240,255,.95);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.20); }
+    .btn.primary{
+      background:
+        radial-gradient(200px 60px at 30% 30%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(180px 50px at 70% 30%, rgba(45,226,255,.25), transparent 60%),
+        rgba(255,255,255,.06);
+      border-color: rgba(124,92,255,.38);
+    }
+    .btn.hot{
+      background:
+        radial-gradient(220px 60px at 30% 30%, rgba(255,78,205,.35), transparent 60%),
+        radial-gradient(180px 50px at 70% 30%, rgba(124,92,255,.22), transparent 60%),
+        rgba(255,255,255,.06);
+      border-color: rgba(255,78,205,.34);
+    }
+
+    .mini-grid{ margin-top: 14px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 980px){ .mini-grid{ grid-template-columns: 1fr; } }
+    .stat{
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 14px;
+    }
+    .stat .k{ font-size: 11px; color: var(--muted2); letter-spacing: .3px; text-transform: uppercase; }
+    .stat .v{ margin-top: 6px; font-size: 20px; font-weight: 800; letter-spacing: .2px; }
+
+    .embed{
+      height: min(66vh, 620px);
+      border-radius: var(--radius-xl);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      box-shadow: var(--shadow);
+    }
+    .embed iframe{ width:100%; height:100%; border:0; display:block; background:#0A0C12; }
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 12px;
+      flex-wrap:wrap;
+    }
+    .toolbar .left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(234,240,255,.90);
+      user-select:none;
+      font-size: 12px;
+    }
+    .chip .badge{
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .select{
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(234,240,255,.92);
+      outline:none;
+    }
+
+    .games-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 1100px){ .games-grid{ grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 820px){ .games-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px){ .games-grid{ grid-template-columns: 1fr; } }
+
+    .game{
+      border-radius: var(--radius-xl);
+      overflow:hidden;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 10px 24px rgba(0,0,0,.28);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .game:hover{ transform: translateY(-2px); border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.05); }
+    .thumb{
+      aspect-ratio: 16 / 9;
+      width:100%;
+      display:block;
+      object-fit: cover;
+      background: radial-gradient(300px 160px at 25% 20%, rgba(124,92,255,.40), transparent 60%),
+                  radial-gradient(260px 140px at 75% 25%, rgba(45,226,255,.28), transparent 60%),
+                  radial-gradient(260px 140px at 60% 90%, rgba(255,78,205,.22), transparent 60%),
+                  rgba(255,255,255,.04);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      cursor:pointer;
+    }
+    .meta{ padding: 12px 12px 14px; }
+    .name{ font-weight: 800; margin: 0 0 6px; font-size: 14px; }
+    .desc{ margin:0; color: var(--muted); font-size: 12px; min-height: 34px; }
+    .actions{ display:flex; gap:10px; margin-top: 12px; align-items:center; justify-content:space-between; }
+    .smallbtn{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      cursor:pointer;
+      color: rgba(234,240,255,.95);
+      font-weight: 700;
+      letter-spacing:.2px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .smallbtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.20); }
+    .price{
+      font-weight: 800;
+      color: rgba(234,240,255,.92);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 999;
+    }
+    .overlay.active{ display:flex; }
+    .frame{
+      width: min(1180px, 96vw);
+      height: min(720px, 84vh);
+      border-radius: 22px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(18, 24, 46, .60);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+      display:flex;
+      flex-direction:column;
+    }
+    .bar{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .bar .title{ display:flex; align-items:center; gap:10px; font-weight: 800; letter-spacing:.2px; }
+    .kbd{
+      font-size: 11px;
+      color: var(--muted2);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 2px 8px;
+      border-radius: 999px;
+      user-select:none;
+    }
+    .close{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(234,240,255,.95);
+      padding: 9px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 800;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .close:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .overlay iframe{ width:100%; height:100%; border:0; background:#0A0C12; }
+
+    .foot{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .sep{ width:6px; height:6px; border-radius:999px; background: rgba(255,255,255,.18); display:inline-block; }
+
+    .ico{ width:14px; height:14px; display:inline-block; opacity:.92; }
+    .ico svg{ width:14px; height:14px; display:block; }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <h1 class="logo">My Site</h1>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="pages/games.html">Games</a>
-      <a href="pages/youtube.html">YouTube</a>
-      <a href="pages/movies.html">Movies</a>
-      <a href="pages/tv.html">TV Shows</a>
-      <a href="pages/emulator.html">Emulator</a>
-      <a href="pages/soundboard.html">Soundboard</a>
-      <a href="pages/requests.html">Requests</a>
-      <a href="pages/water.html">Water</a>
-    </nav>
-  </header>
+  <div class="bg-sheen" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
 
-  <main class="container">
-    <h2>Welcome</h2>
-    <p>Pick a page from the navbar.</p>
+  <div class="topbar-wrap">
+    <div class="topbar">
+      <a class="brand" href="#home" title="Go Home">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <strong>FusionHub</strong>
+          <span>Steam × Discord × Netflix</span>
+        </div>
+      </a>
 
-    <div class="grid">
-      <a class="card" href="pages/games.html">🎮 Games</a>
-      <a class="card" href="pages/youtube.html">▶️ YouTube</a>
-      <a class="card" href="pages/movies.html">🎬 Movies</a>
-      <a class="card" href="pages/tv.html">📺 TV Shows</a>
-      <a class="card" href="pages/emulator.html">🕹️ Emulator</a>
-      <a class="card" href="pages/soundboard.html">🔊 Soundboard</a>
-      <a class="card" href="pages/requests.html">📩 Requests</a>
-      <a class="card" href="pages/water.html">💧 Water</a>
+      <nav class="nav" id="nav">
+        <a href="#home" data-page="home" class="active"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 10.5 12 4l8 6.5V20a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 20v-9.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </span>Home</a>
+
+        <a href="#store" data-page="store"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M7 7h14l-2 11H9L7 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 7 6 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" fill="currentColor"/><path d="M18 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" fill="currentColor"/></svg>
+        </span>Store</a>
+
+        <a href="#library" data-page="library"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 4h12a2 2 0 0 1 2 2v13a1 1 0 0 1-1 1H7a3 3 0 0 0-3 3V6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 8h10M8 12h10M8 16h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>Games</a>
+
+        <a href="#community" data-page="community"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 11a4 4 0 1 0-8 0" stroke="currentColor" stroke-width="2"/><path d="M4 20a6 6 0 0 1 16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>Community</a>
+
+        <a href="#chat" data-page="chat"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M20 15a4 4 0 0 1-4 4H8l-4 3V7a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </span>Chat</a>
+
+        <a href="#watch" data-page="watch"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="2"/><path d="M16 10l4-2v8l-4-2v-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </span>Watch</a>
+
+        <a href="#music" data-page="music"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2"/><path d="M19 16V6l-10 2v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </span>Music</a>
+
+        <a href="#profile" data-page="profile"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2"/><path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>Profile</a>
+
+        <a href="#settings" data-page="settings"><span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a7.8 7.8 0 0 0 .1-1l2-1.2-2-3.4-2.2.7a7.6 7.6 0 0 0-1.7-1L13 6h-4l-.6 2.1a7.6 7.6 0 0 0-1.7 1L4.5 8.4 2.5 11.8l2 1.2a7.8 7.8 0 0 0 0 2l-2 1.2 2 3.4 2.2-.7c.5.4 1.1.8 1.7 1L9 22h4l.6-2.1c.6-.2 1.2-.6 1.7-1l2.2.7 2-3.4-2-1.2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </span>Settings</a>
+      </nav>
+
+      <div class="top-actions">
+        <div class="search" title="Fake search UI">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.2-4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+          <input id="searchInput" placeholder="Search games, friends, shows…" autocomplete="off" />
+          <span class="hint">Ctrl K</span>
+        </div>
+        <div class="pill" title="Status (fake)">
+          <span class="dot" aria-hidden="true"></span>
+          Online
+        </div>
+      </div>
     </div>
+  </div>
+
+  <main class="shell">
+
+    <section class="page active" id="page-home" data-title="Home">
+      <div class="hero">
+        <div class="card glow">
+          <div class="inner">
+            <h2>All-in-one hub</h2>
+            <p>
+              Single-file template (one <strong>index.html</strong>) with a Steam/Discord/Netflix vibe:
+              glass panels, neon accents, top nav, and a game launcher overlay.
+            </p>
+            <div class="cta-row">
+              <button class="btn primary" onclick="go('#library')">Open Games</button>
+              <button class="btn hot" onclick="go('#watch')">Watch</button>
+              <button class="btn" onclick="go('#chat')">Chat</button>
+            </div>
+
+            <div class="mini-grid">
+              <div class="stat"><div class="k">Featured</div><div class="v">Neon UI</div></div>
+              <div class="stat"><div class="k">Pages</div><div class="v">9</div></div>
+              <div class="stat"><div class="k">Launcher</div><div class="v">ESC Close</div></div>
+            </div>
+
+            <div class="foot">
+              Your images folder is <strong>/thumbnails</strong>.
+              <span class="sep"></span>
+              Press <strong>Esc</strong> to close the launcher overlay.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="inner">
+            <h2>Quick embeds</h2>
+            <p>Other pages load as embedded iframes (replace <strong>example.com</strong> later).</p>
+            <div class="cta-row">
+              <button class="btn" onclick="go('#store')">Store</button>
+              <button class="btn" onclick="go('#community')">Community</button>
+              <button class="btn" onclick="go('#music')">Music</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-store" data-title="Store">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Storefront <span class="badge">Embedded</span></span>
+          <span class="chip">Deals <span class="badge">Mock</span></span>
+          <span class="chip">Wishlist <span class="badge">0</span></span>
+        </div>
+        <select class="select" aria-label="Sort">
+          <option>Sort: Featured</option>
+          <option>Sort: New</option>
+          <option>Sort: Price</option>
+        </select>
+      </div>
+      <div class="embed"><iframe src="https://example.com" title="Store Embed"></iframe></div>
+      <div class="foot">Replace this iframe <code>src</code> with your store link.</div>
+    </section>
+
+    <!-- GAMES PAGE (uses /thumbnails instead of /assets) -->
+    <section class="page" id="page-library" data-title="Games">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Your Library <span class="badge">Launcher</span></span>
+          <span class="chip">Installed <span class="badge">3</span></span>
+          <span class="chip">Friends Online <span class="badge">12</span></span>
+        </div>
+        <select class="select" id="filterSelect" aria-label="Filter">
+          <option value="all">Filter: All</option>
+          <option value="popular">Filter: Popular</option>
+          <option value="new">Filter: New</option>
+          <option value="chill">Filter: Chill</option>
+        </select>
+      </div>
+
+      <div class="games-grid" id="gamesGrid"></div>
+
+      <div class="foot">
+        Put your PNGs in <code>/thumbnails</code> and update the <code>img</code> values in the <code>GAMES</code> array.
+      </div>
+    </section>
+
+    <section class="page" id="page-community" data-title="Community">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Community <span class="badge">Embedded</span></span>
+          <span class="chip">Clubs <span class="badge">Mock</span></span>
+          <span class="chip">Events <span class="badge">Mock</span></span>
+        </div>
+        <button class="btn" onclick="toast('Community tools coming soon')">Create Post</button>
+      </div>
+      <div class="embed"><iframe src="https://example.com" title="Community Embed"></iframe></div>
+    </section>
+
+    <section class="page" id="page-chat" data-title="Chat">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Chat <span class="badge">Embedded</span></span>
+          <span class="chip">DMs <span class="badge">Mock</span></span>
+          <span class="chip">Servers <span class="badge">Mock</span></span>
+        </div>
+        <button class="btn" onclick="toast('Invite flow placeholder')">Invite</button>
+      </div>
+      <div class="embed"><iframe src="https://example.com" title="Chat Embed"></iframe></div>
+    </section>
+
+    <section class="page" id="page-watch" data-title="Watch">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Watch <span class="badge">Embedded</span></span>
+          <span class="chip">Continue <span class="badge">Mock</span></span>
+          <span class="chip">Trending <span class="badge">Mock</span></span>
+        </div>
+        <button class="btn hot" onclick="toast('Add to Watchlist placeholder')">+ Watchlist</button>
+      </div>
+      <div class="embed"><iframe src="https://example.com" title="Watch Embed"></iframe></div>
+    </section>
+
+    <section class="page" id="page-music" data-title="Music">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Music <span class="badge">Embedded</span></span>
+          <span class="chip">Playlists <span class="badge">Mock</span></span>
+          <span class="chip">Radio <span class="badge">Mock</span></span>
+        </div>
+        <button class="btn primary" onclick="toast('Upload placeholder')">Upload</button>
+      </div>
+      <div class="embed"><iframe src="https://example.com" title="Music Embed"></iframe></div>
+    </section>
+
+    <section class="page" id="page-profile" data-title="Profile">
+      <div class="hero">
+        <div class="card glow">
+          <div class="inner">
+            <h2>Your profile</h2>
+            <p>Fake profile header UI + embedded content below.</p>
+            <div class="cta-row">
+              <button class="btn primary" onclick="toast('Edit profile placeholder')">Edit Profile</button>
+              <button class="btn" onclick="toast('Share placeholder')">Share</button>
+              <button class="btn" onclick="toast('Add friend placeholder')">Add Friend</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="inner">
+            <h2>Presence</h2>
+            <p>Set a vibe (mock UI).</p>
+            <div class="cta-row">
+              <button class="btn" onclick="toast('Status set: Grinding')">Grinding</button>
+              <button class="btn" onclick="toast('Status set: Chill')">Chill</button>
+              <button class="btn" onclick="toast('Status set: AFK')">AFK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="embed"><iframe src="https://example.com" title="Profile Embed"></iframe></div>
+    </section>
+
+    <section class="page" id="page-settings" data-title="Settings">
+      <div class="toolbar">
+        <div class="left">
+          <span class="chip">Settings <span class="badge">Embedded</span></span>
+          <span class="chip">Theme <span class="badge">Dark</span></span>
+          <span class="chip">Shortcuts <span class="badge">Ctrl+K</span></span>
+        </div>
+        <button class="btn" onclick="toast('Settings saved (mock)')">Save</button>
+      </div>
+      <div class="embed"><iframe src="https://example.com" title="Settings Embed"></iframe></div>
+    </section>
+
   </main>
 
-  <script src="assets/js/main.js"></script>
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Game launcher">
+    <div class="frame">
+      <div class="bar">
+        <div class="title">
+          <span id="overlayTitle">Launching…</span>
+          <span class="kbd">Esc</span>
+        </div>
+        <button class="close" onclick="closeOverlay()">Close</button>
+      </div>
+      <iframe id="overlayFrame" src="about:blank" title="Launched content"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // SPA routing
+    const PAGES = ["home","store","library","community","chat","watch","music","profile","settings"];
+
+    function go(hash){ location.hash = hash; }
+
+    function setActivePage(page){
+      for (const id of PAGES){
+        const el = document.getElementById("page-" + id);
+        if (!el) continue;
+        el.classList.toggle("active", id === page);
+      }
+      document.querySelectorAll('.nav a[data-page]').forEach(a=>{
+        a.classList.toggle("active", a.dataset.page === page);
+      });
+      const title = document.querySelector(`#page-${page}`)?.dataset.title || page;
+      document.title = `FusionHub — ${title}`;
+    }
+
+    function currentPageFromHash(){
+      const h = (location.hash || "#home").replace("#","").trim().toLowerCase();
+      return PAGES.includes(h) ? h : "home";
+    }
+
+    window.addEventListener("hashchange", ()=> setActivePage(currentPageFromHash()));
+
+    // GAMES: use /thumbnails (your folder name)
+    const GAMES = [
+      { name:"Neon Drift",   tag:"popular", price:"Free",   img:"thumbnails/game1.png", url:"https://example.com", desc:"Arcade racing with synth vibes." },
+      { name:"Astra Ops",    tag:"popular", price:"$19.99", img:"thumbnails/game2.png", url:"https://example.com", desc:"Squad tactics in deep space." },
+      { name:"Cozy Colony",  tag:"chill",   price:"$9.99",  img:"thumbnails/game3.png", url:"https://example.com", desc:"Build, craft, relax." },
+      { name:"Pulse Arena",  tag:"new",     price:"$24.99", img:"thumbnails/game4.png", url:"https://example.com", desc:"Fast PvP with flashy abilities." },
+      { name:"Shadow Byte",  tag:"popular", price:"$14.99", img:"thumbnails/game5.png", url:"https://example.com", desc:"Cyber stealth + puzzle hacks." },
+      { name:"Skybound",     tag:"chill",   price:"Free",   img:"thumbnails/game6.png", url:"https://example.com", desc:"Glide worlds. Collect secrets." },
+      { name:"Night Market", tag:"new",     price:"$12.99", img:"thumbnails/game7.png", url:"https://example.com", desc:"Trade, talk, thrive after dark." },
+      { name:"Hex Runner",   tag:"popular", price:"$4.99",  img:"thumbnails/game8.png", url:"https://example.com", desc:"Speedrun platformer chaos." }
+    ];
+
+    function svgFallback(title){
+      const safe = String(title).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+      return `data:image/svg+xml;utf8,` + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90">
+          <defs>
+            <radialGradient id="g1" cx="30%" cy="25%" r="70%">
+              <stop offset="0" stop-color="rgba(124,92,255,0.7)"/>
+              <stop offset="1" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+            <radialGradient id="g2" cx="75%" cy="25%" r="70%">
+              <stop offset="0" stop-color="rgba(45,226,255,0.55)"/>
+              <stop offset="1" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+            <radialGradient id="g3" cx="55%" cy="85%" r="70%">
+              <stop offset="0" stop-color="rgba(255,78,205,0.4)"/>
+              <stop offset="1" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+          </defs>
+          <rect width="160" height="90" fill="rgba(255,255,255,0.04)"/>
+          <rect width="160" height="90" fill="url(#g1)"/>
+          <rect width="160" height="90" fill="url(#g2)"/>
+          <rect width="160" height="90" fill="url(#g3)"/>
+          <rect x="10" y="58" width="140" height="22" rx="11" fill="rgba(0,0,0,0.35)" stroke="rgba(255,255,255,0.12)"/>
+          <text x="80" y="73" fill="rgba(234,240,255,0.92)" font-size="10" text-anchor="middle" font-family="system-ui,Segoe UI,Arial">${safe}</text>
+        </svg>
+      `);
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function escapeAttr(str){ return String(str).replaceAll("\\","\\\\").replaceAll("'","\\'"); }
+
+    function renderGames(){
+      const grid = document.getElementById("gamesGrid");
+      if (!grid) return;
+
+      const filter = document.getElementById("filterSelect")?.value || "all";
+      const items = (filter === "all") ? GAMES : GAMES.filter(g=>g.tag === filter);
+
+      grid.innerHTML = items.map(g=>`
+        <article class="game" data-tag="${g.tag}">
+          <img class="thumb"
+            src="${g.img}"
+            alt="${escapeHtml(g.name)} cover"
+            loading="lazy"
+            onclick="openOverlay('${escapeAttr(g.name)}','${escapeAttr(g.url)}')"
+            onerror="this.onerror=null; this.src='${svgFallback(g.name)}';"
+          />
+          <div class="meta">
+            <p class="name">${escapeHtml(g.name)}</p>
+            <p class="desc">${escapeHtml(g.desc)}</p>
+            <div class="actions">
+              <span class="price">${escapeHtml(g.price)}</span>
+              <button class="smallbtn" onclick="openOverlay('${escapeAttr(g.name)}','${escapeAttr(g.url)}')">Launch</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    // Overlay
+    const overlay = document.getElementById("overlay");
+    const overlayFrame = document.getElementById("overlayFrame");
+    const overlayTitle = document.getElementById("overlayTitle");
+
+    function openOverlay(title, url){
+      overlayTitle.textContent = title || "Launching…";
+      overlayFrame.src = url || "https://example.com";
+      overlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+    function closeOverlay(){
+      overlay.classList.remove("active");
+      overlayFrame.src = "about:blank";
+      document.body.style.overflow = "";
+    }
+    overlay.addEventListener("click", (e)=>{ if (e.target === overlay) closeOverlay(); });
+
+    window.addEventListener("keydown", (e)=>{
+      if (e.key === "Escape" && overlay.classList.contains("active")) closeOverlay();
+      const isK = (e.key || "").toLowerCase() === "k";
+      if ((e.ctrlKey || e.metaKey) && isK){
+        e.preventDefault();
+        document.getElementById("searchInput")?.focus();
+      }
+    });
+
+    // Tiny toast
+    let toastTimer = null;
+    function toast(msg){
+      clearTimeout(toastTimer);
+      let el = document.getElementById("toast");
+      if (!el){
+        el = document.createElement("div");
+        el.id = "toast";
+        el.style.position = "fixed";
+        el.style.left = "50%";
+        el.style.bottom = "18px";
+        el.style.transform = "translateX(-50%)";
+        el.style.padding = "10px 12px";
+        el.style.borderRadius = "14px";
+        el.style.background = "rgba(18,24,46,.70)";
+        el.style.border = "1px solid rgba(255,255,255,.14)";
+        el.style.color = "rgba(234,240,255,.94)";
+        el.style.backdropFilter = "blur(10px)";
+        el.style.boxShadow = "0 18px 50px rgba(0,0,0,.45)";
+        el.style.zIndex = "2000";
+        el.style.maxWidth = "min(92vw, 520px)";
+        el.style.textAlign = "center";
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = "1";
+      toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 1600);
+    }
+
+    // Init
+    document.getElementById("filterSelect")?.addEventListener("change", renderGames);
+    setActivePage(currentPageFromHash());
+    renderGames();
+  </script>
 </body>
 </html>
