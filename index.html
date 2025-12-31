@@ -4,12 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FusionHub</title>
+  <meta name="description" content="Single-file Steam/Discord/Netflix vibe. 3 games + live chat + username login gate." />
+
   <style>
     :root{
       --bg0:#070A12;
       --bg1:#0B1022;
       --text:#EAF0FF;
-      --muted: rgba(234,240,255,.72);
+      --muted: rgba(234,240,255,.70);
       --muted2: rgba(234,240,255,.52);
 
       --card: rgba(255,255,255,.055);
@@ -201,7 +203,7 @@
       cursor:pointer;
       user-select:none;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: .2px;
     }
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.20); }
@@ -218,6 +220,9 @@
         radial-gradient(180px 50px at 70% 30%, rgba(124,92,255,.22), transparent 60%),
         rgba(255,255,255,.06);
       border-color: rgba(255,78,205,.34);
+    }
+    .btn.ghost{
+      background: rgba(255,255,255,.03);
     }
 
     /* Embeds */
@@ -267,7 +272,7 @@
     }
     .game:hover{ transform: translateY(-2px); border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.05); }
 
-    /* FULL PNG no matter what: object-fit: contain + padding area */
+    /* FULL PNG ALWAYS: object-fit contain */
     .thumbwrap{
       width:100%;
       aspect-ratio: 16 / 9;
@@ -285,15 +290,14 @@
     .thumb{
       width:100%;
       height:100%;
-      object-fit: contain;  /* key line */
+      object-fit: contain;
       display:block;
       border-radius: 12px;
       background: rgba(0,0,0,.18);
     }
-
     .meta{ padding: 12px 12px 14px; }
     .name{ font-weight: 900; margin: 0 0 10px; font-size: 14px; letter-spacing:.2px; }
-    .actions{ display:flex; gap:10px; align-items:center; }
+
     .smallbtn{
       width:100%;
       padding: 10px 12px;
@@ -302,7 +306,7 @@
       background: rgba(255,255,255,.05);
       cursor:pointer;
       color: rgba(234,240,255,.95);
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing:.2px;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
@@ -359,78 +363,6 @@
     .close:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
     .overlay iframe{ width:100%; height:100%; border:0; background:#0A0C12; }
 
-    /* Friends page layout with LEFT SIDEBAR */
-    .friends-layout{
-      display:grid;
-      grid-template-columns: 320px 1fr;
-      gap: 14px;
-      align-items: start;
-    }
-    @media (max-width: 900px){
-      .friends-layout{ grid-template-columns: 1fr; }
-    }
-
-    .sidebar{
-      border-radius: var(--radius-xl);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-    }
-    .sidebar .head{
-      padding: 14px 14px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .sidebar .head strong{ font-size: 14px; letter-spacing:.2px; }
-    .sidebar .list{ padding: 10px; display:flex; flex-direction:column; gap:8px; }
-    .friend{
-      width:100%;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding: 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      cursor:pointer;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      text-align:left;
-      color: inherit;
-    }
-    .friend:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.16); }
-    .friend.active{ border-color: rgba(124,92,255,.35); background: rgba(255,255,255,.05); }
-    .avatar{
-      width:38px; height:38px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background:
-        radial-gradient(circle at 30% 30%, rgba(45,226,255,.55), transparent 55%),
-        radial-gradient(circle at 70% 30%, rgba(124,92,255,.55), transparent 55%),
-        radial-gradient(circle at 50% 80%, rgba(255,78,205,.45), transparent 55%),
-        rgba(255,255,255,.03);
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
-      flex: 0 0 auto;
-    }
-    .friend .info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
-    .friend .info .n{ font-weight: 900; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .friend .info .s{ font-size: 12px; color: var(--muted2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .panel{
-      border-radius: var(--radius-xl);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-    }
-    .panel .inner{ padding: 18px; }
-    .panel h3{ margin:0 0 8px; font-size:16px; letter-spacing:.2px; }
-    .panel p{ margin:0 0 12px; color: var(--muted); }
-
     /* Community create forms */
     .formrow{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
     .input{
@@ -442,6 +374,7 @@
       color: var(--text);
       outline:none;
     }
+
     .listbox{
       margin-top: 12px;
       display:grid;
@@ -461,6 +394,10 @@
       background: rgba(255,255,255,.03);
       font-weight: 900;
       letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
     .items{ padding: 10px; display:flex; flex-direction:column; gap:8px; }
     .item{
@@ -481,9 +418,154 @@
       background: rgba(255,255,255,.05);
       color: var(--text);
       cursor:pointer;
-      font-weight: 800;
+      font-weight: 900;
     }
     .item button:hover{ background: rgba(255,255,255,.07); }
+
+    /* Chat */
+    .chatwrap{
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: min(72vh, 740px);
+    }
+    .chathead{
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .chathead strong{ font-weight: 900; letter-spacing:.2px; }
+    .chathead .who{
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .chatlog{
+      padding: 12px;
+      overflow:auto;
+      flex: 1 1 auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .msg{
+      max-width: 820px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding: 10px 12px;
+    }
+    .msg .top{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 6px;
+    }
+    .msg .user{
+      font-weight: 900;
+      letter-spacing:.2px;
+    }
+    .msg .time{
+      color: var(--muted2);
+      font-size: 11px;
+      white-space:nowrap;
+    }
+    .msg .body{
+      color: rgba(234,240,255,.92);
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .chatform{
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.02);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .chatform textarea{
+      flex: 1 1 auto;
+      resize:none;
+      min-height: 44px;
+      max-height: 140px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline:none;
+      font: inherit;
+    }
+
+    /* Login gate */
+    .login{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 2000;
+      background: rgba(0,0,0,.68);
+      backdrop-filter: blur(14px);
+    }
+    .login.active{ display:flex; }
+    .loginbox{
+      width: min(520px, 96vw);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .loginbox .top{
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .loginbox h1{
+      margin:0 0 6px;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    .loginbox p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .loginbox .mid{
+      padding: 14px 16px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .loginbox .warn{
+      color: var(--muted2);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .pillrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .smallnote{
+      color: var(--muted2);
+      font-size: 12px;
+    }
 
     .foot{
       margin-top: 14px;
@@ -498,6 +580,7 @@
     .sep{ width:6px; height:6px; border-radius:999px; background: rgba(255,255,255,.18); display:inline-block; }
   </style>
 </head>
+
 <body>
   <div class="bg-sheen" aria-hidden="true"></div>
   <div class="bg-grid" aria-hidden="true"></div>
@@ -509,7 +592,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div class="title">
           <strong>FusionHub</strong>
-          <span>Clean • Free • No filler</span>
+          <span>Games • Community • Live Chat</span>
         </div>
       </a>
 
@@ -517,7 +600,7 @@
         <a href="#home" data-page="home">Home</a>
         <a href="#games" data-page="games">Games</a>
         <a href="#community" data-page="community">Community</a>
-        <a href="#friends" data-page="friends">Friends</a>
+        <a href="#live" data-page="live">Live Chat</a>
         <a href="#watch" data-page="watch">Watch</a>
         <a href="#profile" data-page="profile">Profile</a>
         <a href="#settings" data-page="settings">Settings</a>
@@ -534,31 +617,32 @@
           <div class="inner">
             <h2>Welcome</h2>
             <p>
-              One-file website with a Steam/Discord/Netflix vibe: neon glass UI, top nav, a proper games launcher overlay,
-              real Community creation (forums + group chats), and a Friends page with a left sidebar.
+              First-time username login (no fake friends), 3 games, Community (Forums + Group Chats),
+              and a real Live Chat that can work across computers (with Firebase config).
             </p>
+
             <div style="height:12px"></div>
             <button class="btn primary" onclick="go('#games')">Open Games</button>
-            <button class="btn" onclick="go('#friends')" style="margin-left:8px;">Open Friends</button>
-            <button class="btn hot" onclick="go('#community')" style="margin-left:8px;">Open Community</button>
+            <button class="btn hot" onclick="go('#live')" style="margin-left:8px;">Open Live Chat</button>
+            <button class="btn" onclick="go('#community')" style="margin-left:8px;">Open Community</button>
 
             <div class="foot">
               Put PNGs in <code>/thumbnails</code>.
               <span class="sep"></span>
-              Press <code>Esc</code> to close the game launcher overlay.
+              Press <code>Esc</code> to close the launcher overlay.
             </div>
           </div>
         </div>
 
         <div class="card">
           <div class="inner">
-            <h2>What’s included</h2>
+            <h2>Important</h2>
             <p>
-              • 3 free games (template names: <code>PUT NAME HERE</code>)<br/>
-              • Community: create Forums + Group Chats (stored locally in your browser)<br/>
-              • Friends: left sidebar list + details panel<br/>
-              • Watch/Profile/Settings: embedded (swap URLs later)
+              Live Chat + cross-computer messages require a backend.
+              This template uses Firebase (free tier) when you paste your config.
             </p>
+            <div style="height:12px"></div>
+            <button class="btn ghost" onclick="go('#live')">Go to Live Chat setup</button>
           </div>
         </div>
       </div>
@@ -569,7 +653,6 @@
       <div class="toolbar">
         <div class="left">
           <span class="chip">Library</span>
-          <span class="chip">All Free</span>
           <span class="chip">3 Games</span>
         </div>
       </div>
@@ -577,86 +660,100 @@
       <div class="games-grid" id="gamesGrid"></div>
 
       <div class="foot">
-        Edit the <code>GAMES</code> array in the script to change names/thumbnails/links.
+        Edit the <code>GAMES</code> array (names/thumbnails/links).
+        <span class="sep"></span>
+        Button text is just <code>Launch</code>.
       </div>
     </section>
 
-    <!-- COMMUNITY: only create forums + group chats -->
+    <!-- COMMUNITY -->
     <section class="page" id="page-community" data-title="Community">
       <div class="card">
         <div class="inner">
           <h2>Community</h2>
-          <p>Create Forums and Group Chats (this works locally using browser storage).</p>
+          <p>Create Forums and Group Chats (saved locally in your browser).</p>
 
           <div class="formrow" style="margin-top:14px;">
-            <input class="input" id="forumName" placeholder="Forum name (e.g. Speedrunners)" />
+            <input class="input" id="forumName" placeholder="Forum name" />
             <button class="btn primary" id="createForumBtn">Create Forum</button>
           </div>
 
           <div class="formrow">
-            <input class="input" id="groupName" placeholder="Group chat name (e.g. Friday Night Squad)" />
+            <input class="input" id="groupName" placeholder="Group chat name" />
             <button class="btn hot" id="createGroupBtn">Create Group Chat</button>
           </div>
 
           <div class="listbox">
             <div class="listcard">
-              <div class="hd">Forums</div>
+              <div class="hd">
+                <span>Forums</span>
+                <span class="smallnote" id="forumsCount"></span>
+              </div>
               <div class="items" id="forumsList"></div>
             </div>
             <div class="listcard">
-              <div class="hd">Group Chats</div>
+              <div class="hd">
+                <span>Group Chats</span>
+                <span class="smallnote" id="groupsCount"></span>
+              </div>
               <div class="items" id="groupsList"></div>
             </div>
           </div>
 
           <div class="foot">
-            Tip: “Open” will launch <code>example.com</code> in the overlay right now.
+            “Open” launches <code>example.com</code> in the overlay (swap later).
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FRIENDS -->
-    <section class="page" id="page-friends" data-title="Friends">
-      <div class="friends-layout">
-        <aside class="sidebar">
-          <div class="head">
-            <strong>Friends</strong>
-            <span style="color:var(--muted2); font-size:12px;" id="friendsCount"></span>
+    <!-- LIVE CHAT -->
+    <section class="page" id="page-live" data-title="Live Chat">
+      <div class="chatwrap">
+        <div class="chathead">
+          <strong>Live Chat</strong>
+          <div class="who">
+            <span>Signed in as: <span id="whoami" style="font-weight:900;"></span></span>
+            <span class="sep"></span>
+            <button class="btn ghost" id="changeUserBtn" type="button">Change Username</button>
           </div>
-          <div class="list" id="friendsList"></div>
-        </aside>
+        </div>
 
-        <section class="panel">
-          <div class="inner">
-            <h3 id="friendTitle">Select a friend</h3>
-            <p id="friendStatus">Choose someone from the left sidebar.</p>
-            <div id="friendActions" style="display:none; margin-top:12px;">
-              <button class="btn primary" id="openFriendBtn">Open Profile Link</button>
-            </div>
-          </div>
-        </section>
+        <div class="chatlog" id="chatLog">
+          <!-- messages render here -->
+        </div>
+
+        <form class="chatform" id="chatForm" autocomplete="off">
+          <textarea id="chatInput" placeholder="Type a message… (Enter to send, Shift+Enter for new line)"></textarea>
+          <button class="btn primary" type="submit">Send</button>
+        </form>
+      </div>
+
+      <div class="foot">
+        If chat doesn’t work, you haven’t added Firebase config yet.
+        <span class="sep"></span>
+        Search in this file for <code>PASTE_FIREBASE_CONFIG_HERE</code>.
       </div>
     </section>
 
-    <!-- WATCH (embedded) -->
+    <!-- WATCH (embedded placeholder) -->
     <section class="page" id="page-watch" data-title="Watch">
       <div class="embed"><iframe src="https://example.com" title="Watch Embed"></iframe></div>
     </section>
 
-    <!-- PROFILE (embedded) -->
+    <!-- PROFILE (embedded placeholder) -->
     <section class="page" id="page-profile" data-title="Profile">
       <div class="embed"><iframe src="https://example.com" title="Profile Embed"></iframe></div>
     </section>
 
-    <!-- SETTINGS (embedded) -->
+    <!-- SETTINGS (embedded placeholder) -->
     <section class="page" id="page-settings" data-title="Settings">
       <div class="embed"><iframe src="https://example.com" title="Settings Embed"></iframe></div>
     </section>
 
   </main>
 
-  <!-- OVERLAY (Games + Community Open buttons) -->
+  <!-- LAUNCHER OVERLAY -->
   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Launcher">
     <div class="frame">
       <div class="bar">
@@ -670,11 +767,40 @@
     </div>
   </div>
 
-  <script>
-    // ---------- ROUTING ----------
-    const PAGES = ["home","games","community","friends","watch","profile","settings"];
+  <!-- FIRST-TIME USERNAME LOGIN -->
+  <div class="login" id="loginGate" role="dialog" aria-modal="true" aria-label="Login">
+    <div class="loginbox">
+      <div class="top">
+        <h1>Choose a username</h1>
+        <p>This name will appear on chat messages.</p>
+      </div>
+      <div class="mid">
+        <input class="input" id="usernameInput" placeholder="Username" maxlength="24" />
+        <div class="pillrow">
+          <button class="btn primary" id="enterBtn" type="button">Enter</button>
+          <button class="btn ghost" id="randomBtn" type="button">Random</button>
+        </div>
+
+        <div class="warn">
+          Note: a static site can’t “auto-log you in” on a different computer without accounts.
+          But if you type the same username on another computer, you’ll show up as that name in chat.
+        </div>
+
+        <div class="smallnote" id="loginError" style="display:none; color: rgba(255,255,255,.78);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase (CDN). Works on GitHub Pages. -->
+  <script type="module">
+    // =========================
+    //  ROUTING
+    // =========================
+    const PAGES = ["home","games","community","live","watch","profile","settings"];
 
     function go(hash){ location.hash = hash; }
+    window.go = go;
+
     function currentPageFromHash(){
       const h = (location.hash || "#home").replace("#","").trim().toLowerCase();
       return PAGES.includes(h) ? h : "home";
@@ -692,8 +818,11 @@
       document.title = `FusionHub — ${title}`;
     }
     window.addEventListener("hashchange", ()=> setActivePage(currentPageFromHash()));
+    setActivePage(currentPageFromHash());
 
-    // ---------- OVERLAY ----------
+    // =========================
+    //  OVERLAY
+    // =========================
     const overlay = document.getElementById("overlay");
     const overlayFrame = document.getElementById("overlayFrame");
     const overlayTitle = document.getElementById("overlayTitle");
@@ -709,13 +838,94 @@
       overlayFrame.src = "about:blank";
       document.body.style.overflow = "";
     }
+    window.openOverlay = openOverlay;
+    window.closeOverlay = closeOverlay;
 
     document.getElementById("closeOverlayBtn").addEventListener("click", closeOverlay);
     overlay.addEventListener("click", (e)=>{ if (e.target === overlay) closeOverlay(); });
     window.addEventListener("keydown", (e)=>{ if (e.key === "Escape" && overlay.classList.contains("active")) closeOverlay(); });
 
-    // ---------- GAMES (3, all free, placeholders) ----------
-    // Put your PNGs in /thumbnails
+    // =========================
+    //  HELPERS
+    // =========================
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function escapeAttr(str){ return String(str).replaceAll("\\","\\\\").replaceAll("'","\\'"); }
+
+    // =========================
+    //  LOGIN (USERNAME GATE)
+    // =========================
+    const LS_USER = "fusionhub_username_v1";
+    const loginGate = document.getElementById("loginGate");
+    const usernameInput = document.getElementById("usernameInput");
+    const loginError = document.getElementById("loginError");
+    const whoami = document.getElementById("whoami");
+
+    function sanitizeUsername(name){
+      const trimmed = (name || "").trim();
+      // allow letters/numbers/space/_- (simple + safe)
+      const cleaned = trimmed.replace(/[^\w \-]/g, "").replace(/\s+/g, " ");
+      return cleaned.slice(0, 24);
+    }
+
+    function showLogin(){
+      loginGate.classList.add("active");
+      usernameInput.value = "";
+      loginError.style.display = "none";
+      usernameInput.focus();
+    }
+
+    function setUsername(name){
+      const u = sanitizeUsername(name);
+      if (!u || u.length < 2){
+        loginError.textContent = "Username must be at least 2 characters.";
+        loginError.style.display = "block";
+        return false;
+      }
+      localStorage.setItem(LS_USER, u);
+      whoami.textContent = u;
+      loginGate.classList.remove("active");
+      return true;
+    }
+
+    function getUsername(){
+      return localStorage.getItem(LS_USER) || "";
+    }
+
+    // initial gate
+    const existing = getUsername();
+    if (!existing) showLogin();
+    else whoami.textContent = existing;
+
+    document.getElementById("enterBtn").addEventListener("click", ()=>{
+      setUsername(usernameInput.value);
+    });
+    usernameInput.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter"){
+        e.preventDefault();
+        setUsername(usernameInput.value);
+      }
+    });
+
+    document.getElementById("randomBtn").addEventListener("click", ()=>{
+      const n = Math.floor(Math.random()*9000)+1000;
+      usernameInput.value = `User${n}`;
+      usernameInput.focus();
+    });
+
+    document.getElementById("changeUserBtn").addEventListener("click", ()=>{
+      showLogin();
+    });
+
+    // =========================
+    //  GAMES (3 placeholders)
+    // =========================
     const GAMES = [
       { name:"PUT NAME HERE", img:"thumbnails/game1.png", url:"https://example.com" },
       { name:"PUT NAME HERE", img:"thumbnails/game2.png", url:"https://example.com" },
@@ -750,16 +960,6 @@
       `);
     }
 
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-    function escapeAttr(str){ return String(str).replaceAll("\\","\\\\").replaceAll("'","\\'"); }
-
     function renderGames(){
       const grid = document.getElementById("gamesGrid");
       grid.innerHTML = GAMES.map(g=>`
@@ -774,55 +974,18 @@
           </div>
           <div class="meta">
             <p class="name">${escapeHtml(g.name)}</p>
-            <div class="actions">
-              <button class="smallbtn" onclick="event.stopPropagation(); openOverlay('${escapeAttr(g.name)}','${escapeAttr(g.url)}')">
-                Launch (Free)
-              </button>
-            </div>
+            <button class="smallbtn" onclick="event.stopPropagation(); openOverlay('${escapeAttr(g.name)}','${escapeAttr(g.url)}')">
+              Launch
+            </button>
           </div>
         </article>
       `).join("");
     }
+    renderGames();
 
-    // ---------- FRIENDS (left sidebar, no filler UI) ----------
-    // You can edit this list or replace with your own data later.
-    const FRIENDS = [
-      { name: "Alex", status: "Online", url: "https://example.com" },
-      { name: "Jordan", status: "In a game", url: "https://example.com" },
-      { name: "Riley", status: "Away", url: "https://example.com" },
-      { name: "Sam", status: "Online", url: "https://example.com" },
-      { name: "Casey", status: "Offline", url: "https://example.com" },
-    ];
-
-    let selectedFriendIndex = -1;
-
-    function renderFriends(){
-      const list = document.getElementById("friendsList");
-      const count = document.getElementById("friendsCount");
-      count.textContent = `${FRIENDS.length}`;
-
-      list.innerHTML = FRIENDS.map((f, i)=>`
-        <button class="friend ${i===selectedFriendIndex ? "active" : ""}" onclick="selectFriend(${i})" type="button">
-          <div class="avatar" aria-hidden="true"></div>
-          <div class="info">
-            <div class="n">${escapeHtml(f.name)}</div>
-            <div class="s">${escapeHtml(f.status)}</div>
-          </div>
-        </button>
-      `).join("");
-    }
-
-    function selectFriend(i){
-      selectedFriendIndex = i;
-      const f = FRIENDS[i];
-      document.getElementById("friendTitle").textContent = f.name;
-      document.getElementById("friendStatus").textContent = f.status;
-      document.getElementById("friendActions").style.display = "block";
-      document.getElementById("openFriendBtn").onclick = () => openOverlay(`${f.name} — Profile`, f.url);
-      renderFriends();
-    }
-
-    // ---------- COMMUNITY (Forums + Group Chats, stored locally) ----------
+    // =========================
+    //  COMMUNITY (LOCAL)
+    // =========================
     const LS_FORUMS = "fusionhub_forums_v1";
     const LS_GROUPS = "fusionhub_groups_v1";
 
@@ -841,6 +1004,9 @@
     let groups = loadList(LS_GROUPS);
 
     function renderCommunity(){
+      document.getElementById("forumsCount").textContent = forums.length ? `${forums.length}` : "";
+      document.getElementById("groupsCount").textContent = groups.length ? `${groups.length}` : "";
+
       const forumsList = document.getElementById("forumsList");
       const groupsList = document.getElementById("groupsList");
 
@@ -883,27 +1049,154 @@
       input.value = "";
       renderCommunity();
     }
-    function deleteForum(idx){
+
+    window.deleteForum = (idx)=>{
       forums.splice(idx, 1);
       saveList(LS_FORUMS, forums);
       renderCommunity();
-    }
-    function deleteGroup(idx){
+    };
+    window.deleteGroup = (idx)=>{
       groups.splice(idx, 1);
       saveList(LS_GROUPS, groups);
       renderCommunity();
-    }
+    };
 
     document.getElementById("createForumBtn").addEventListener("click", createForum);
     document.getElementById("createGroupBtn").addEventListener("click", createGroup);
     document.getElementById("forumName").addEventListener("keydown", (e)=>{ if(e.key==="Enter") createForum(); });
     document.getElementById("groupName").addEventListener("keydown", (e)=>{ if(e.key==="Enter") createGroup(); });
-
-    // ---------- INIT ----------
-    setActivePage(currentPageFromHash());
-    renderGames();
-    renderFriends();
     renderCommunity();
+
+    // =========================
+    //  LIVE CHAT (Firebase)
+    // =========================
+    // This is real cross-computer chat, but you MUST paste Firebase config.
+    // Steps (quick):
+    // 1) Go to Firebase Console -> create project
+    // 2) Build -> Realtime Database -> Create database
+    // 3) Project Settings -> Your apps -> Web app -> copy config into firebaseConfig below
+    // 4) Database Rules (for easy testing):
+    //    {
+    //      "rules": {
+    //        "messages": { ".read": true, ".write": true }
+    //      }
+    //    }
+    //
+    // For a real public site you should add auth + rules later.
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import {
+      getDatabase, ref, push, onChildAdded, query, limitToLast, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+    // ===== PASTE_FIREBASE_CONFIG_HERE =====
+    // Replace these placeholder strings with your real Firebase config values.
+    const firebaseConfig = {
+      apiKey: "PASTE_YOURS",
+      authDomain: "PASTE_YOURS",
+      databaseURL: "PASTE_YOURS",
+      projectId: "PASTE_YOURS",
+      storageBucket: "PASTE_YOURS",
+      messagingSenderId: "PASTE_YOURS",
+      appId: "PASTE_YOURS"
+    };
+    // =====================================
+
+    const chatLog = document.getElementById("chatLog");
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+
+    function configLooksPasted(cfg){
+      return cfg && Object.values(cfg).every(v => typeof v === "string" && v && !v.startsWith("PASTE_"));
+    }
+
+    function formatTime(ts){
+      try{
+        const d = new Date(ts);
+        return d.toLocaleString([], { hour:"2-digit", minute:"2-digit", month:"short", day:"2-digit" });
+      }catch{ return ""; }
+    }
+
+    function addMessageToUI(msg){
+      const el = document.createElement("div");
+      el.className = "msg";
+      const when = msg.createdAt && typeof msg.createdAt === "number" ? formatTime(msg.createdAt) : "";
+      el.innerHTML = `
+        <div class="top">
+          <div class="user">${escapeHtml(msg.user || "Unknown")}</div>
+          <div class="time">${escapeHtml(when)}</div>
+        </div>
+        <div class="body">${escapeHtml(msg.text || "")}</div>
+      `;
+      chatLog.appendChild(el);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    let db = null;
+
+    if (configLooksPasted(firebaseConfig)) {
+      const app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+
+      // Listen for last messages
+      const messagesRef = query(ref(db, "messages"), limitToLast(80));
+      onChildAdded(messagesRef, (snap) => {
+        const data = snap.val() || {};
+        addMessageToUI({
+          user: data.user,
+          text: data.text,
+          createdAt: data.createdAt || Date.now()
+        });
+      });
+    } else {
+      // If config is not set, show a helpful message in chat log.
+      addMessageToUI({
+        user: "System",
+        text: "Live chat is not connected yet. Paste your Firebase config where it says PASTE_FIREBASE_CONFIG_HERE.",
+        createdAt: Date.now()
+      });
+    }
+
+    // Enter to send; Shift+Enter newline
+    chatInput.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        chatForm.requestSubmit();
+      }
+    });
+
+    chatForm.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const text = (chatInput.value || "").trim();
+      if (!text) return;
+
+      const user = getUsername();
+      if (!user){
+        showLogin();
+        return;
+      }
+
+      if (!db){
+        addMessageToUI({ user:"System", text:"Chat not connected (Firebase config missing).", createdAt: Date.now() });
+        return;
+      }
+
+      // Send to Firebase
+      const payload = {
+        user,
+        text,
+        createdAt: Date.now()
+        // serverTimestamp() is possible too, but Date.now() keeps it simple.
+      };
+
+      try{
+        await push(ref(db, "messages"), payload);
+        chatInput.value = "";
+        chatInput.focus();
+      }catch(err){
+        addMessageToUI({ user:"System", text:`Send failed: ${String(err?.message || err)}`, createdAt: Date.now() });
+      }
+    });
   </script>
 </body>
 </html>
