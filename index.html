@@ -3,1031 +3,207 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FusionHub</title>
-  <meta name="description" content="Single-file: 3 games + community + live chat + first-time username gate." />
-
+  <title>StudyMath</title>
   <style>
     :root{
-      --bg0:#070A12;
-      --bg1:#0B1022;
-      --text:#EAF0FF;
-      --muted: rgba(234,240,255,.70);
-      --muted2: rgba(234,240,255,.52);
-
-      --stroke: rgba(255,255,255,.10);
-      --shadow2: 0 12px 30px rgba(0,0,0,.34);
-
-      --brand:#7C5CFF;
-      --brand2:#2DE2FF;
-      --hot:#FF4ECD;
-
-      --radius-xl: 22px;
-      --radius-md: 14px;
+      --bg: #0b1220;
+      --panel: #0f1a33;
+      --panel2: #0c162e;
+      --text: #e8eefc;
+      --muted: #a9b6d6;
+      --border: rgba(255,255,255,.10);
+      --hover: rgba(255,255,255,.07);
+      --active: rgba(255,255,255,.12);
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      color:var(--text);
-      font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background:
-        radial-gradient(1200px 700px at 15% 10%, rgba(124,92,255,.18), transparent 55%),
-        radial-gradient(900px 600px at 85% 20%, rgba(45,226,255,.14), transparent 55%),
-        radial-gradient(900px 700px at 70% 90%, rgba(255,78,205,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
     }
 
-    .bg-sheen{
-      position:fixed; inset:-40%;
-      background: conic-gradient(from 180deg at 50% 50%,
-        rgba(124,92,255,.14),
-        rgba(45,226,255,.12),
-        rgba(255,78,205,.10),
-        rgba(124,92,255,.14));
-      filter: blur(70px);
-      opacity:.55;
-      animation: drift 18s linear infinite;
-      pointer-events:none;
-      z-index:-2;
-    }
-    @keyframes drift{
-      0%{ transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1.05); }
-      50%{ transform: translate3d(3%, 2%, 0) rotate(180deg) scale(1.08); }
-      100%{ transform: translate3d(-3%, -2%, 0) rotate(360deg) scale(1.05); }
+    .app {
+      display: grid;
+      grid-template-rows: 56px 1fr;
+      grid-template-columns: 260px 1fr;
+      height: 100vh;
     }
 
-    .bg-grid{
-      position:fixed; inset:0;
-      background-image:
-        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 70px 70px;
-      mask-image: radial-gradient(650px 420px at 50% 12%, rgba(0,0,0,1), transparent 72%);
-      opacity:.35;
-      pointer-events:none;
-      z-index:-1;
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
     }
 
-    a{ color:inherit; text-decoration:none; }
-
-    /* Top bar */
-    .topbar-wrap{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(7,10,18,.75), rgba(7,10,18,.36));
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .topbar{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px 16px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: 0 10px 24px rgba(0,0,0,.22);
-      user-select:none;
-      white-space:nowrap;
-    }
-    .brand .logo{
-      width:34px; height:34px; border-radius: 12px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(45,226,255,.95), transparent 55%),
-        radial-gradient(circle at 70% 30%, rgba(124,92,255,.95), transparent 55%),
-        radial-gradient(circle at 50% 80%, rgba(255,78,205,.85), transparent 55%),
-        rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.10);
-      position:relative;
-      overflow:hidden;
-    }
-    .brand .title{ display:flex; flex-direction:column; line-height:1.05; }
-    .brand .title strong{ font-size:13px; letter-spacing:.2px; }
-    .brand .title span{ font-size:11px; color:var(--muted2); margin-top:2px; }
-
-    .nav{
-      display:flex;
-      gap:8px;
-      flex: 1 1 auto;
-      overflow:auto hidden;
-      padding: 0 4px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,.18) transparent;
-    }
-    .nav::-webkit-scrollbar{ height:8px; }
-    .nav::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.14); border-radius: 999px; }
-    .nav a{
-      display:flex; align-items:center; gap:8px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      color: rgba(234,240,255,.90);
-      white-space:nowrap;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .nav a:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
-    .nav a.active{
-      background:
-        radial-gradient(200px 70px at 30% 30%, rgba(124,92,255,.22), transparent 60%),
-        radial-gradient(180px 60px at 70% 30%, rgba(45,226,255,.18), transparent 60%),
-        rgba(255,255,255,.05);
-      border-color: rgba(124,92,255,.35);
-    }
-
-    /* Layout */
-    .shell{ max-width: 1200px; margin: 0 auto; padding: 18px 16px 34px; }
-    .page{ display:none; animation: fadeIn .18s ease; }
-    .page.active{ display:block; }
-    @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform: translateY(0);} }
-
-    .card{
-      border-radius: var(--radius-xl);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-    }
-    .card .inner{ padding: 18px; }
-    .card h2{ margin: 0 0 8px; font-size: 18px; letter-spacing: .2px; }
-    .card p{ margin: 0; color: var(--muted); }
-
-    .hero{ display:grid; grid-template-columns: 1.2fr .8fr; gap: 14px; align-items: stretch; }
-    @media (max-width: 980px){ .hero{ grid-template-columns: 1fr; } }
-
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px;
-      padding: 10px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: rgba(234,240,255,.95);
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      font-weight: 900;
+    .brand {
+      font-weight: 800;
       letter-spacing: .2px;
-    }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.20); }
-    .btn.primary{
-      background:
-        radial-gradient(200px 60px at 30% 30%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(180px 50px at 70% 30%, rgba(45,226,255,.25), transparent 60%),
-        rgba(255,255,255,.06);
-      border-color: rgba(124,92,255,.38);
-    }
-    .btn.hot{
-      background:
-        radial-gradient(220px 60px at 30% 30%, rgba(255,78,205,.35), transparent 60%),
-        radial-gradient(180px 50px at 70% 30%, rgba(124,92,255,.22), transparent 60%),
-        rgba(255,255,255,.06);
-      border-color: rgba(255,78,205,.34);
-    }
-    .btn.ghost{ background: rgba(255,255,255,.03); }
-
-    /* Games */
-    .toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 12px; flex-wrap:wrap; }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color: rgba(234,240,255,.90);
-      user-select:none;
-      font-size: 12px;
+      font-size: 18px;
     }
 
-    .games-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    @media (max-width: 900px){ .games-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px){ .games-grid{ grid-template-columns: 1fr; } }
-
-    .game{
-      border-radius: var(--radius-xl);
-      overflow:hidden;
-      background: rgba(255,255,255,.035);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 10px 24px rgba(0,0,0,.28);
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
-      cursor:pointer;
-    }
-    .game:hover{ transform: translateY(-2px); border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.05); }
-
-    /* FULL PNG ALWAYS */
-    .thumbwrap{
-      width:100%;
-      aspect-ratio: 16 / 9;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:
-        radial-gradient(280px 150px at 25% 20%, rgba(124,92,255,.22), transparent 60%),
-        radial-gradient(240px 140px at 75% 25%, rgba(45,226,255,.16), transparent 60%),
-        radial-gradient(240px 140px at 60% 90%, rgba(255,78,205,.12), transparent 60%),
-        rgba(255,255,255,.02);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      padding: 10px;
-    }
-    .thumb{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
-      border-radius: 12px;
-      background: rgba(0,0,0,.18);
-    }
-    .meta{ padding: 12px 12px 14px; }
-    .name{ font-weight: 900; margin: 0 0 10px; font-size: 14px; letter-spacing:.2px; }
-    .smallbtn{
-      width:100%;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      cursor:pointer;
-      color: rgba(234,240,255,.95);
-      font-weight: 900;
-      letter-spacing:.2px;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-    }
-    .smallbtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.20); }
-
-    /* Community */
-    .formrow{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
-    .input{
-      flex: 1 1 220px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      outline:none;
-    }
-    .listbox{ margin-top: 12px; display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 860px){ .listbox{ grid-template-columns: 1fr; } }
-    .listcard{
-      border-radius: var(--radius-xl);
-      background: rgba(255,255,255,.035);
-      border: 1px solid rgba(255,255,255,.10);
-      overflow:hidden;
-    }
-    .listcard .hd{
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      font-weight: 900;
-      letter-spacing:.2px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .items{ padding: 10px; display:flex; flex-direction:column; gap:8px; }
-    .item{
-      padding: 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .item strong{ font-weight: 900; }
-    .item button{
-      padding: 8px 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      cursor:pointer;
-      font-weight: 900;
-    }
-    .item button:hover{ background: rgba(255,255,255,.07); }
-
-    /* Chat */
-    .chatwrap{
-      border-radius: var(--radius-xl);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      min-height: min(72vh, 740px);
-    }
-    .chathead{
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .chathead strong{ font-weight: 900; letter-spacing:.2px; }
-    .chathead .who{
-      color: var(--muted2);
-      font-size: 12px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .chatlog{
-      padding: 12px;
-      overflow:auto;
-      flex: 1 1 auto;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .msg{
-      max-width: 820px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 10px 12px;
-    }
-    .msg .top{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 6px;
-    }
-    .msg .user{ font-weight: 900; letter-spacing:.2px; }
-    .msg .time{ color: var(--muted2); font-size: 11px; white-space:nowrap; }
-    .msg .body{ color: rgba(234,240,255,.92); word-wrap: break-word; white-space: pre-wrap; }
-    .chatform{
-      padding: 12px;
-      border-top: 1px solid rgba(255,255,255,.10);
+    aside {
+      border-right: 1px solid var(--border);
       background: rgba(255,255,255,.02);
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .chatform textarea{
-      flex: 1 1 auto;
-      resize:none;
-      min-height: 44px;
-      max-height: 140px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      outline:none;
-      font: inherit;
+      padding: 14px;
     }
 
-    /* Login gate */
-    .login{
-      position:fixed; inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-      z-index: 2000;
-      background: rgba(0,0,0,.68);
-      backdrop-filter: blur(14px);
-    }
-    .login.active{ display:flex; }
-    .loginbox{
-      width: min(520px, 96vw);
-      border-radius: 26px;
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 30px 80px rgba(0,0,0,.55);
-      overflow:hidden;
-    }
-    .loginbox .top{
-      padding: 16px 16px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    .loginbox h1{ margin:0 0 6px; font-size: 18px; letter-spacing:.2px; }
-    .loginbox p{ margin:0; color: var(--muted); font-size: 13px; }
-    .loginbox .mid{ padding: 14px 16px 16px; display:flex; flex-direction:column; gap:10px; }
-    .loginbox .warn{ color: var(--muted2); font-size: 12px; line-height: 1.35; }
-
-    .pillrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-
-    .foot{
-      margin-top: 14px;
-      color: var(--muted2);
+    .nav-title {
       font-size: 12px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin: 6px 10px 10px;
     }
-    code{ color: rgba(234,240,255,.92); }
-    .sep{ width:6px; height:6px; border-radius:999px; background: rgba(255,255,255,.18); display:inline-block; }
 
-    /* ===== FULLSCREEN GAME LAYER =====
-       This covers EVERYTHING (including top nav) when active.
-    */
-    .gamefs{
-      position: fixed;
-      inset: 0;
-      display: none;
-      z-index: 999999;
-      background: #000;
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .gamefs.active{ display:block; }
-    .gamefs iframe{
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display:block;
-      background:#000;
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: background .15s ease, border-color .15s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav a:hover {
+      background: var(--hover);
+      border-color: var(--border);
+    }
+
+    .nav a.active {
+      background: var(--active);
+      border-color: var(--border);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.35);
+      flex: 0 0 auto;
+    }
+
+    main {
+      padding: 18px;
+    }
+
+    .card {
+      max-width: 900px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .card h1 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    code {
+      background: rgba(255,255,255,.06);
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
     }
   </style>
 </head>
-
 <body>
-  <div class="bg-sheen" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="app">
+    <header>
+      <!-- Title in the top-left -->
+      <div class="brand">StudyMath</div>
+    </header>
 
-  <!-- TOP NAV -->
-  <div class="topbar-wrap">
-    <div class="topbar">
-      <a class="brand" href="#home" title="Go Home">
-        <div class="logo" aria-hidden="true"></div>
-        <div class="title">
-          <strong>FusionHub</strong>
-          <span>Games • Community • Live Chat</span>
-        </div>
-      </a>
-
-      <nav class="nav">
-        <a href="#home" data-page="home">Home</a>
-        <a href="#games" data-page="games">Games</a>
-        <a href="#community" data-page="community">Community</a>
-        <a href="#live" data-page="live">Live Chat</a>
-        <a href="#watch" data-page="watch">Watch</a>
-        <a href="#profile" data-page="profile">Profile</a>
-        <a href="#settings" data-page="settings">Settings</a>
+    <aside>
+      <div class="nav-title">Pages</div>
+      <nav class="nav" id="nav">
+        <!-- 3 pages named PUT NAME HERE -->
+        <a href="https://example.com/page1" data-key="page1">
+          <span class="dot"></span>
+          <span>PUT NAME HERE</span>
+        </a>
+        <a href="https://example.com/page2" data-key="page2">
+          <span class="dot"></span>
+          <span>PUT NAME HERE</span>
+        </a>
+        <a href="https://example.com/page3" data-key="page3">
+          <span class="dot"></span>
+          <span>PUT NAME HERE</span>
+        </a>
       </nav>
-    </div>
-  </div>
+    </aside>
 
-  <main class="shell">
-    <!-- HOME -->
-    <section class="page" id="page-home" data-title="Home">
-      <div class="hero">
-        <div class="card">
-          <div class="inner">
-            <h2>Welcome</h2>
-            <p>
-              Click a game to open it in true fullscreen (nothing else visible).
-              Press <code>Esc</code> to close.
-            </p>
-
-            <div style="height:12px"></div>
-            <button class="btn primary" onclick="go('#games')">Open Games</button>
-            <button class="btn hot" onclick="go('#live')" style="margin-left:8px;">Open Live Chat</button>
-            <button class="btn" onclick="go('#community')" style="margin-left:8px;">Open Community</button>
-
-            <div class="foot">
-              Put PNGs in <code>/thumbnails</code>.
-              <span class="sep"></span>
-              For chat across computers, paste Firebase config in this file.
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="inner">
-            <h2>Setup</h2>
-            <p>
-              Live chat works once you paste your Firebase config where it says
-              <code>PASTE_FIREBASE_CONFIG_HERE</code>.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GAMES -->
-    <section class="page" id="page-games" data-title="Games">
-      <div class="toolbar">
-        <div class="left">
-          <span class="chip">Library</span>
-          <span class="chip">3 Games</span>
-        </div>
-      </div>
-
-      <div class="games-grid" id="gamesGrid"></div>
-
-      <div class="foot">
-        Edit the <code>GAMES</code> array for names/thumbnails/links.
-      </div>
-    </section>
-
-    <!-- COMMUNITY -->
-    <section class="page" id="page-community" data-title="Community">
+    <main>
       <div class="card">
-        <div class="inner">
-          <h2>Community</h2>
-          <p>Create Forums and Group Chats (saved locally in your browser).</p>
-
-          <div class="formrow" style="margin-top:14px;">
-            <input class="input" id="forumName" placeholder="Forum name" />
-            <button class="btn primary" id="createForumBtn">Create Forum</button>
-          </div>
-
-          <div class="formrow">
-            <input class="input" id="groupName" placeholder="Group chat name" />
-            <button class="btn hot" id="createGroupBtn">Create Group Chat</button>
-          </div>
-
-          <div class="listbox">
-            <div class="listcard">
-              <div class="hd">
-                <span>Forums</span>
-                <span style="color:var(--muted2); font-size:12px;" id="forumsCount"></span>
-              </div>
-              <div class="items" id="forumsList"></div>
-            </div>
-            <div class="listcard">
-              <div class="hd">
-                <span>Group Chats</span>
-                <span style="color:var(--muted2); font-size:12px;" id="groupsCount"></span>
-              </div>
-              <div class="items" id="groupsList"></div>
-            </div>
-          </div>
-        </div>
+        <h1>Welcome to StudyMath</h1>
+        <p>
+          Click a page in the left sidebar. It will navigate <em>in this tab</em> and change the URL to an
+          <code>example.com</code> link (no new tab, no embed).
+        </p>
+        <div class="hint" id="hint"></div>
       </div>
-    </section>
-
-    <!-- LIVE CHAT -->
-    <section class="page" id="page-live" data-title="Live Chat">
-      <div class="chatwrap">
-        <div class="chathead">
-          <strong>Live Chat</strong>
-          <div class="who">
-            <span>Signed in as: <span id="whoami" style="font-weight:900;"></span></span>
-            <span class="sep"></span>
-            <button class="btn ghost" id="changeUserBtn" type="button">Change Username</button>
-          </div>
-        </div>
-
-        <div class="chatlog" id="chatLog"></div>
-
-        <form class="chatform" id="chatForm" autocomplete="off">
-          <textarea id="chatInput" placeholder="Type a message… (Enter to send, Shift+Enter for new line)"></textarea>
-          <button class="btn primary" type="submit">Send</button>
-        </form>
-      </div>
-
-      <div class="foot">
-        Paste Firebase config in this file to enable cross-computer live chat.
-      </div>
-    </section>
-
-    <!-- WATCH / PROFILE / SETTINGS (embedded placeholders) -->
-    <section class="page" id="page-watch" data-title="Watch">
-      <div class="card"><div class="inner"><h2>Watch</h2><p>Replace this page with your own content later.</p></div></div>
-    </section>
-
-    <section class="page" id="page-profile" data-title="Profile">
-      <div class="card"><div class="inner"><h2>Profile</h2><p>Replace this page with your own content later.</p></div></div>
-    </section>
-
-    <section class="page" id="page-settings" data-title="Settings">
-      <div class="card"><div class="inner"><h2>Settings</h2><p>Replace this page with your own content later.</p></div></div>
-    </section>
-  </main>
-
-  <!-- FULLSCREEN GAME LAYER -->
-  <div class="gamefs" id="gameFS" aria-hidden="true">
-    <iframe id="gameFSFrame" src="about:blank" title="Game Fullscreen"></iframe>
+    </main>
   </div>
 
-  <!-- FIRST-TIME USERNAME LOGIN -->
-  <div class="login" id="loginGate" role="dialog" aria-modal="true" aria-label="Login">
-    <div class="loginbox">
-      <div class="top">
-        <h1>Choose a username</h1>
-        <p>This name will appear on chat messages.</p>
-      </div>
-      <div class="mid">
-        <input class="input" id="usernameInput" placeholder="Username" maxlength="24" />
-        <div class="pillrow">
-          <button class="btn primary" id="enterBtn" type="button">Enter</button>
-          <button class="btn ghost" id="randomBtn" type="button">Random</button>
-        </div>
+  <script>
+    // Optional: visually mark the "active" link based on current URL
+    // (This will mostly matter if you later change these links to your own site pages.)
+    const nav = document.getElementById("nav");
+    const hint = document.getElementById("hint");
 
-        <div class="warn">
-          If you want the same identity across computers automatically, you’d need real account auth.
-          This template uses a username + live chat via Firebase.
-        </div>
+    function setActiveFromUrl() {
+      const current = window.location.href;
+      const links = [...nav.querySelectorAll("a")];
 
-        <div id="loginError" style="display:none; color: rgba(255,255,255,.78); font-size:12px;"></div>
-      </div>
-    </div>
-  </div>
+      links.forEach(a => a.classList.remove("active"));
+      const match = links.find(a => current.startsWith(a.href));
+      if (match) match.classList.add("active");
 
-  <!-- Everything (routing + games + community + chat) -->
-  <script type="module">
-    // =========================
-    //  ROUTING
-    // =========================
-    const PAGES = ["home","games","community","live","watch","profile","settings"];
-
-    function go(hash){ location.hash = hash; }
-    window.go = go;
-
-    function currentPageFromHash(){
-      const h = (location.hash || "#home").replace("#","").trim().toLowerCase();
-      return PAGES.includes(h) ? h : "home";
-    }
-    function setActivePage(page){
-      for (const id of PAGES){
-        const el = document.getElementById("page-" + id);
-        if (!el) continue;
-        el.classList.toggle("active", id === page);
-      }
-      document.querySelectorAll('.nav a[data-page]').forEach(a=>{
-        a.classList.toggle("active", a.dataset.page === page);
-      });
-      const title = document.querySelector(`#page-${page}`)?.dataset.title || "FusionHub";
-      document.title = `FusionHub — ${title}`;
-    }
-    window.addEventListener("hashchange", ()=> setActivePage(currentPageFromHash()));
-    setActivePage(currentPageFromHash());
-
-    // =========================
-    //  HELPERS
-    // =========================
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-    function escapeAttr(str){ return String(str).replaceAll("\\","\\\\").replaceAll("'","\\'"); }
-
-    // =========================
-    //  FULLSCREEN GAME LAUNCHER
-    // =========================
-    const gameFS = document.getElementById("gameFS");
-    const gameFSFrame = document.getElementById("gameFSFrame");
-    let fsActive = false;
-
-    async function requestFullScreen(el){
-      try{
-        if (el.requestFullscreen) return await el.requestFullscreen();
-        if (el.webkitRequestFullscreen) return await el.webkitRequestFullscreen();
-        if (el.msRequestFullscreen) return await el.msRequestFullscreen();
-      }catch{}
-    }
-    async function exitFullScreen(){
-      try{
-        if (document.fullscreenElement) return await document.exitFullscreen();
-        if (document.webkitFullscreenElement) return await document.webkitExitFullscreen();
-        if (document.msFullscreenElement) return await document.msExitFullscreen();
-      }catch{}
+      hint.textContent = "Current URL: " + current;
     }
 
-    async function openGameFullscreen(title, url){
-      // Show the cover layer
-      gameFSFrame.src = url || "https://example.com";
-      gameFS.classList.add("active");
-      fsActive = true;
+    // Make sure clicking navigates in same tab (default behavior),
+    // and NOT opening a new tab (no target=_blank used).
+    nav.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a) return;
 
-      // Prevent scrolling behind
-      document.body.style.overflow = "hidden";
-
-      // Try to request real browser fullscreen (user gesture required; click counts)
-      await requestFullScreen(gameFS);
-    }
-
-    async function closeGameFullscreen(){
-      if (!fsActive) return;
-      fsActive = false;
-
-      // Exit browser fullscreen if we got it
-      await exitFullScreen();
-
-      // Hide layer + stop game
-      gameFS.classList.remove("active");
-      gameFSFrame.src = "about:blank";
-      document.body.style.overflow = "";
-    }
-
-    window.openGameFullscreen = openGameFullscreen;
-    window.closeGameFullscreen = closeGameFullscreen;
-
-    // If user hits Esc while game is open: close the game.
-    window.addEventListener("keydown", async (e)=>{
-      if (e.key === "Escape" && fsActive){
-        e.preventDefault();
-        await closeGameFullscreen();
-      }
-    });
-
-    // If user exits fullscreen via browser UI: also close the layer.
-    document.addEventListener("fullscreenchange", ()=>{
-      if (fsActive && !document.fullscreenElement){
-        // If they left fullscreen, still keep it clean by closing the game.
-        closeGameFullscreen();
-      }
-    });
-
-    // =========================
-    //  LOGIN (USERNAME)
-    // =========================
-    const LS_USER = "fusionhub_username_v1";
-    const loginGate = document.getElementById("loginGate");
-    const usernameInput = document.getElementById("usernameInput");
-    const loginError = document.getElementById("loginError");
-    const whoami = document.getElementById("whoami");
-
-    function sanitizeUsername(name){
-      const trimmed = (name || "").trim();
-      const cleaned = trimmed.replace(/[^\w \-]/g, "").replace(/\s+/g, " ");
-      return cleaned.slice(0, 24);
-    }
-    function showLogin(){
-      loginGate.classList.add("active");
-      usernameInput.value = "";
-      loginError.style.display = "none";
-      usernameInput.focus();
-    }
-    function setUsername(name){
-      const u = sanitizeUsername(name);
-      if (!u || u.length < 2){
-        loginError.textContent = "Username must be at least 2 characters.";
-        loginError.style.display = "block";
-        return false;
-      }
-      localStorage.setItem(LS_USER, u);
-      whoami.textContent = u;
-      loginGate.classList.remove("active");
-      return true;
-    }
-    function getUsername(){ return localStorage.getItem(LS_USER) || ""; }
-
-    const existing = getUsername();
-    if (!existing) showLogin();
-    else whoami.textContent = existing;
-
-    document.getElementById("enterBtn").addEventListener("click", ()=> setUsername(usernameInput.value));
-    usernameInput.addEventListener("keydown", (e)=>{
-      if (e.key === "Enter"){ e.preventDefault(); setUsername(usernameInput.value); }
-    });
-    document.getElementById("randomBtn").addEventListener("click", ()=>{
-      const n = Math.floor(Math.random()*9000)+1000;
-      usernameInput.value = `User${n}`;
-      usernameInput.focus();
-    });
-    document.getElementById("changeUserBtn").addEventListener("click", showLogin);
-
-    // =========================
-    //  GAMES (3 placeholders)
-    // =========================
-    const GAMES = [
-      { name:"PUT NAME HERE", img:"thumbnails/game1.png", url:"https://example.com" },
-      { name:"PUT NAME HERE", img:"thumbnails/game2.png", url:"https://example.com" },
-      { name:"PUT NAME HERE", img:"thumbnails/game3.png", url:"https://example.com" },
-    ];
-
-    function svgFallback(title){
-      const safe = String(title).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-      return `data:image/svg+xml;utf8,` + encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90">
-          <defs>
-            <radialGradient id="g1" cx="30%" cy="25%" r="70%">
-              <stop offset="0" stop-color="rgba(124,92,255,0.7)"/>
-              <stop offset="1" stop-color="rgba(0,0,0,0)"/>
-            </radialGradient>
-            <radialGradient id="g2" cx="75%" cy="25%" r="70%">
-              <stop offset="0" stop-color="rgba(45,226,255,0.55)"/>
-              <stop offset="1" stop-color="rgba(0,0,0,0)"/>
-            </radialGradient>
-            <radialGradient id="g3" cx="55%" cy="85%" r="70%">
-              <stop offset="0" stop-color="rgba(255,78,205,0.4)"/>
-              <stop offset="1" stop-color="rgba(0,0,0,0)"/>
-            </radialGradient>
-          </defs>
-          <rect width="160" height="90" fill="rgba(255,255,255,0.04)"/>
-          <rect width="160" height="90" fill="url(#g1)"/>
-          <rect width="160" height="90" fill="url(#g2)"/>
-          <rect width="160" height="90" fill="url(#g3)"/>
-          <rect x="10" y="58" width="140" height="22" rx="11" fill="rgba(0,0,0,0.35)" stroke="rgba(255,255,255,0.12)"/>
-          <text x="80" y="73" fill="rgba(234,240,255,0.92)" font-size="10" text-anchor="middle" font-family="system-ui,Segoe UI,Arial">${safe}</text>
-        </svg>
-      `);
-    }
-
-    function renderGames(){
-      const grid = document.getElementById("gamesGrid");
-      grid.innerHTML = GAMES.map(g=>`
-        <article class="game" onclick="openGameFullscreen('${escapeAttr(g.name)}','${escapeAttr(g.url)}')">
-          <div class="thumbwrap">
-            <img class="thumb"
-              src="${g.img}"
-              alt="${escapeHtml(g.name)} thumbnail"
-              loading="lazy"
-              onerror="this.onerror=null; this.src='${svgFallback(g.name)}';"
-            />
-          </div>
-          <div class="meta">
-            <p class="name">${escapeHtml(g.name)}</p>
-            <button class="smallbtn" onclick="event.stopPropagation(); openGameFullscreen('${escapeAttr(g.name)}','${escapeAttr(g.url)}')">
-              Launch
-            </button>
-          </div>
-        </article>
-      `).join("");
-    }
-    renderGames();
-
-    // =========================
-    //  COMMUNITY (LOCAL)
-    // =========================
-    const LS_FORUMS = "fusionhub_forums_v1";
-    const LS_GROUPS = "fusionhub_groups_v1";
-
-    function loadList(key){
-      try{
-        const raw = localStorage.getItem(key);
-        const data = raw ? JSON.parse(raw) : [];
-        return Array.isArray(data) ? data : [];
-      }catch{ return []; }
-    }
-    function saveList(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
-
-    let forums = loadList(LS_FORUMS);
-    let groups = loadList(LS_GROUPS);
-
-    function renderCommunity(){
-      document.getElementById("forumsCount").textContent = forums.length ? `${forums.length}` : "";
-      document.getElementById("groupsCount").textContent = groups.length ? `${groups.length}` : "";
-
-      const forumsList = document.getElementById("forumsList");
-      const groupsList = document.getElementById("groupsList");
-
-      forumsList.innerHTML = forums.length ? forums.map((name, idx)=>`
-        <div class="item">
-          <strong>${escapeHtml(name)}</strong>
-          <div style="display:flex; gap:8px;">
-            <button onclick="openGameFullscreen('Forum — ${escapeAttr(name)}','https://example.com')">Open</button>
-            <button onclick="deleteForum(${idx})">Delete</button>
-          </div>
-        </div>
-      `).join("") : `<div class="item"><span style="color:var(--muted2)">No forums yet.</span></div>`;
-
-      groupsList.innerHTML = groups.length ? groups.map((name, idx)=>`
-        <div class="item">
-          <strong>${escapeHtml(name)}</strong>
-          <div style="display:flex; gap:8px;">
-            <button onclick="openGameFullscreen('Group Chat — ${escapeAttr(name)}','https://example.com')">Open</button>
-            <button onclick="deleteGroup(${idx})">Delete</button>
-          </div>
-        </div>
-      `).join("") : `<div class="item"><span style="color:var(--muted2)">No group chats yet.</span></div>`;
-    }
-
-    function createForum(){
-      const input = document.getElementById("forumName");
-      const name = (input.value || "").trim();
-      if (!name) return;
-      forums.unshift(name);
-      saveList(LS_FORUMS, forums);
-      input.value = "";
-      renderCommunity();
-    }
-    function createGroup(){
-      const input = document.getElementById("groupName");
-      const name = (input.value || "").trim();
-      if (!name) return;
-      groups.unshift(name);
-      saveList(LS_GROUPS, groups);
-      input.value = "";
-      renderCommunity();
-    }
-
-    window.deleteForum = (idx)=>{ forums.splice(idx,1); saveList(LS_FORUMS, forums); renderCommunity(); };
-    window.deleteGroup = (idx)=>{ groups.splice(idx,1); saveList(LS_GROUPS, groups); renderCommunity(); };
-
-    document.getElementById("createForumBtn").addEventListener("click", createForum);
-    document.getElementById("createGroupBtn").addEventListener("click", createGroup);
-    document.getElementById("forumName").addEventListener("keydown", (e)=>{ if(e.key==="Enter") createForum(); });
-    document.getElementById("groupName").addEventListener("keydown", (e)=>{ if(e.key==="Enter") createGroup(); });
-    renderCommunity();
-
-    // =========================
-    //  LIVE CHAT (Firebase)
-    // =========================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
-
-    const chatLog = document.getElementById("chatLog");
-    const chatForm = document.getElementById("chatForm");
-    const chatInput = document.getElementById("chatInput");
-
-    function addMessageToUI(msg){
-      const el = document.createElement("div");
-      el.className = "msg";
-      const when = msg.createdAt ? new Date(msg.createdAt).toLocaleString([], { month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" }) : "";
-      el.innerHTML = `
-        <div class="top">
-          <div class="user">${escapeHtml(msg.user || "Unknown")}</div>
-          <div class="time">${escapeHtml(when)}</div>
-        </div>
-        <div class="body">${escapeHtml(msg.text || "")}</div>
-      `;
-      chatLog.appendChild(el);
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }
-
-    function configLooksPasted(cfg){
-      return cfg && Object.values(cfg).every(v => typeof v === "string" && v && !v.startsWith("PASTE_"));
-    }
-
-    // ===== PASTE_FIREBASE_CONFIG_HERE =====
-    const firebaseConfig = {
-      apiKey: "PASTE_YOURS",
-      authDomain: "PASTE_YOURS",
-      databaseURL: "PASTE_YOURS",
-      projectId: "PASTE_YOURS",
-      storageBucket: "PASTE_YOURS",
-      messagingSenderId: "PASTE_YOURS",
-      appId: "PASTE_YOURS"
-    };
-    // =====================================
-
-    let db = null;
-
-    if (configLooksPasted(firebaseConfig)) {
-      const app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-
-      const messagesRef = query(ref(db, "messages"), limitToLast(80));
-      onChildAdded(messagesRef, (snap) => {
-        const data = snap.val() || {};
-        addMessageToUI({
-          user: data.user,
-          text: data.text,
-          createdAt: data.createdAt || Date.now()
-        });
-      });
-    } else {
-      addMessageToUI({
-        user: "System",
-        text: "Live chat not connected yet. Paste your Firebase config where it says PASTE_FIREBASE_CONFIG_HERE.",
-        createdAt: Date.now()
-      });
-    }
-
-    // Enter to send; Shift+Enter newline
-    chatInput.addEventListener("keydown", (e)=>{
-      if (e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        chatForm.requestSubmit();
-      }
-    });
-
-    chatForm.addEventListener("submit", async (e)=>{
+      // Navigate in the same tab by setting location.
+      // (Equivalent to normal link navigation, but explicit.)
       e.preventDefault();
-      const text = (chatInput.value || "").trim();
-      if (!text) return;
-
-      const user = getUsername();
-      if (!user){
-        showLogin();
-        return;
-      }
-      if (!db){
-        addMessageToUI({ user:"System", text:"Chat not connected (Firebase config missing).", createdAt: Date.now() });
-        return;
-      }
-
-      try{
-        await push(ref(db, "messages"), { user, text, createdAt: Date.now() });
-        chatInput.value = "";
-        chatInput.focus();
-      }catch(err){
-        addMessageToUI({ user:"System", text:`Send failed: ${String(err?.message || err)}`, createdAt: Date.now() });
-      }
+      window.location.href = a.href;
     });
+
+    setActiveFromUrl();
   </script>
 </body>
 </html>
