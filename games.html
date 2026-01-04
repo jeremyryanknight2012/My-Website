@@ -41,11 +41,7 @@
       background: linear-gradient(180deg, var(--panel), var(--panel2));
     }
 
-    .brand {
-      font-weight: 800;
-      letter-spacing: .2px;
-      font-size: 18px;
-    }
+    .brand { font-weight: 800; letter-spacing: .2px; font-size: 18px; }
 
     aside {
       border-right: 1px solid var(--border);
@@ -61,11 +57,7 @@
       margin: 6px 10px 10px;
     }
 
-    .nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .nav { display: flex; flex-direction: column; gap: 6px; }
 
     .nav a {
       display: flex;
@@ -80,23 +72,17 @@
       cursor: pointer;
       user-select: none;
     }
-
     .nav a:hover { background: var(--hover); border-color: var(--border); }
     .nav a.active { background: var(--active); border-color: var(--border); }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 10px; height: 10px;
       border-radius: 999px;
       background: rgba(255,255,255,.35);
       flex: 0 0 auto;
     }
 
-    main {
-      padding: 18px;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+    main { padding: 18px; overflow-y: auto; overflow-x: hidden; }
 
     .card {
       max-width: 100%;
@@ -159,6 +145,11 @@
       -webkit-overflow-scrolling: touch;
     }
 
+    .scroller::-webkit-scrollbar { height: 10px; }
+    .scroller::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
+    .scroller::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 999px; }
+    .scroller::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.20); }
+
     .game {
       scroll-snap-align: start;
       flex: 0 0 240px;
@@ -184,8 +175,7 @@
 
     .game-name { margin: 0; font-weight: 800; font-size: 14px; }
 
-    /* Launch link styled like your button */
-    .game-link {
+    .game-btn {
       appearance: none;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.06);
@@ -194,14 +184,74 @@
       border-radius: 12px;
       font-weight: 800;
       cursor: pointer;
-      text-decoration: none;
       text-align: center;
-      display: block;
     }
-    .game-link:hover { background: rgba(255,255,255,.10); }
+    .game-btn:hover { background: rgba(255,255,255,.10); }
 
     #searchRow { display:none; }
     #searchNote { margin-top: 8px; color: var(--muted); font-size: 13px; }
+
+    /* ===== Fullscreen overlay player ===== */
+    .player {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: none;
+      z-index: 9999;
+    }
+    .player.open { display: block; }
+
+    .player-topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      background: rgba(0,0,0,.55);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(6px);
+    }
+
+    .player-title {
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: .2px;
+      color: var(--text);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .player-hint {
+      font-weight: 600;
+      font-size: 12px;
+      color: rgba(255,255,255,.72);
+    }
+
+    .close-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .close-btn:hover { background: rgba(255,255,255,.12); }
+
+    .player-frame {
+      position: absolute;
+      left: 0; right: 0;
+      top: 52px; bottom: 0;
+      width: 100%;
+      height: calc(100% - 52px);
+      border: 0;
+      display: block;
+      background: #000;
+    }
   </style>
 </head>
 <body>
@@ -220,7 +270,7 @@
     <main>
       <div class="card">
         <h1>Games</h1>
-        <p>Search for a game, or scroll the rows below. Launch always opens in this tab.</p>
+        <p>Search for a game, or scroll, and enjoy! Press Esc to exit.</p>
 
         <div class="search-wrap">
           <input id="searchInput" class="search-input" type="text" placeholder="Search games (example: retro bowl)" autocomplete="off" />
@@ -246,8 +296,20 @@
     </main>
   </div>
 
+  <!-- Overlay Player -->
+  <div class="player" id="player" aria-hidden="true">
+    <div class="player-topbar">
+      <div class="player-title">
+        <span id="playerName">Game</span>
+        <span class="player-hint">Press Esc to exit</span>
+      </div>
+      <button class="close-btn" id="closeBtn" type="button">Exit</button>
+    </div>
+    <iframe class="player-frame" id="playerFrame" src="about:blank" allow="fullscreen; autoplay"></iframe>
+  </div>
+
   <script>
-    // Active nav highlight (simple + safe)
+    // Active nav highlight
     const nav = document.getElementById("nav");
     const current = window.location.href;
     [...nav.querySelectorAll("a")].forEach(a => {
@@ -265,16 +327,6 @@
       ids.unshift(id);
       setRecent(ids);
     }
-
-    // Make launching robust:
-    // - It's a real <a href="..."> so it ALWAYS works
-    // - If JS works, we save recents first
-    function launchGame(id, url){
-      addRecent(id);
-      // allow navigation to proceed normally
-      return true;
-    }
-    window.launchGame = launchGame;
 
     // Game lists
     const TOP_GAMES = [
@@ -303,9 +355,7 @@
       wrap.innerHTML = `
         <img class="thumb" src="${game.thumb}" alt="${game.name}">
         <p class="game-name">${game.name}</p>
-        <a class="game-link"
-           href="${game.url}"
-           onclick="return launchGame('${game.id}', '${game.url}')">Launch</a>
+        <button class="game-btn" data-id="${game.id}" data-title="${game.name}" data-url="${game.url}">Launch</button>
       `;
       return wrap;
     }
@@ -316,7 +366,85 @@
     TOP_GAMES.forEach(g => topScroller.appendChild(buildCard(g)));
     GAMES.forEach(g => allScroller.appendChild(buildCard(g)));
 
-    // Search
+    // ===== Overlay Player Logic with fallback =====
+    const player = document.getElementById("player");
+    const playerFrame = document.getElementById("playerFrame");
+    const playerName = document.getElementById("playerName");
+    const closeBtn = document.getElementById("closeBtn");
+
+    async function openPlayer(title, url) {
+      addRecent(title); // (not used; just in case)
+      playerName.textContent = title;
+
+      player.classList.add("open");
+      player.setAttribute("aria-hidden", "false");
+      playerFrame.src = url;
+
+      // request fullscreen -> browser shows "Press Esc to exit"
+      try {
+        if (!document.fullscreenElement && player.requestFullscreen) {
+          await player.requestFullscreen();
+        }
+      } catch (e) {}
+
+      // Fallback: if iframe is blocked, it will stay blank.
+      // After a short delay, if we detect it didn't load, navigate normally.
+      setTimeout(() => {
+        try {
+          // If the iframe is blocked by X-Frame-Options/CSP, accessing contentWindow can throw.
+          // We'll treat that as "blocked" and open normally.
+          void playerFrame.contentWindow;
+        } catch (e) {
+          window.location.href = url;
+        }
+      }, 700);
+    }
+
+    function closePlayer() {
+      player.classList.remove("open");
+      player.setAttribute("aria-hidden", "true");
+      playerFrame.src = "about:blank";
+
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // click Launch
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".game-btn");
+      if (!btn) return;
+
+      const id = btn.getAttribute("data-id");
+      const title = btn.getAttribute("data-title") || "Game";
+      const url = btn.getAttribute("data-url");
+      if (!url) return;
+
+      // Save recently played correctly (by ID)
+      addRecentId(id);
+
+      openPlayer(title, url);
+    });
+
+    closeBtn.addEventListener("click", closePlayer);
+
+    // ESC + fullscreenchange -> close overlay
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && player.classList.contains("open")) closePlayer();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && player.classList.contains("open")) closePlayer();
+    });
+
+    // ===== Correct recent saving by ID =====
+    function addRecentId(id){
+      if(!id) return;
+      const ids = getRecent().filter(x => x !== id);
+      ids.unshift(id);
+      setRecent(ids);
+    }
+
+    // ===== Search =====
     const searchInput = document.getElementById("searchInput");
     const clearSearch = document.getElementById("clearSearch");
     const searchRow = document.getElementById("searchRow");
