@@ -184,7 +184,8 @@
 
     .game-name { margin: 0; font-weight: 800; font-size: 14px; }
 
-    .game-btn {
+    /* Launch link styled like your button */
+    .game-link {
       appearance: none;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.06);
@@ -193,8 +194,11 @@
       border-radius: 12px;
       font-weight: 800;
       cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      display: block;
     }
-    .game-btn:hover { background: rgba(255,255,255,.10); }
+    .game-link:hover { background: rgba(255,255,255,.10); }
 
     #searchRow { display:none; }
     #searchNote { margin-top: 8px; color: var(--muted); font-size: 13px; }
@@ -216,10 +220,10 @@
     <main>
       <div class="card">
         <h1>Games</h1>
-        <p>Search for a game or just scroll for one, and I hope you enjoy!</p>
+        <p>Search for a game, or scroll the rows below. Launch always opens in this tab.</p>
 
         <div class="search-wrap">
-          <input id="searchInput" class="search-input" type="text" placeholder="Search games" autocomplete="off" />
+          <input id="searchInput" class="search-input" type="text" placeholder="Search games (example: retro bowl)" autocomplete="off" />
           <button id="clearSearch" class="clear-btn" type="button">Clear</button>
         </div>
         <div id="searchNote"></div>
@@ -243,14 +247,14 @@
   </div>
 
   <script>
-    // active nav
+    // Active nav highlight (simple + safe)
     const nav = document.getElementById("nav");
     const current = window.location.href;
     [...nav.querySelectorAll("a")].forEach(a => {
       if (current === a.href || current.startsWith(a.href)) a.classList.add("active");
     });
 
-    // recent storage
+    // Recently played storage (used by index.html)
     const RECENT_KEY = "studymath_recent_v1";
     function safeParse(json, fallback){ try{return JSON.parse(json)}catch{return fallback} }
     function getRecent(){ return safeParse(localStorage.getItem(RECENT_KEY), []) }
@@ -262,7 +266,17 @@
       setRecent(ids);
     }
 
-    // game data
+    // Make launching robust:
+    // - It's a real <a href="..."> so it ALWAYS works
+    // - If JS works, we save recents first
+    function launchGame(id, url){
+      addRecent(id);
+      // allow navigation to proceed normally
+      return true;
+    }
+    window.launchGame = launchGame;
+
+    // Game lists
     const TOP_GAMES = [
       { id:"stealabrainrot", name:"Steal a Brainrot", search:"steal a brainrot", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/stealabrainrot.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/stealabrainrot.html" },
       { id:"1v1lol", name:"1v1.LOL", search:"1v1 lol 1v1.lol", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html" },
@@ -289,9 +303,9 @@
       wrap.innerHTML = `
         <img class="thumb" src="${game.thumb}" alt="${game.name}">
         <p class="game-name">${game.name}</p>
-        <button class="game-btn"
-          data-id="${game.id}"
-          data-url="${game.url}">Launch</button>
+        <a class="game-link"
+           href="${game.url}"
+           onclick="return launchGame('${game.id}', '${game.url}')">Launch</a>
       `;
       return wrap;
     }
@@ -301,19 +315,6 @@
     const allScroller = document.getElementById("allScroller");
     TOP_GAMES.forEach(g => topScroller.appendChild(buildCard(g)));
     GAMES.forEach(g => allScroller.appendChild(buildCard(g)));
-
-    // Launch handler: save recent THEN go to game in same tab
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".game-btn");
-      if (!btn) return;
-
-      const id = btn.getAttribute("data-id");
-      const url = btn.getAttribute("data-url");
-      if (!url) return;
-
-      addRecent(id);
-      window.location.href = url;
-    });
 
     // Search
     const searchInput = document.getElementById("searchInput");
