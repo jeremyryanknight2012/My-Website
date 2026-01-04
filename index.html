@@ -193,27 +193,28 @@
   <aside>
     <div class="nav-title">Pages</div>
     <nav class="nav" id="nav">
-      <a href="./"><span class="dot"></span><span>Home</span></a>
-      <a href="./games.html"><span class="dot"></span><span>Games</span></a>
-      <a href="./requests.html"><span class="dot"></span><span>Requests</span></a>
+      <!-- Absolute links so they ALWAYS work on GitHub Pages -->
+      <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
     </nav>
   </aside>
 
   <main>
     <div class="card">
       <h1>Welcome to StudyMath</h1>
-      <p>Play games and pick up right where you left off.</p>
+      <p></p>
 
       <div class="row" style="margin-top:16px;">
         <div class="row-title">
           <span>Recently Played</span>
           <div class="row-actions">
             <button class="small-btn" id="clearRecent" type="button">Clear</button>
-            <a class="small-btn" href="./games.html">Go to Games</a>
+            <a class="small-btn" href="https://jeremyryanknight2012.github.io/My-Website/games.html">Go to Games</a>
           </div>
         </div>
 
-        <p class="empty" id="recentEmpty">No recently played games yet. Go play something!</p>
+        <p class="empty" id="recentEmpty">No recently played games yet.</p>
         <div class="scroller" id="recentScroller" style="display:none;"></div>
       </div>
     </div>
@@ -221,16 +222,11 @@
 </div>
 
 <script>
-  // ===== Active nav highlight =====
+  // ===== Active nav highlight (simple + safe) =====
   const nav = document.getElementById("nav");
-  const here = (location.pathname || "").replace(/\/+$/, "");
+  const current = window.location.href;
   [...nav.querySelectorAll("a")].forEach(a => {
-    const href = (a.getAttribute("href") || "").replace(/\/+$/, "");
-    // basic match: home "./" or exact file
-    if ((href === "./" && (here.endsWith("/My-Website") || here.endsWith("/My-Website/index.html") || here === "")) ||
-        (href !== "./" && here.endsWith(href.replace("./","/")))) {
-      a.classList.add("active");
-    }
+    if (current === a.href || current.startsWith(a.href)) a.classList.add("active");
   });
 
   // ===== Recently Played =====
@@ -239,7 +235,6 @@
   const recentEmpty = document.getElementById("recentEmpty");
   const clearRecent = document.getElementById("clearRecent");
 
-  // Use ABSOLUTE urls so links never break
   const BASE = "https://jeremyryanknight2012.github.io/My-Website";
 
   const GAME_CATALOG = [
@@ -247,7 +242,6 @@
     { id:"1v1lol", title:"1v1.LOL", thumb:`${BASE}/thumbnails/1v1lol.png`, url:`${BASE}/games/1v1lol.html` },
     { id:"drivemad", title:"Drive Mad", thumb:`${BASE}/thumbnails/drivemad.png`, url:`${BASE}/games/drivemad.html` },
     { id:"retrobowl", title:"Retro Bowl", thumb:`${BASE}/thumbnails/retrobowl.png`, url:`${BASE}/games/retrobowl.html` },
-
     { id:"10minutestilldawn", title:"10 Minutes Till Dawn", thumb:`${BASE}/thumbnails/10minutestilldawn.png`, url:`${BASE}/games/10minutestilldawn.html` },
     { id:"amandatheadventurer", title:"Amanda the Adventurer", thumb:`${BASE}/thumbnails/amandatheadventurer.png`, url:`${BASE}/games/amandatheadventurer.html` },
     { id:"bankrobbery2", title:"Bank Robbery 2", thumb:`${BASE}/thumbnails/bankrobbery2.png`, url:`${BASE}/games/bankrobbery2.html` },
@@ -283,16 +277,13 @@
 
     ids.forEach(id => {
       const g = GAME_BY_ID[id];
-
       const card = document.createElement("div");
       card.className = "game";
-
       card.innerHTML = `
         <img class="thumb" src="${g.thumb}" alt="${g.title}">
         <p class="game-name">${g.title}</p>
         <a class="play-link" href="${g.url}">Play</a>
       `;
-
       recentScroller.appendChild(card);
     });
   }
@@ -304,7 +295,6 @@
 
   renderRecent();
 
-  // If you play a game in another tab, update automatically
   window.addEventListener("storage", (e) => {
     if (e.key === RECENT_KEY) renderRecent();
   });
