@@ -1,381 +1,290 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SME Requests - Suggestion Box</title>
-    <style>
-        /* =====================================
-           [1] SNOWY GLASS THEME VARIABLES
-        ===================================== */
-        @font-face {
-            font-family: "Comic Sans MS";
-            src: local("Comic Sans MS");
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyMath</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: #0f1a33;
+      --panel2: #0c162e;
+      --text: #e8eefc;
+      --muted: #a9b6d6;
+      --border: rgba(255,255,255,.10);
+      --hover: rgba(255,255,255,.07);
+      --active: rgba(255,255,255,.12);
+    }
 
-        :root {
-            /* Snowy Day Palette */
-            --color-sky-light: #e0f2f7;
-            --color-sky-dark: #c0e0e8;
-            --color-snow: #f8f8f8;
-            --color-accent-blue: #66b2b2; /* Main highlight color */
-            --color-text-dark: #33444c;
-            --color-text-light: #5a7d8a;
-            --color-glass-effect: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
-            --color-glass-border: rgba(255, 255, 255, 0.8);
-            --color-bg-primary: linear-gradient(180deg, var(--color-sky-light) 0%, var(--color-sky-dark) 100%);
-            --color-sidebar-bg: rgba(255, 255, 255, 0.7); /* Lighter sidebar */
-            --color-button-hover: #7bd3d3; /* Lighter blue */
-            
-            /* Glass card specific settings */
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background: var(--color-bg-primary);
-            color: var(--color-text-dark);
-            font-family: "Comic Sans MS", cursive, sans-serif;
-            overflow-x: hidden;
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
+    .app {
+      display: grid;
+      grid-template-rows: 56px 1fr;
+      grid-template-columns: 260px 1fr;
+      height: 100vh;
+    }
 
-        /* =====================================
-           [2] SIDEBAR STYLES (Copied from Launcher)
-        ===================================== */
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 75px;
-            height: 100%;
-            background: var(--color-sidebar-bg); /* Lighter background */
-            backdrop-filter: blur(10px); /* Glass effect */
-            border-right: 1px solid var(--color-glass-border);
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-        }
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+    }
 
-        #sidebar div {
-            padding: 15px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 24px;
-            transition: 0.2s;
-            color: var(--color-text-dark); /* Dark icons */
-        }
+    .brand {
+      font-weight: 800;
+      letter-spacing: .2px;
+      font-size: 18px;
+    }
 
-        #sidebar div:hover, .sidebar-active {
-            transform: scale(1.1);
-            background: rgba(102, 178, 178, 0.2); /* Subtle blue hover */
-            border-radius: 8px;
-            color: var(--color-accent-blue);
-        }
-        
-        /* =====================================
-           [3] MAIN CONTENT LAYOUT
-        ===================================== */
-        #main {
-            margin-left: 90px;
-            padding: 20px;
-            z-index: 5;
-            position: relative;
-        }
+    aside {
+      border-right: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      padding: 14px;
+    }
 
-        .request-container {
-            padding: 20px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 40px); /* Fill the screen */
-        }
+    .nav-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin: 6px 10px 10px;
+    }
 
-        .form-box {
-            /* This is the standard 'Card' style now */
-            background: var(--color-glass-effect);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            margin-top: -50px; /* Center it nicely */
-        }
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-        .form-box h2 {
-            font-size: 32px;
-            color: var(--color-accent-blue);
-            text-align: center;
-            margin-bottom: 25px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
-        }
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: background .15s ease, border-color .15s ease;
+      cursor: pointer;
+      user-select: none;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .nav a:hover { background: var(--hover); border-color: var(--border); }
+    .nav a.active { background: var(--active); border-color: var(--border); }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--color-text-dark);
-        }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.35);
+      flex: 0 0 auto;
+    }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid var(--color-glass-border);
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            color: var(--color-text-dark);
-            transition: border-color 0.3s, box-shadow 0.3s;
-            resize: vertical;
-        }
+    main {
+      padding: 18px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--color-accent-blue);
-            box-shadow: 0 0 0 3px rgba(102, 178, 178, 0.3);
-            outline: none;
-        }
+    .card {
+      max-width: 900px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
 
-        .submit-btn {
-            /* Standard tabBtn style */
-            width: 100%;
-            padding: 15px;
-            margin-top: 10px;
-            background: var(--color-accent-blue);
-            color: var(--color-snow);
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        }
+    .card h1 {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+    }
 
-        .submit-btn:hover {
-            background: var(--color-button-hover);
-            transform: translateY(-2px);
-        }
+    .card p {
+      margin: 0 0 14px 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
-        /* Submission feedback message styles */
-        #form-message {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            display: none;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+    /* Form styling to match UI */
+    form {
+      max-width: 520px;
+      margin-top: 8px;
+    }
 
-        /* =====================================
-           [4] SNOW BACKGROUND ANIMATION
-        ===================================== */
-        #snow-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
+    label {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-weight: 800;
+      color: var(--text);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .10em;
+    }
 
-        .snowflake {
-            position: absolute;
-            background: var(--color-snow);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: fall linear infinite;
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
-            opacity: 0;
-            filter: blur(0.5px);
-        }
-        
-        @keyframes fall {
-            0% {
-                opacity: 0;
-                transform: translateY(-10vh) scale(0.8);
-            }
-            5% {
-                opacity: 0.9;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(110vh) scale(1.2);
-            }
-        }
-    </style>
+    select, textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline: none;
+      font-weight: 700;
+    }
+
+    textarea { resize: vertical; min-height: 120px; }
+
+    select option { color: #000; } /* browser uses native select; options often need dark text */
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .15s ease, transform .05s ease;
+    }
+
+    .btn:hover { background: rgba(255,255,255,.10); }
+    .btn:active { transform: translateY(1px); }
+
+    #status {
+      margin-top: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .status-ok { color: #b7f7c9; }
+    .status-bad { color: #ffb7b7; }
+  </style>
 </head>
-
 <body>
-    <div id="snow-layer"></div>
+  <div class="app">
+    <header>
+      <div class="brand">StudyMath</div>
+    </header>
 
-    <div id="sidebar">
-        <div onclick="window.location.href='index.html'">🏠</div>
-        <div onclick="window.location.href='index.html#games'">🎮</div>
-        <div onclick="window.location.href='index.html#friends'">👥</div>
-        <div onclick="window.location.href='index.html#profile'">👤</div>
-        <div onclick="window.location.href='index.html#settingsPage'">⚙️</div>
-        <div onclick="window.location.href='theater.html'">🎬</div>
-        <div class="sidebar-active">📮</div> <div onclick="window.location.href='proxies.html'">🌐</div>
-        <div onclick="panic()">⚠</div>
-    </div>
+    <aside>
+      <div class="nav-title">Pages</div>
+      <nav class="nav" id="nav">
+        <a href="./" data-key="home"><span class="dot"></span><span>Home</span></a>
+        <a href="./games.html" data-key="games"><span class="dot"></span><span>Games</span></a>
+        <a href="./requests.html" data-key="requests"><span class="dot"></span><span>Requests</span></a>
+      </nav>
+    </aside>
 
-    <div id="main">
-        <div class="request-container">
-            <div class="form-box">
-                <h2>
-                    <span style="color: var(--color-accent-blue)">📮</span> Suggestion Box
-                    <span style="color: var(--color-accent-blue)">💡</span>
-                </h2>
-                <form id="requestForm">
-                    <div class="form-group">
-                        <label for="type">Request Type</label>
-                        <select id="type" name="Request Type" required>
-                            <option value="" disabled selected>Select an option</option>
-                            <option value="Game">Game Request (Name of game)</option>
-                            <option value="Proxy">Proxy Request (Need access to X site)</option>
-                            <option value="Feature">Feature Suggestion (New button/idea)</option>
-                            <option value="Bug">Report a Bug/Problem</option>
-                            <option value="Other">Other Suggestion</option>
-                        </select>
-                    </div>
+    <main>
+      <div class="card">
+        <h1>Requests</h1>
+        <p>Submit a request or report a bug. Your message will be sent using EmailJS.</p>
 
-                    <div class="form-group">
-                        <label for="detail">Details / Link (Be Specific!)</label>
-                        <textarea
-                            id="detail"
-                            name="Details"
-                            rows="4"
-                            placeholder="E.g., The full name of the game, a link to the site you need proxied, or a detailed description of the feature."
-                            required
-                        ></textarea>
-                    </div>
+        <!-- EmailJS SDK -->
+        <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+        <script>
+          (function () {
+            emailjs.init("WVn4FyckWoY68y1Kp");
+          })();
+        </script>
 
-                    <div class="form-group">
-                        <label for="name">Your Name (Optional)</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="User Name"
-                            placeholder="Your Name / Nickname"
-                        />
-                    </div>
+        <form id="requestForm">
+          <label><strong>Request Type</strong></label><br>
+          <select name="request_type" required>
+            <option value="">Select an option</option>
+            <option>Game Request</option>
+            <option>Movie Request</option>
+            <option>TV Show Request</option>
+            <option>YouTube Channel Request</option>
+            <option>Anime Request</option>
+            <option>Feature Suggestion</option>
+            <option>Report a Bug</option>
+            <option>Other</option>
+          </select>
 
-                    <button type="submit" class="submit-btn">
-                        Send Request <span style="font-size: 1.2em">🚀</span>
-                    </button>
-                </form>
-                
-                <div id="form-message"></div>
-            </div>
-        </div>
-    </div>
+          <label><strong>Details</strong></label><br>
+          <textarea name="details" required rows="5"
+            placeholder="Describe your request..."></textarea>
 
-    <script>
-        function panic() {
-            location.href = "https://classroom.google.com"; 
-        }
+          <label><strong>Name (optional)</strong></label><br>
+          <input type="text" name="name" placeholder="Your name (optional)">
 
-        // 1. DISCORD WEBHOOK URL
-        const WEBHOOK_URL = "https://discord.com/api/webhooks/1442000760710758430/ZWZiA2xZPAVzbD15kHA-C2YxoLb3rFXUl-xuiBmOhpmD1cylFQ28jGl3S8ZRmiPGhLwu";
+          <button class="btn" type="submit">Submit Request</button>
 
-        // 2. Form Submission Handler
-        document.getElementById('requestForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const form = e.target;
-            const messageDiv = document.getElementById('form-message');
-            const submitButton = form.querySelector('.submit-btn');
+          <p id="status"></p>
+        </form>
 
-            const type = document.getElementById('type').value;
-            const detail = document.getElementById('detail').value;
-            const name = document.getElementById('name').value || "Anonymous User";
-            
-            submitButton.disabled = true;
-            submitButton.textContent = "Sending...";
-            messageDiv.style.display = 'none';
+        <script>
+          const nav = document.getElementById("nav");
 
-            const payload = {
-                username: "calcfree Request Bot",
-                avatar_url: "https://i.imgur.com/8YlV4z8.png", 
-                embeds: [{
-                    title: `New Request: ${type}`,
-                    description: `**Details:**\n${detail}`,
-                    color: 6950290, 
-                    fields: [{ name: "Submitted By", value: name, inline: true }, { name: "Type", value: type, inline: true }],
-                    timestamp: new Date().toISOString(),
-                    footer: { text: "Via calcfree request form" }
-                }]
-            };
+          function normalizeUrl(u) { return (u || "").replace(/\/+$/, ""); }
+          function setActiveFromUrl() {
+            const current = normalizeUrl(window.location.href);
+            const links = [...nav.querySelectorAll("a")];
+            links.forEach(a => a.classList.remove("active"));
 
-            try {
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                });
-
-                if (response.ok) {
-                    messageDiv.textContent = "✅ Request sent successfully! Thank you.";
-                    messageDiv.className = 'success';
-                    form.reset(); 
-                } else {
-                    messageDiv.textContent = `❌ Submission failed! Status: ${response.status}. Check webhook or form fields.`;
-                    messageDiv.className = 'error';
-                }
-            } catch (error) {
-                messageDiv.textContent = "❌ An error occurred during submission. Check your connection.";
-                messageDiv.className = 'error';
-                console.error('Submission Error:', error);
-            } finally {
-                messageDiv.style.display = 'block';
-                submitButton.disabled = false;
-                submitButton.textContent = "Send Request 🚀";
+            let best = null;
+            for (const a of links) {
+              const href = normalizeUrl(a.href);
+              if (current === href || current.startsWith(href + "/")) {
+                if (!best || href.length > best.href.length) best = a;
+              }
             }
-        });
+            if (best) best.classList.add("active");
+          }
 
-        // 3. Snowflakes Script 
-        const snowLayer = document.getElementById('snow-layer');
-        function createSnowflake() {
-            const s = document.createElement("div");
-            s.classList.add("snowflake");
-            s.style.width = s.style.height = Math.random() * 4 + 1 + "px";
-            s.style.top = Math.random() * -10 + "vh";
-            s.style.left = Math.random() * 100 + "vw";
-            s.style.animationDuration = Math.random() * 12 + 8 + "s";
-            s.style.animationDelay = Math.random() * 6 + "s";
-            s.style.zIndex = Math.floor(Math.random() * 5);
+          nav.addEventListener("click", (e) => {
+            const a = e.target.closest("a");
+            if (!a) return;
+            e.preventDefault();
+            window.location.href = a.href;
+          });
 
-            snowLayer.appendChild(s);
-            setTimeout(() => s.remove(), 20000);
-        }
-        setInterval(createSnowflake, 150);
-    </script>
+          setActiveFromUrl();
+
+          // Form submit
+          document.getElementById("requestForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const statusEl = document.getElementById("status");
+            statusEl.className = "";
+            statusEl.textContent = "Sending...";
+
+            emailjs.sendForm(
+              "service_4caoubc",
+              "template_67jfhnb",
+              this
+            ).then(
+              function () {
+                statusEl.textContent = "✅ Your request has been sent!";
+                statusEl.classList.add("status-ok");
+                document.getElementById("requestForm").reset();
+              },
+              function (error) {
+                statusEl.textContent = "❌ Failed to send request. Please try again.";
+                statusEl.classList.add("status-bad");
+                console.error("EmailJS Error:", error);
+              }
+            );
+          });
+        </script>
+      </div>
+    </main>
+  </div>
 </body>
 </html>
