@@ -4,487 +4,270 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>StudyMath — Games</title>
+
   <style>
     :root{
-      --bg: #0b1220;
-      --panel: #0f1a33;
-      --panel2: #0c162e;
-      --text: #e8eefc;
-      --muted: #a9b6d6;
-      --border: rgba(255,255,255,.10);
-      --hover: rgba(255,255,255,.07);
-      --active: rgba(255,255,255,.12);
+      --bg:#0b1220;
+      --panel:#0f1a33;
+      --panel2:#0c162e;
+      --text:#e8eefc;
+      --muted:#a9b6d6;
+      --border:rgba(255,255,255,.10);
+      --hover:rgba(255,255,255,.07);
+      --active:rgba(255,255,255,.12);
     }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: var(--bg);
-      color: var(--text);
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
     }
-
-    .app {
-      display: grid;
-      grid-template-rows: 56px 1fr;
-      grid-template-columns: 260px 1fr;
-      height: 100vh;
+    .app{
+      display:grid;
+      grid-template-rows:56px 1fr;
+      grid-template-columns:260px 1fr;
+      height:100vh;
     }
-
-    header {
-      grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--panel), var(--panel2));
+    header{
+      grid-column:1/-1;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
     }
-
-    .brand { font-weight: 800; letter-spacing: .2px; font-size: 18px; }
-
-    aside {
-      border-right: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      padding: 14px;
+    .brand{font-weight:800;font-size:18px}
+    aside{
+      border-right:1px solid var(--border);
+      padding:14px;
+      background:rgba(255,255,255,.02);
     }
-
-    .nav-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--muted);
-      margin: 6px 10px 10px;
+    .nav-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin:6px 10px 10px;
     }
-
-    .nav { display: flex; flex-direction: column; gap: 6px; }
-
-    .nav a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid transparent;
-      transition: background .15s ease, border-color .15s ease;
-      cursor: pointer;
-      user-select: none;
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a{
+      display:flex;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
     }
-    .nav a:hover { background: var(--hover); border-color: var(--border); }
-    .nav a.active { background: var(--active); border-color: var(--border); }
-
-    .dot {
-      width: 10px; height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.35);
-      flex: 0 0 auto;
+    .nav a:hover{background:var(--hover)}
+    .nav a.active{background:var(--active)}
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:rgba(255,255,255,.35);
     }
-
-    main { padding: 18px; overflow-y: auto; overflow-x: hidden; }
-
-    .card {
-      max-width: 100%;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
+    main{padding:18px;overflow:auto}
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
     }
-
-    .card h1 { margin: 0 0 8px 0; font-size: 22px; }
-    .card p { margin: 0; color: var(--muted); line-height: 1.5; }
-
-    /* Search bar */
     .search-wrap{
-      margin-top: 14px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    .search-input{
-      width: min(520px, 100%);
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      outline: none;
-      font-weight: 700;
+    .search-input,.clear-btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
     }
-    .search-input::placeholder{ color: rgba(255,255,255,.45); font-weight: 600; }
-    .clear-btn{
-      appearance: none;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 800;
-      cursor: pointer;
+    .row{margin-top:14px}
+    .row-title{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin-bottom:10px;
     }
-    .clear-btn:hover{ background: rgba(255,255,255,.10); }
-
-    /* Netflix-style rows */
-    .row { margin-top: 14px; }
-    .row-title {
-      margin: 0 0 10px 0;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--muted);
+    .scroller{
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
     }
-
-    .scroller {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 10px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
+    .game{
+      width:240px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
     }
-
-    .scroller::-webkit-scrollbar { height: 10px; }
-    .scroller::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
-    .scroller::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 999px; }
-    .scroller::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.20); }
-
-    .game {
-      scroll-snap-align: start;
-      flex: 0 0 240px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: transform .12s ease, background .12s ease;
+    .thumb{
+      height:160px;
+      object-fit:contain;
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
     }
-    .game:hover { transform: translateY(-2px); background: rgba(255,255,255,.05); }
-
-    .thumb {
-      width: 100%;
-      height: 160px;
-      object-fit: contain;
-      background: rgba(255,255,255,.04);
-      border-radius: 12px;
-      border: 1px solid var(--border);
+    .game-btn{
+      padding:10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.08);
+      font-weight:800;
+      cursor:pointer;
     }
 
-    .game-name { margin: 0; font-weight: 800; font-size: 14px; }
-
-    .game-btn {
-      appearance: none;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      text-align: center;
+    /* ===== Overlay Player ===== */
+    .player{
+      position:fixed;
+      inset:0;
+      background:#000;
+      display:none;
+      z-index:9999;
     }
-    .game-btn:hover { background: rgba(255,255,255,.10); }
-
-    #searchRow { display:none; }
-    #searchNote { margin-top: 8px; color: var(--muted); font-size: 13px; }
-
-    /* ===== Fullscreen overlay player ===== */
-    .player {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: none;
-      z-index: 9999;
+    .player.open{display:block}
+    .player-topbar{
+      position:absolute;
+      top:0;left:0;right:0;
+      height:52px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 12px;
+      background:rgba(0,0,0,.6);
     }
-    .player.open { display: block; }
-
-    .player-topbar {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 12px;
-      background: rgba(0,0,0,.55);
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(6px);
-    }
-
-    .player-title {
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: .2px;
-      color: var(--text);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .player-hint {
-      font-weight: 600;
-      font-size: 12px;
-      color: rgba(255,255,255,.72);
-    }
-
-    .close-btn {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 8px 10px;
-      cursor: pointer;
-      font-weight: 800;
-    }
-    .close-btn:hover { background: rgba(255,255,255,.12); }
-
-    .player-frame {
-      position: absolute;
-      left: 0; right: 0;
-      top: 52px; bottom: 0;
-      width: 100%;
-      height: calc(100% - 52px);
-      border: 0;
-      display: block;
-      background: #000;
+    .player-frame{
+      position:absolute;
+      top:52px;
+      left:0;
+      width:100%;
+      height:calc(100% - 52px);
+      border:0;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <header><div class="brand">StudyMath</div></header>
+<div class="app">
 
-    <aside>
-      <div class="nav-title">Pages</div>
-      <nav class="nav" id="nav">
-        <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
-        <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
-        <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
-      </nav>
-    </aside>
+<header><div class="brand">StudyMath</div></header>
 
-    <main>
-      <div class="card">
-        <h1>Games</h1>
-        <p>Search for a game, or scroll, and enjoy! Press Esc to exit.</p>
+<aside>
+  <div class="nav-title">Pages</div>
+  <nav class="nav" id="nav">
+    <a href="https://jeremyryanknight2012.github.io/My-Website/">Home</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/games.html">Games</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html">Requests</a>
+  </nav>
+</aside>
 
-        <div class="search-wrap">
-          <input id="searchInput" class="search-input" type="text" placeholder="Search games (example: retro bowl)" autocomplete="off" />
-          <button id="clearSearch" class="clear-btn" type="button">Clear</button>
-        </div>
-        <div id="searchNote"></div>
-
-        <div class="row" id="searchRow">
-          <div class="row-title">Search Results</div>
-          <div class="scroller" id="searchScroller"></div>
-        </div>
-
-        <div class="row">
-          <div class="row-title">Top Games</div>
-          <div class="scroller" id="topScroller"></div>
-        </div>
-
-        <div class="row">
-          <div class="row-title">Games</div>
-          <div class="scroller" id="allScroller"></div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Overlay Player -->
-  <div class="player" id="player" aria-hidden="true">
-    <div class="player-topbar">
-      <div class="player-title">
-        <span id="playerName">Game</span>
-        <span class="player-hint">Press Esc to exit</span>
-      </div>
-      <button class="close-btn" id="closeBtn" type="button">Exit</button>
+<main>
+  <div class="card">
+    <h1>Games</h1>
+    <div class="search-wrap">
+      <input id="searchInput" class="search-input" placeholder="Search games">
+      <button id="clearSearch" class="clear-btn">Clear</button>
     </div>
-    <iframe class="player-frame" id="playerFrame" src="about:blank" allow="fullscreen; autoplay"></iframe>
+
+    <div class="row">
+      <div class="row-title">Games</div>
+      <div class="scroller" id="allScroller"></div>
+    </div>
   </div>
+</main>
 
-  <script>
-    // Active nav highlight (FIXED so Home doesn't stay active on every page)
-    const nav = document.getElementById("nav");
-    const currentUrl = new URL(window.location.href);
-    const currentPath = currentUrl.pathname.replace(/\/$/, "");
+</div>
 
-    [...nav.querySelectorAll("a")].forEach(a => {
-      const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
-      if (currentPath === linkPath) a.classList.add("active");
-    });
+<!-- PLAYER -->
+<div class="player" id="player">
+  <div class="player-topbar">
+    <div id="playerName">Game</div>
+    <button id="closeBtn" class="clear-btn">Exit</button>
+  </div>
+  <iframe id="playerFrame" class="player-frame"></iframe>
+</div>
 
-    // Recently played storage (used by index.html)
-    const RECENT_KEY = "studymath_recent_v1";
-    function safeParse(json, fallback){ try{return JSON.parse(json)}catch{return fallback} }
-    function getRecent(){ return safeParse(localStorage.getItem(RECENT_KEY), []) }
-    function setRecent(ids){ localStorage.setItem(RECENT_KEY, JSON.stringify(ids.slice(0,10))) }
-    function addRecent(id){
-      if(!id) return;
-      const ids = getRecent().filter(x => x !== id);
-      ids.unshift(id);
-      setRecent(ids);
+<script>
+/* ===== NAV ACTIVE ===== */
+const current = location.pathname.replace(/\/$/,"");
+document.querySelectorAll("#nav a").forEach(a=>{
+  if(new URL(a.href).pathname.replace(/\/$/,"")===current){
+    a.classList.add("active");
+  }
+});
+
+/* ===== GAMES ===== */
+const GAMES=[
+  {id:"retrobowl",name:"Retro Bowl",url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
+  {id:"1v1lol",name:"1v1.LOL",url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
+];
+
+const scroller=document.getElementById("allScroller");
+GAMES.forEach(g=>{
+  const d=document.createElement("div");
+  d.className="game";
+  d.innerHTML=`
+    <img class="thumb" src="${g.thumb}">
+    <strong>${g.name}</strong>
+    <button class="game-btn" data-url="${g.url}" data-title="${g.name}">Launch</button>
+  `;
+  scroller.appendChild(d);
+});
+
+/* ===== PLAYER FIX ===== */
+const player=document.getElementById("player");
+const frame=document.getElementById("playerFrame");
+const nameEl=document.getElementById("playerName");
+const closeBtn=document.getElementById("closeBtn");
+let loadTimer=null;
+
+async function openPlayer(title,url){
+  nameEl.textContent=title;
+  player.classList.add("open");
+  frame.src="about:blank";
+
+  let loaded=false;
+  frame.onload=()=>loaded=true;
+  frame.src=url;
+
+  clearTimeout(loadTimer);
+  loadTimer=setTimeout(()=>{
+    if(!loaded){
+      window.open(url,"_blank");
+      closePlayer();
     }
+  },1200);
 
-    // Game lists
-    const TOP_GAMES = [
-      { id:"stealabrainrot", name:"Steal a Brainrot", search:"steal a brainrot", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/stealabrainrot.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/stealabrainrot.html" },
-      { id:"1v1lol", name:"1v1.LOL", search:"1v1 lol 1v1.lol", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html" },
-      { id:"drivemad", name:"Drive Mad", search:"drive mad", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/drivemad.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/drivemad.html" },
-      { id:"retrobowl", name:"Retro Bowl", search:"retro bowl", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html" }
-    ];
+  try{
+    if(!document.fullscreenElement) await player.requestFullscreen();
+  }catch{}
+}
 
-    const GAMES = [
-      { id:"10minutestilldawn", name:"10 Minutes Till Dawn", search:"10 minutes till dawn", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html" },
-      { id:"amandatheadventurer", name:"Amanda the Adventurer", search:"amanda the adventurer", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/amandatheadventurer.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/amandatheadventurer.html" },
-      { id:"bankrobbery2", name:"Bank Robbery 2", search:"bank robbery 2", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html" },
-      { id:"baseballbros", name:"Baseball Bros", search:"baseball bros", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/baseballbros.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/baseballbros.html" },
-      { id:"basketbros", name:"Basket Bros", search:"basket bros", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/basketbros.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/basketbros.html" },
-      { id:"retrobowlcollege", name:"Retro Bowl College", search:"retro bowl college", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowlcollege.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowlcollege.html" },
-      { id:"undertale", name:"Undertale", search:"Undertale", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/undertale.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/undertale.html" }
-    ];
+function closePlayer(){
+  player.classList.remove("open");
+  frame.src="about:blank";
+  if(document.fullscreenElement) document.exitFullscreen();
+}
 
-    const ALL = [...TOP_GAMES, ...GAMES];
+document.addEventListener("click",e=>{
+  const btn=e.target.closest(".game-btn");
+  if(!btn) return;
+  openPlayer(btn.dataset.title,btn.dataset.url);
+});
 
-    function buildCard(game){
-      const wrap = document.createElement("div");
-      wrap.className = "game";
-      wrap.dataset.name = game.search;
+closeBtn.onclick=closePlayer;
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closePlayer();
+});
+</script>
 
-      wrap.innerHTML = `
-        <img class="thumb" src="${game.thumb}" alt="${game.name}">
-        <p class="game-name">${game.name}</p>
-        <button class="game-btn" data-id="${game.id}" data-title="${game.name}" data-url="${game.url}">Launch</button>
-      `;
-      return wrap;
-    }
-
-    // render scrollers
-    const topScroller = document.getElementById("topScroller");
-    const allScroller = document.getElementById("allScroller");
-    TOP_GAMES.forEach(g => topScroller.appendChild(buildCard(g)));
-    GAMES.forEach(g => allScroller.appendChild(buildCard(g)));
-
-    // ===== Overlay Player Logic with fallback =====
-    const player = document.getElementById("player");
-    const playerFrame = document.getElementById("playerFrame");
-    const playerName = document.getElementById("playerName");
-    const closeBtn = document.getElementById("closeBtn");
-
-    async function openPlayer(title, url) {
-      addRecent(title); // (not used; just in case)
-      playerName.textContent = title;
-
-      player.classList.add("open");
-      player.setAttribute("aria-hidden", "false");
-      playerFrame.src = url;
-
-      // request fullscreen -> browser shows "Press Esc to exit"
-      try {
-        if (!document.fullscreenElement && player.requestFullscreen) {
-          await player.requestFullscreen();
-        }
-      } catch (e) {}
-
-      // Fallback: if iframe is blocked, it will stay blank.
-      // After a short delay, if we detect it didn't load, navigate normally.
-      setTimeout(() => {
-        try {
-          // If the iframe is blocked by X-Frame-Options/CSP, accessing contentWindow can throw.
-          // We'll treat that as "blocked" and open normally.
-          void playerFrame.contentWindow;
-        } catch (e) {
-          window.location.href = url;
-        }
-      }, 700);
-    }
-
-    function closePlayer() {
-      player.classList.remove("open");
-      player.setAttribute("aria-hidden", "true");
-      playerFrame.src = "about:blank";
-
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-
-    // click Launch
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".game-btn");
-      if (!btn) return;
-
-      const id = btn.getAttribute("data-id");
-      const title = btn.getAttribute("data-title") || "Game";
-      const url = btn.getAttribute("data-url");
-      if (!url) return;
-
-      // Save recently played correctly (by ID)
-      addRecentId(id);
-
-      openPlayer(title, url);
-    });
-
-    closeBtn.addEventListener("click", closePlayer);
-
-    // ESC + fullscreenchange -> close overlay
-    document.addEventListener("fullscreenchange", () => {
-      if (!document.fullscreenElement && player.classList.contains("open")) closePlayer();
-    });
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && player.classList.contains("open")) closePlayer();
-    });
-
-    // ===== Correct recent saving by ID =====
-    function addRecentId(id){
-      if(!id) return;
-      const ids = getRecent().filter(x => x !== id);
-      ids.unshift(id);
-      setRecent(ids);
-    }
-
-    // ===== Search =====
-    const searchInput = document.getElementById("searchInput");
-    const clearSearch = document.getElementById("clearSearch");
-    const searchRow = document.getElementById("searchRow");
-    const searchScroller = document.getElementById("searchScroller");
-    const searchNote = document.getElementById("searchNote");
-
-    function norm(s){ return (s||"").toLowerCase().trim(); }
-
-    function renderSearch(qRaw){
-      const q = norm(qRaw);
-      searchScroller.innerHTML = "";
-      searchNote.textContent = "";
-
-      if(!q){
-        searchRow.style.display = "none";
-        return;
-      }
-
-      const matches = ALL.filter(g => norm(g.search).includes(q) || norm(g.name).includes(q));
-      if(matches.length === 0){
-        searchRow.style.display = "none";
-        searchNote.textContent = "No results for: " + qRaw;
-        return;
-      }
-
-      searchRow.style.display = "block";
-      searchNote.textContent = "Showing " + matches.length + " result(s) for: " + qRaw;
-      matches.forEach(g => searchScroller.appendChild(buildCard(g)));
-    }
-
-    searchInput.addEventListener("input", () => renderSearch(searchInput.value));
-    clearSearch.addEventListener("click", () => {
-      searchInput.value = "";
-      renderSearch("");
-      searchInput.focus();
-    });
-  </script>
 </body>
 </html>
