@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyMath — Games</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: #0f1a33;
+      --panel2: #0c162e;
+      --text: #e8eefc;
+      --muted: #a9b6d6;
+      --border: rgba(255,255,255,.10);
+      --hover: rgba(255,255,255,.07);
+      --active: rgba(255,255,255,.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: 56px 1fr;
+      grid-template-columns: 260px 1fr;
+      height: 100vh;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: .2px;
+      font-size: 18px;
+    }
+
+    aside {
+      border-right: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      padding: 14px;
+    }
+
+    .nav-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin: 6px 10px 10px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: background .15s ease, border-color .15s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav a:hover {
+      background: var(--hover);
+      border-color: var(--border);
+    }
+
+    .nav a.active {
+      background: var(--active);
+      border-color: var(--border);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.35);
+      flex: 0 0 auto;
+    }
+
+    main {
+      padding: 18px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .card {
+      max-width: 100%;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .card h1 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Search bar */
+    .search-wrap{
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input{
+      width: min(520px, 100%);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline: none;
+      font-weight: 700;
+    }
+
+    .search-input::placeholder{
+      color: rgba(255,255,255,.45);
+      font-weight: 600;
+    }
+
+    .clear-btn{
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .clear-btn:hover{ background: rgba(255,255,255,.10); }
+
+    /* Netflix-style rows */
+    .row { margin-top: 14px; }
+    .row-title {
+      margin: 0 0 10px 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+
+    .scroller {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scroller::-webkit-scrollbar { height: 10px; }
+    .scroller::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
+    .scroller::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 999px; }
+    .scroller::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.20); }
+
+    .game {
+      scroll-snap-align: start;
+      flex: 0 0 240px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .game:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.05);
+    }
+
+    .thumb {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+      background: rgba(255,255,255,.04);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .game-name {
+      margin: 0;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .game-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s ease, transform .05s ease;
+    }
+
+    .game-btn:hover { background: rgba(255,255,255,.10); }
+    .game-btn:active { transform: translateY(1px); }
+
+    /* Search results row */
+    #searchRow { display: none; }
+    #searchNote { margin-top: 8px; color: var(--muted); font-size: 13px; }
+
+    /* Fullscreen overlay player */
+    .player {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: none;
+      z-index: 9999;
+    }
+    .player.open { display: block; }
+
+    .player-topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      background: rgba(0,0,0,.55);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(6px);
+    }
+
+    .player-title {
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: .2px;
+      color: var(--text);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .player-hint {
+      font-weight: 600;
+      font-size: 12px;
+      color: rgba(255,255,255,.72);
+    }
+
+    .close-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .close-btn:hover { background: rgba(255,255,255,.12); }
+
+    .player-frame {
+      position: absolute;
+      left: 0; right: 0;
+      top: 52px; bottom: 0;
+      width: 100%;
+      height: calc(100% - 52px);
+      border: 0;
+      display: block;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">StudyMath</div>
+    </header>
+
+    <aside>
+      <div class="nav-title">Pages</div>
+      <nav class="nav" id="nav">
+        <a href="./" data-key="home">
+          <span class="dot"></span><span>Home</span>
+        </a>
+        <a href="./games.html" data-key="games">
+          <span class="dot"></span><span>Games</span>
+        </a>
+        <a href="./requests.html" data-key="requests">
+          <span class="dot"></span><span>Requests</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="card">
+        <h1>Games</h1>
+        <p>Search for a game, or scroll the rows below. Click Launch to play fullscreen.</p>
+
+        <div class="search-wrap">
+          <input id="searchInput" class="search-input" type="text" placeholder="Search games (example: retro bowl)" autocomplete="off" />
+          <button id="clearSearch" class="clear-btn" type="button">Clear</button>
+        </div>
+        <div id="searchNote"></div>
+
+        <div class="row" id="searchRow">
+          <div class="row-title">Search Results</div>
+          <div class="scroller" id="searchScroller"></div>
+        </div>
+
+        <div class="row">
+          <div class="row-title">Top Games</div>
+          <div class="scroller">
+            <div class="game" data-name="steal a brainrot">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/stealabrainrot.png" alt="Steal a Brainrot">
+              <p class="game-name">Steal a Brainrot</p>
+              <button class="game-btn" data-id="stealabrainrot" data-title="Steal a Brainrot" data-url="https://jeremyryanknight2012.github.io/My-Website/games/stealabrainrot.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="1v1 lol 1v1.lol">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" alt="1v1.LOL">
+              <p class="game-name">1v1.LOL</p>
+              <button class="game-btn" data-id="1v1lol" data-title="1v1.LOL" data-url="https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="drive mad">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/drivemad.png" alt="Drive Mad">
+              <p class="game-name">Drive Mad</p>
+              <button class="game-btn" data-id="drivemad" data-title="Drive Mad" data-url="https://jeremyryanknight2012.github.io/My-Website/games/drivemad.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="retro bowl">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" alt="Retro Bowl">
+              <p class="game-name">Retro Bowl</p>
+              <button class="game-btn" data-id="retrobowl" data-title="Retro Bowl" data-url="https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html">Launch</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="row-title">Games</div>
+          <div class="scroller">
+            <div class="game" data-name="10 minutes till dawn">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png" alt="10 Minutes Till Dawn">
+              <p class="game-name">10 Minutes Till Dawn</p>
+              <button class="game-btn" data-id="10minutestilldawn" data-title="10 Minutes Till Dawn" data-url="https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="amanda the adventurer">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/amandatheadventurer.png" alt="Amanda the Adventurer">
+              <p class="game-name">Amanda the Adventurer</p>
+              <button class="game-btn" data-id="amandatheadventurer" data-title="Amanda the Adventurer" data-url="https://jeremyryanknight2012.github.io/My-Website/games/amandatheadventurer.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="bank robbery 2">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png" alt="Bank Robbery 2">
+              <p class="game-name">Bank Robbery 2</p>
+              <button class="game-btn" data-id="bankrobbery2" data-title="Bank Robbery 2" data-url="https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="baseball bros">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/baseballbros.png" alt="Baseball Bros">
+              <p class="game-name">Baseball Bros</p>
+              <button class="game-btn" data-id="baseballbros" data-title="Baseball Bros" data-url="https://jeremyryanknight2012.github.io/My-Website/games/baseballbros.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="basket bros">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/basketbros.png" alt="Basket Bros">
+              <p class="game-name">Basket Bros</p>
+              <button class="game-btn" data-id="basketbros" data-title="Basket Bros" data-url="https://jeremyryanknight2012.github.io/My-Website/games/basketbros.html">Launch</button>
+            </div>
+
+            <div class="game" data-name="retro bowl college">
+              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowlcollege.png" alt="Retro Bowl College">
+              <p class="game-name">Retro Bowl College</p>
+              <button class="game-btn" data-id="retrobowlcollege" data-title="Retro Bowl College" data-url="https://jeremyryanknight2012.github.io/My-Website/games/retrobowlcollege.html">Launch</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Fullscreen overlay player -->
+  <div class="player" id="player" aria-hidden="true">
+    <div class="player-topbar">
+      <div class="player-title">
+        <span id="playerName">Game</span>
+        <span class="player-hint">Press Esc to exit</span>
+      </div>
+      <button class="close-btn" id="closeBtn" type="button">Exit</button>
+    </div>
+    <iframe class="player-frame" id="playerFrame" src="about:blank" allow="fullscreen; autoplay"></iframe>
+  </div>
+
+  <script>
+    const nav = document.getElementById("nav");
+    const player = document.getElementById("player");
+    const playerFrame = document.getElementById("playerFrame");
+    const playerName = document.getElementById("playerName");
+    const closeBtn = document.getElementById("closeBtn");
+
+    const searchInput = document.getElementById("searchInput");
+    const clearSearch = document.getElementById("clearSearch");
+    const searchRow = document.getElementById("searchRow");
+    const searchScroller = document.getElementById("searchScroller");
+    const searchNote = document.getElementById("searchNote");
+
+    // Active nav highlight (works on GitHub Pages)
+    function normalizePath(p) { return (p || "").replace(/\/+$/, ""); }
+    function setActive() {
+      const current = normalizePath(location.pathname);
+      [...nav.querySelectorAll("a")].forEach(a => {
+        const href = a.getAttribute("href");
+        const hrefPath = href === "./" ? "" : normalizePath("/" + href.replace("./",""));
+        a.classList.toggle("active", current.endsWith(hrefPath));
+      });
+    }
+    setActive();
+
+    // Recently played
+    const RECENT_KEY = "studymath_recent_v1";
+    function safeParse(json, fallback){ try{return JSON.parse(json)}catch{return fallback} }
+    function getRecent(){ return safeParse(localStorage.getItem(RECENT_KEY), []) }
+    function setRecent(ids){ localStorage.setItem(RECENT_KEY, JSON.stringify(ids.slice(0,10))) }
+    function addRecent(id){
+      if(!id) return;
+      const ids = getRecent().filter(x => x !== id);
+      ids.unshift(id);
+      setRecent(ids);
+    }
+
+    // Player
+    async function openPlayer(title, url) {
+      playerName.textContent = title;
+      playerFrame.src = url;
+
+      player.classList.add("open");
+      player.setAttribute("aria-hidden", "false");
+
+      try {
+        if (!document.fullscreenElement && player.requestFullscreen) {
+          await player.requestFullscreen();
+        }
+      } catch (e) {}
+    }
+
+    function closePlayer() {
+      player.classList.remove("open");
+      player.setAttribute("aria-hidden", "true");
+      playerFrame.src = "about:blank";
+
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".game-btn");
+      if (!btn) return;
+
+      const id = btn.getAttribute("data-id");
+      const title = btn.getAttribute("data-title") || "Game";
+      const url = btn.getAttribute("data-url");
+      if (!url) return;
+
+      addRecent(id);
+      openPlayer(title, url);
+    });
+
+    closeBtn.addEventListener("click", closePlayer);
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && player.classList.contains("open")) {
+        closePlayer();
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && player.classList.contains("open")) {
+        closePlayer();
+      }
+    });
+
+    // Search
+    function norm(s){ return (s||"").toLowerCase().trim(); }
+    function allCards(){ return [...document.querySelectorAll(".game")]; }
+
+    function renderSearch(qRaw){
+      const q = norm(qRaw);
+      searchScroller.innerHTML = "";
+      searchNote.textContent = "";
+
+      if(!q){
+        searchRow.style.display = "none";
+        return;
+      }
+
+      const matches = allCards().filter(card => norm(card.dataset.name).includes(q));
+      if(matches.length === 0){
+        searchRow.style.display = "none";
+        searchNote.textContent = "No results for: " + qRaw;
+        return;
+      }
+
+      searchRow.style.display = "block";
+      searchNote.textContent = "Showing " + matches.length + " result(s) for: " + qRaw;
+
+      matches.forEach(card => {
+        const clone = card.cloneNode(true);
+        searchScroller.appendChild(clone);
+      });
+    }
+
+    searchInput.addEventListener("input", () => renderSearch(searchInput.value));
+    clearSearch.addEventListener("click", () => {
+      searchInput.value = "";
+      renderSearch("");
+      searchInput.focus();
+    });
+  </script>
+</body>
+</html>
