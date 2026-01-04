@@ -81,15 +81,8 @@
       user-select: none;
     }
 
-    .nav a:hover {
-      background: var(--hover);
-      border-color: var(--border);
-    }
-
-    .nav a.active {
-      background: var(--active);
-      border-color: var(--border);
-    }
+    .nav a:hover { background: var(--hover); border-color: var(--border); }
+    .nav a.active { background: var(--active); border-color: var(--border); }
 
     .dot {
       width: 10px;
@@ -113,16 +106,8 @@
       padding: 18px;
     }
 
-    .card h1 {
-      margin: 0 0 8px 0;
-      font-size: 22px;
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .card h1 { margin: 0 0 8px 0; font-size: 22px; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.5; }
 
     /* Search bar */
     .search-wrap{
@@ -132,7 +117,6 @@
       align-items: center;
       flex-wrap: wrap;
     }
-
     .search-input{
       width: min(520px, 100%);
       padding: 10px 12px;
@@ -143,12 +127,7 @@
       outline: none;
       font-weight: 700;
     }
-
-    .search-input::placeholder{
-      color: rgba(255,255,255,.45);
-      font-weight: 600;
-    }
-
+    .search-input::placeholder{ color: rgba(255,255,255,.45); font-weight: 600; }
     .clear-btn{
       appearance: none;
       border: 1px solid var(--border);
@@ -180,11 +159,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    .scroller::-webkit-scrollbar { height: 10px; }
-    .scroller::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 999px; }
-    .scroller::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 999px; }
-    .scroller::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.20); }
-
     .game {
       scroll-snap-align: start;
       flex: 0 0 240px;
@@ -197,11 +171,7 @@
       gap: 10px;
       transition: transform .12s ease, background .12s ease;
     }
-
-    .game:hover {
-      transform: translateY(-2px);
-      background: rgba(255,255,255,.05);
-    }
+    .game:hover { transform: translateY(-2px); background: rgba(255,255,255,.05); }
 
     .thumb {
       width: 100%;
@@ -212,11 +182,7 @@
       border: 1px solid var(--border);
     }
 
-    .game-name {
-      margin: 0;
-      font-weight: 800;
-      font-size: 14px;
-    }
+    .game-name { margin: 0; font-weight: 800; font-size: 14px; }
 
     .game-btn {
       appearance: none;
@@ -225,107 +191,32 @@
       color: var(--text);
       padding: 10px 12px;
       border-radius: 12px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      transition: background .15s ease, transform .05s ease;
     }
-
     .game-btn:hover { background: rgba(255,255,255,.10); }
-    .game-btn:active { transform: translateY(1px); }
 
-    /* Search results row */
-    #searchRow { display: none; }
+    #searchRow { display:none; }
     #searchNote { margin-top: 8px; color: var(--muted); font-size: 13px; }
-
-    /* Fullscreen overlay player */
-    .player {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: none;
-      z-index: 9999;
-    }
-    .player.open { display: block; }
-
-    .player-topbar {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 12px;
-      background: rgba(0,0,0,.55);
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(6px);
-    }
-
-    .player-title {
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: .2px;
-      color: var(--text);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .player-hint {
-      font-weight: 600;
-      font-size: 12px;
-      color: rgba(255,255,255,.72);
-    }
-
-    .close-btn {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 8px 10px;
-      cursor: pointer;
-      font-weight: 800;
-    }
-    .close-btn:hover { background: rgba(255,255,255,.12); }
-
-    .player-frame {
-      position: absolute;
-      left: 0; right: 0;
-      top: 52px; bottom: 0;
-      width: 100%;
-      height: calc(100% - 52px);
-      border: 0;
-      display: block;
-      background: #000;
-    }
   </style>
 </head>
 <body>
   <div class="app">
-    <header>
-      <div class="brand">StudyMath</div>
-    </header>
+    <header><div class="brand">StudyMath</div></header>
 
     <aside>
       <div class="nav-title">Pages</div>
       <nav class="nav" id="nav">
-        <!-- Absolute links so navigation NEVER breaks -->
-        <a href="https://jeremyryanknight2012.github.io/My-Website/">
-          <span class="dot"></span><span>Home</span>
-        </a>
-        <a href="https://jeremyryanknight2012.github.io/My-Website/games.html">
-          <span class="dot"></span><span>Games</span>
-        </a>
-        <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html">
-          <span class="dot"></span><span>Requests</span>
-        </a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
       </nav>
     </aside>
 
     <main>
       <div class="card">
         <h1>Games</h1>
-        <p>Search for a game, or scroll the rows below. Click Launch to play fullscreen.</p>
+        <p>Search for a game, or scroll the rows below. Launch opens the game in this tab (works on all browsers).</p>
 
         <div class="search-wrap">
           <input id="searchInput" class="search-input" type="text" placeholder="Search games (example: retro bowl)" autocomplete="off" />
@@ -347,32 +238,31 @@
           <div class="row-title">Games</div>
           <div class="scroller" id="allScroller"></div>
         </div>
-
       </div>
     </main>
   </div>
 
-  <!-- Fullscreen overlay player -->
-  <div class="player" id="player" aria-hidden="true">
-    <div class="player-topbar">
-      <div class="player-title">
-        <span id="playerName">Game</span>
-        <span class="player-hint">Press Esc to exit</span>
-      </div>
-      <button class="close-btn" id="closeBtn" type="button">Exit</button>
-    </div>
-    <iframe class="player-frame" id="playerFrame" src="about:blank" allow="fullscreen; autoplay"></iframe>
-  </div>
-
   <script>
-    // Active nav highlight (safe)
+    // active nav
     const nav = document.getElementById("nav");
     const current = window.location.href;
     [...nav.querySelectorAll("a")].forEach(a => {
       if (current === a.href || current.startsWith(a.href)) a.classList.add("active");
     });
 
-    // ===== Game Data (single source of truth) =====
+    // recent storage
+    const RECENT_KEY = "studymath_recent_v1";
+    function safeParse(json, fallback){ try{return JSON.parse(json)}catch{return fallback} }
+    function getRecent(){ return safeParse(localStorage.getItem(RECENT_KEY), []) }
+    function setRecent(ids){ localStorage.setItem(RECENT_KEY, JSON.stringify(ids.slice(0,10))) }
+    function addRecent(id){
+      if(!id) return;
+      const ids = getRecent().filter(x => x !== id);
+      ids.unshift(id);
+      setRecent(ids);
+    }
+
+    // game data
     const TOP_GAMES = [
       { id:"stealabrainrot", name:"Steal a Brainrot", search:"steal a brainrot", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/stealabrainrot.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/stealabrainrot.html" },
       { id:"1v1lol", name:"1v1.LOL", search:"1v1 lol 1v1.lol", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html" },
@@ -394,92 +284,38 @@
     function buildCard(game){
       const wrap = document.createElement("div");
       wrap.className = "game";
-      wrap.setAttribute("data-name", game.search);
+      wrap.dataset.name = game.search;
 
       wrap.innerHTML = `
         <img class="thumb" src="${game.thumb}" alt="${game.name}">
         <p class="game-name">${game.name}</p>
         <button class="game-btn"
           data-id="${game.id}"
-          data-title="${game.name}"
           data-url="${game.url}">Launch</button>
       `;
       return wrap;
     }
 
-    // Render lists
+    // render scrollers
     const topScroller = document.getElementById("topScroller");
     const allScroller = document.getElementById("allScroller");
     TOP_GAMES.forEach(g => topScroller.appendChild(buildCard(g)));
     GAMES.forEach(g => allScroller.appendChild(buildCard(g)));
 
-    // ===== Player + Recently Played =====
-    const player = document.getElementById("player");
-    const playerFrame = document.getElementById("playerFrame");
-    const playerName = document.getElementById("playerName");
-    const closeBtn = document.getElementById("closeBtn");
-
-    const RECENT_KEY = "studymath_recent_v1";
-
-    function safeParse(json, fallback){ try{return JSON.parse(json)}catch{return fallback} }
-    function getRecent(){ return safeParse(localStorage.getItem(RECENT_KEY), []) }
-    function setRecent(ids){ localStorage.setItem(RECENT_KEY, JSON.stringify(ids.slice(0,10))) }
-    function addRecent(id){
-      if(!id) return;
-      const ids = getRecent().filter(x => x !== id);
-      ids.unshift(id);
-      setRecent(ids);
-    }
-
-    async function openPlayer(title, url) {
-      playerName.textContent = title;
-      playerFrame.src = url;
-
-      player.classList.add("open");
-      player.setAttribute("aria-hidden", "false");
-
-      try {
-        if (!document.fullscreenElement && player.requestFullscreen) {
-          await player.requestFullscreen();
-        }
-      } catch (e) {}
-    }
-
-    function closePlayer() {
-      player.classList.remove("open");
-      player.setAttribute("aria-hidden", "true");
-      playerFrame.src = "about:blank";
-
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-
-    // Launch buttons (works for ALL cards, including search results)
+    // Launch handler: save recent THEN go to game in same tab
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".game-btn");
       if (!btn) return;
 
       const id = btn.getAttribute("data-id");
-      const title = btn.getAttribute("data-title") || "Game";
       const url = btn.getAttribute("data-url");
       if (!url) return;
 
       addRecent(id);
-      openPlayer(title, url);
+      window.location.href = url;
     });
 
-    closeBtn.addEventListener("click", closePlayer);
-
-    document.addEventListener("fullscreenchange", () => {
-      if (!document.fullscreenElement && player.classList.contains("open")) closePlayer();
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && player.classList.contains("open")) closePlayer();
-    });
-
-    // ===== Search (rebuild cards, no cloning) =====
+    // Search
     const searchInput = document.getElementById("searchInput");
     const clearSearch = document.getElementById("clearSearch");
     const searchRow = document.getElementById("searchRow");
@@ -507,7 +343,6 @@
 
       searchRow.style.display = "block";
       searchNote.textContent = "Showing " + matches.length + " result(s) for: " + qRaw;
-
       matches.forEach(g => searchScroller.appendChild(buildCard(g)));
     }
 
