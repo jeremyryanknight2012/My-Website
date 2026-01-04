@@ -309,11 +309,14 @@
   </div>
 
   <script>
-    // Active nav highlight
+    // Active nav highlight (FIXED so Home doesn't stay active on every page)
     const nav = document.getElementById("nav");
-    const current = window.location.href;
+    const currentUrl = new URL(window.location.href);
+    const currentPath = currentUrl.pathname.replace(/\/$/, "");
+
     [...nav.querySelectorAll("a")].forEach(a => {
-      if (current === a.href || current.startsWith(a.href)) a.classList.add("active");
+      const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
+      if (currentPath === linkPath) a.classList.add("active");
     });
 
     // Recently played storage (used by index.html)
@@ -342,7 +345,8 @@
       { id:"bankrobbery2", name:"Bank Robbery 2", search:"bank robbery 2", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html" },
       { id:"baseballbros", name:"Baseball Bros", search:"baseball bros", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/baseballbros.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/baseballbros.html" },
       { id:"basketbros", name:"Basket Bros", search:"basket bros", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/basketbros.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/basketbros.html" },
-      { id:"retrobowlcollege", name:"Retro Bowl College", search:"retro bowl college", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowlcollege.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowlcollege.html" }
+      { id:"retrobowlcollege", name:"Retro Bowl College", search:"retro bowl college", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowlcollege.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowlcollege.html" },
+      { id:"undertale", name:"Undertale", search:"Undertale", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/undertale.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/undertale.html" }
     ];
 
     const ALL = [...TOP_GAMES, ...GAMES];
