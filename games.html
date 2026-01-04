@@ -309,13 +309,14 @@
     <aside>
       <div class="nav-title">Pages</div>
       <nav class="nav" id="nav">
-        <a href="./" data-key="home">
+        <!-- Absolute links so navigation NEVER breaks -->
+        <a href="https://jeremyryanknight2012.github.io/My-Website/">
           <span class="dot"></span><span>Home</span>
         </a>
-        <a href="./games.html" data-key="games">
+        <a href="https://jeremyryanknight2012.github.io/My-Website/games.html">
           <span class="dot"></span><span>Games</span>
         </a>
-        <a href="./requests.html" data-key="requests">
+        <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html">
           <span class="dot"></span><span>Requests</span>
         </a>
       </nav>
@@ -339,72 +340,12 @@
 
         <div class="row">
           <div class="row-title">Top Games</div>
-          <div class="scroller">
-            <div class="game" data-name="steal a brainrot">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/stealabrainrot.png" alt="Steal a Brainrot">
-              <p class="game-name">Steal a Brainrot</p>
-              <button class="game-btn" data-id="stealabrainrot" data-title="Steal a Brainrot" data-url="https://jeremyryanknight2012.github.io/My-Website/games/stealabrainrot.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="1v1 lol 1v1.lol">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" alt="1v1.LOL">
-              <p class="game-name">1v1.LOL</p>
-              <button class="game-btn" data-id="1v1lol" data-title="1v1.LOL" data-url="https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="drive mad">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/drivemad.png" alt="Drive Mad">
-              <p class="game-name">Drive Mad</p>
-              <button class="game-btn" data-id="drivemad" data-title="Drive Mad" data-url="https://jeremyryanknight2012.github.io/My-Website/games/drivemad.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="retro bowl">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" alt="Retro Bowl">
-              <p class="game-name">Retro Bowl</p>
-              <button class="game-btn" data-id="retrobowl" data-title="Retro Bowl" data-url="https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html">Launch</button>
-            </div>
-          </div>
+          <div class="scroller" id="topScroller"></div>
         </div>
 
         <div class="row">
           <div class="row-title">Games</div>
-          <div class="scroller">
-            <div class="game" data-name="10 minutes till dawn">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png" alt="10 Minutes Till Dawn">
-              <p class="game-name">10 Minutes Till Dawn</p>
-              <button class="game-btn" data-id="10minutestilldawn" data-title="10 Minutes Till Dawn" data-url="https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="amanda the adventurer">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/amandatheadventurer.png" alt="Amanda the Adventurer">
-              <p class="game-name">Amanda the Adventurer</p>
-              <button class="game-btn" data-id="amandatheadventurer" data-title="Amanda the Adventurer" data-url="https://jeremyryanknight2012.github.io/My-Website/games/amandatheadventurer.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="bank robbery 2">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png" alt="Bank Robbery 2">
-              <p class="game-name">Bank Robbery 2</p>
-              <button class="game-btn" data-id="bankrobbery2" data-title="Bank Robbery 2" data-url="https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="baseball bros">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/baseballbros.png" alt="Baseball Bros">
-              <p class="game-name">Baseball Bros</p>
-              <button class="game-btn" data-id="baseballbros" data-title="Baseball Bros" data-url="https://jeremyryanknight2012.github.io/My-Website/games/baseballbros.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="basket bros">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/basketbros.png" alt="Basket Bros">
-              <p class="game-name">Basket Bros</p>
-              <button class="game-btn" data-id="basketbros" data-title="Basket Bros" data-url="https://jeremyryanknight2012.github.io/My-Website/games/basketbros.html">Launch</button>
-            </div>
-
-            <div class="game" data-name="retro bowl college">
-              <img class="thumb" src="https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowlcollege.png" alt="Retro Bowl College">
-              <p class="game-name">Retro Bowl College</p>
-              <button class="game-btn" data-id="retrobowlcollege" data-title="Retro Bowl College" data-url="https://jeremyryanknight2012.github.io/My-Website/games/retrobowlcollege.html">Launch</button>
-            </div>
-          </div>
+          <div class="scroller" id="allScroller"></div>
         </div>
 
       </div>
@@ -424,32 +365,62 @@
   </div>
 
   <script>
+    // Active nav highlight (safe)
     const nav = document.getElementById("nav");
+    const current = window.location.href;
+    [...nav.querySelectorAll("a")].forEach(a => {
+      if (current === a.href || current.startsWith(a.href)) a.classList.add("active");
+    });
+
+    // ===== Game Data (single source of truth) =====
+    const TOP_GAMES = [
+      { id:"stealabrainrot", name:"Steal a Brainrot", search:"steal a brainrot", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/stealabrainrot.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/stealabrainrot.html" },
+      { id:"1v1lol", name:"1v1.LOL", search:"1v1 lol 1v1.lol", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html" },
+      { id:"drivemad", name:"Drive Mad", search:"drive mad", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/drivemad.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/drivemad.html" },
+      { id:"retrobowl", name:"Retro Bowl", search:"retro bowl", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html" }
+    ];
+
+    const GAMES = [
+      { id:"10minutestilldawn", name:"10 Minutes Till Dawn", search:"10 minutes till dawn", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html" },
+      { id:"amandatheadventurer", name:"Amanda the Adventurer", search:"amanda the adventurer", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/amandatheadventurer.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/amandatheadventurer.html" },
+      { id:"bankrobbery2", name:"Bank Robbery 2", search:"bank robbery 2", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html" },
+      { id:"baseballbros", name:"Baseball Bros", search:"baseball bros", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/baseballbros.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/baseballbros.html" },
+      { id:"basketbros", name:"Basket Bros", search:"basket bros", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/basketbros.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/basketbros.html" },
+      { id:"retrobowlcollege", name:"Retro Bowl College", search:"retro bowl college", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowlcollege.png", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowlcollege.html" }
+    ];
+
+    const ALL = [...TOP_GAMES, ...GAMES];
+
+    function buildCard(game){
+      const wrap = document.createElement("div");
+      wrap.className = "game";
+      wrap.setAttribute("data-name", game.search);
+
+      wrap.innerHTML = `
+        <img class="thumb" src="${game.thumb}" alt="${game.name}">
+        <p class="game-name">${game.name}</p>
+        <button class="game-btn"
+          data-id="${game.id}"
+          data-title="${game.name}"
+          data-url="${game.url}">Launch</button>
+      `;
+      return wrap;
+    }
+
+    // Render lists
+    const topScroller = document.getElementById("topScroller");
+    const allScroller = document.getElementById("allScroller");
+    TOP_GAMES.forEach(g => topScroller.appendChild(buildCard(g)));
+    GAMES.forEach(g => allScroller.appendChild(buildCard(g)));
+
+    // ===== Player + Recently Played =====
     const player = document.getElementById("player");
     const playerFrame = document.getElementById("playerFrame");
     const playerName = document.getElementById("playerName");
     const closeBtn = document.getElementById("closeBtn");
 
-    const searchInput = document.getElementById("searchInput");
-    const clearSearch = document.getElementById("clearSearch");
-    const searchRow = document.getElementById("searchRow");
-    const searchScroller = document.getElementById("searchScroller");
-    const searchNote = document.getElementById("searchNote");
-
-    // Active nav highlight (works on GitHub Pages)
-    function normalizePath(p) { return (p || "").replace(/\/+$/, ""); }
-    function setActive() {
-      const current = normalizePath(location.pathname);
-      [...nav.querySelectorAll("a")].forEach(a => {
-        const href = a.getAttribute("href");
-        const hrefPath = href === "./" ? "" : normalizePath("/" + href.replace("./",""));
-        a.classList.toggle("active", current.endsWith(hrefPath));
-      });
-    }
-    setActive();
-
-    // Recently played
     const RECENT_KEY = "studymath_recent_v1";
+
     function safeParse(json, fallback){ try{return JSON.parse(json)}catch{return fallback} }
     function getRecent(){ return safeParse(localStorage.getItem(RECENT_KEY), []) }
     function setRecent(ids){ localStorage.setItem(RECENT_KEY, JSON.stringify(ids.slice(0,10))) }
@@ -460,7 +431,6 @@
       setRecent(ids);
     }
 
-    // Player
     async function openPlayer(title, url) {
       playerName.textContent = title;
       playerFrame.src = url;
@@ -485,6 +455,7 @@
       }
     }
 
+    // Launch buttons (works for ALL cards, including search results)
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".game-btn");
       if (!btn) return;
@@ -501,20 +472,21 @@
     closeBtn.addEventListener("click", closePlayer);
 
     document.addEventListener("fullscreenchange", () => {
-      if (!document.fullscreenElement && player.classList.contains("open")) {
-        closePlayer();
-      }
+      if (!document.fullscreenElement && player.classList.contains("open")) closePlayer();
     });
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && player.classList.contains("open")) {
-        closePlayer();
-      }
+      if (e.key === "Escape" && player.classList.contains("open")) closePlayer();
     });
 
-    // Search
+    // ===== Search (rebuild cards, no cloning) =====
+    const searchInput = document.getElementById("searchInput");
+    const clearSearch = document.getElementById("clearSearch");
+    const searchRow = document.getElementById("searchRow");
+    const searchScroller = document.getElementById("searchScroller");
+    const searchNote = document.getElementById("searchNote");
+
     function norm(s){ return (s||"").toLowerCase().trim(); }
-    function allCards(){ return [...document.querySelectorAll(".game")]; }
 
     function renderSearch(qRaw){
       const q = norm(qRaw);
@@ -526,7 +498,7 @@
         return;
       }
 
-      const matches = allCards().filter(card => norm(card.dataset.name).includes(q));
+      const matches = ALL.filter(g => norm(g.search).includes(q) || norm(g.name).includes(q));
       if(matches.length === 0){
         searchRow.style.display = "none";
         searchNote.textContent = "No results for: " + qRaw;
@@ -536,10 +508,7 @@
       searchRow.style.display = "block";
       searchNote.textContent = "Showing " + matches.length + " result(s) for: " + qRaw;
 
-      matches.forEach(card => {
-        const clone = card.cloneNode(true);
-        searchScroller.appendChild(clone);
-      });
+      matches.forEach(g => searchScroller.appendChild(buildCard(g)));
     }
 
     searchInput.addEventListener("input", () => renderSearch(searchInput.value));
