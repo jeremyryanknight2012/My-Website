@@ -72,14 +72,42 @@
       border-radius:16px;
       padding:18px;
     }
-    .row{margin-top:14px}
+
+    .search-wrap{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .search-input,.clear-btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
+    }
+    .search-input{min-width:220px;flex:1}
+    .clear-btn{
+      cursor:pointer;
+      font-weight:800;
+    }
+    .clear-btn:hover{background:rgba(255,255,255,.10)}
+
+    .row{margin-top:16px}
     .row-title{
       font-size:13px;
       text-transform:uppercase;
       letter-spacing:.12em;
       color:var(--muted);
       margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
+
     .scroller{
       display:flex;
       gap:12px;
@@ -116,6 +144,13 @@
     }
     .game-btn:hover{background:rgba(255,255,255,.12)}
 
+    .empty{
+      margin:0;
+      color:var(--muted);
+      font-weight:700;
+      font-size:13px;
+    }
+
     /* ===== Overlay Player ===== */
     .player{
       position:fixed;
@@ -136,7 +171,7 @@
       background:rgba(0,0,0,.6);
       color:#fff;
     }
-    .clear-btn{
+    .player-exit{
       padding:10px 12px;
       border-radius:12px;
       border:1px solid rgba(255,255,255,.20);
@@ -145,8 +180,7 @@
       font-weight:800;
       cursor:pointer;
     }
-    .clear-btn:hover{background:rgba(255,255,255,.12)}
-
+    .player-exit:hover{background:rgba(255,255,255,.12)}
     .player-frame{
       position:absolute;
       top:52px;
@@ -176,8 +210,22 @@
   <div class="card">
     <h1>Games</h1>
 
+    <!-- Search -->
+    <div class="search-wrap">
+      <input id="q" class="search-input" type="text" placeholder="Search games..." autocomplete="off" />
+      <button id="clear" class="clear-btn" type="button">Clear</button>
+    </div>
+
+    <!-- Top Games -->
     <div class="row">
-      <div class="row-title">Games</div>
+      <div class="row-title"><span>Top Games</span></div>
+      <div class="scroller" id="topScroller"></div>
+    </div>
+
+    <!-- Games (scroll down section) -->
+    <div class="row" style="margin-top:22px;">
+      <div class="row-title"><span>Games</span></div>
+      <p class="empty" id="gamesEmpty" style="display:none;">No games match your search.</p>
       <div class="scroller" id="allScroller"></div>
     </div>
   </div>
@@ -189,7 +237,7 @@
 <div class="player" id="player">
   <div class="player-topbar">
     <div id="playerName">Game</div>
-    <button id="closeBtn" class="clear-btn" type="button">Exit</button>
+    <button id="closeBtn" class="player-exit" type="button">Exit</button>
   </div>
   <iframe id="playerFrame" class="player-frame"></iframe>
 </div>
@@ -202,22 +250,79 @@
     if (linkPath === currentPath) a.classList.add("active");
   });
 
-  // ===== Games list =====
-  const GAMES = [
-    {name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
-    {name:"1v1.LOL",   url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",    thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
+  // ===== Data =====
+  const TOP_GAMES = [
+    { id:"retrobowl", name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" },
+    { id:"1v1lol",   name:"1v1.LOL",   url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",   thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" }
   ];
 
-  const scroller = document.getElementById("allScroller");
-  GAMES.forEach(g=>{
-    const d=document.createElement("div");
-    d.className="game";
-    d.innerHTML=`
+  // Put ALL your games here. Right now it's the same two — add more later.
+  const ALL_GAMES = [
+    { id:"retrobowl", name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" },
+    { id:"1v1lol",   name:"1v1.LOL",   url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",   thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" }
+  ];
+
+  const topScroller = document.getElementById("topScroller");
+  const allScroller = document.getElementById("allScroller");
+  const gamesEmpty = document.getElementById("gamesEmpty");
+
+  function cardHTML(g){
+    return `
       <img class="thumb" src="${g.thumb}" alt="${g.name}">
       <strong>${g.name}</strong>
       <button class="game-btn" data-url="${g.url}" data-title="${g.name}">Launch</button>
     `;
-    scroller.appendChild(d);
+  }
+
+  function renderTop(){
+    topScroller.innerHTML = "";
+    TOP_GAMES.forEach(g=>{
+      const d=document.createElement("div");
+      d.className="game";
+      d.innerHTML = cardHTML(g);
+      topScroller.appendChild(d);
+    });
+  }
+
+  function renderAll(list){
+    allScroller.innerHTML = "";
+
+    if(!list.length){
+      gamesEmpty.style.display = "block";
+      return;
+    }
+    gamesEmpty.style.display = "none";
+
+    list.forEach(g=>{
+      const d=document.createElement("div");
+      d.className="game";
+      d.innerHTML = cardHTML(g);
+      allScroller.appendChild(d);
+    });
+  }
+
+  renderTop();
+  renderAll(ALL_GAMES);
+
+  // ===== Search =====
+  const q = document.getElementById("q");
+  const clear = document.getElementById("clear");
+
+  function applySearch(){
+    const term = q.value.trim().toLowerCase();
+    if(!term){
+      renderAll(ALL_GAMES);
+      return;
+    }
+    const filtered = ALL_GAMES.filter(g => g.name.toLowerCase().includes(term));
+    renderAll(filtered);
+  }
+
+  q.addEventListener("input", applySearch);
+  clear.addEventListener("click", () => {
+    q.value = "";
+    renderAll(ALL_GAMES);
+    q.focus();
   });
 
   // ===== Overlay Player =====
