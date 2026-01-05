@@ -69,20 +69,6 @@
       border-radius:16px;
       padding:18px;
     }
-    .search-wrap{
-      margin-top:14px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .search-input,.clear-btn{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:700;
-    }
     .row{margin-top:14px}
     .row-title{
       font-size:13px;
@@ -119,7 +105,7 @@
       background:rgba(255,255,255,.08);
       font-weight:800;
       cursor:pointer;
-      color:#ffffff; /* ✅ FORCE WHITE TEXT */
+      color:#ffffff; /* force white text */
     }
 
     /* ===== Overlay Player ===== */
@@ -181,82 +167,124 @@
 </div>
 
 <!-- PLAYER -->
-<div class="player" id="player">
+<div class="player" id="player" aria-hidden="true">
   <div class="player-topbar">
     <div id="playerName">Game</div>
-    <button id="closeBtn" class="clear-btn">Exit</button>
+    <button id="closeBtn" class="game-btn" type="button">Exit</button>
   </div>
-  <iframe id="playerFrame" class="player-frame"></iframe>
+  <iframe id="playerFrame" class="player-frame" src="about:blank" allow="fullscreen; autoplay"></iframe>
 </div>
 
 <script>
-const current=location.pathname.replace(/\/$/,"");
+/* ===== NAV ACTIVE ===== */
+const current = location.pathname.replace(/\/$/,"");
 document.querySelectorAll("#nav a").forEach(a=>{
   if(new URL(a.href).pathname.replace(/\/$/,"")===current){
     a.classList.add("active");
   }
 });
 
-const GAMES=[
-  {name:"Retro Bowl",url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
-  {name:"1v1.LOL",url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
+/* ===== RECENTLY PLAYED (saved for your Home page) ===== */
+const RECENT_KEY = "studymath_recent_v1";
+
+function safeParse(json, fallback){
+  try { return JSON.parse(json); } catch { return fallback; }
+}
+function getRecent(){
+  return safeParse(localStorage.getItem(RECENT_KEY), []);
+}
+function setRecent(ids){
+  localStorage.setItem(RECENT_KEY, JSON.stringify(ids.slice(0,10)));
+}
+function addRecentId(id){
+  if(!id) return;
+  const ids = getRecent().filter(x => x !== id);
+  ids.unshift(id);
+  setRecent(ids);
+}
+
+/* ===== GAMES ===== */
+const GAMES = [
+  { id:"retrobowl", name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" },
+  { id:"1v1lol", name:"1v1.LOL", url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" }
 ];
 
-const scroller=document.getElementById("allScroller");
+const scroller = document.getElementById("allScroller");
 GAMES.forEach(g=>{
   const d=document.createElement("div");
   d.className="game";
   d.innerHTML=`
-    <img class="thumb" src="${g.thumb}">
+    <img class="thumb" src="${g.thumb}" alt="${g.name}">
     <strong>${g.name}</strong>
-    <button class="game-btn" data-url="${g.url}" data-title="${g.name}">Launch</button>
+    <button class="game-btn"
+      data-id="${g.id}"
+      data-url="${g.url}"
+      data-title="${g.name}">
+      Launch
+    </button>
   `;
   scroller.appendChild(d);
 });
 
-const player=document.getElementById("player");
-const frame=document.getElementById("playerFrame");
-const nameEl=document.getElementById("playerName");
-const closeBtn=document.getElementById("closeBtn");
-let loadTimer=null;
+/* ===== PLAYER FIX (iframe + fallback) ===== */
+const player = document.getElementById("player");
+const frame = document.getElementById("playerFrame");
+const nameEl = document.getElementById("playerName");
+const closeBtn = document.getElementById("closeBtn");
+let loadTimer = null;
 
-async function openPlayer(title,url){
-  nameEl.textContent=title;
+async function openPlayer(title, url){
+  nameEl.textContent = title;
   player.classList.add("open");
-  frame.src="about:blank";
+  player.setAttribute("aria-hidden","false");
 
-  let loaded=false;
-  frame.onload=()=>loaded=true;
-  frame.src=url;
+  frame.src = "about:blank";
+
+  let loaded = false;
+  frame.onload = () => { loaded = true; };
+  frame.src = url;
 
   clearTimeout(loadTimer);
-  loadTimer=setTimeout(()=>{
+  loadTimer = setTimeout(() => {
     if(!loaded){
-      window.open(url,"_blank");
+      window.open(url, "_blank");
       closePlayer();
     }
-  },1200);
+  }, 1200);
 
   try{
-    if(!document.fullscreenElement) await player.requestFullscreen();
+    if(!document.fullscreenElement && player.requestFullscreen){
+      await player.requestFullscreen();
+    }
   }catch{}
 }
 
 function closePlayer(){
   player.classList.remove("open");
-  frame.src="about:blank";
-  if(document.fullscreenElement) document.exitFullscreen();
+  player.setAttribute("aria-hidden","true");
+  frame.src = "about:blank";
+  if(document.fullscreenElement && document.exitFullscreen){
+    document.exitFullscreen().catch(()=>{});
+  }
 }
 
-document.addEventListener("click",e=>{
-  const btn=e.target.closest(".game-btn");
+document.addEventListener("click", e=>{
+  const btn = e.target.closest(".game-btn");
   if(!btn) return;
-  openPlayer(btn.dataset.title,btn.dataset.url);
+
+  const id = btn.dataset.id;
+  const title = btn.dataset.title || "Game";
+  const url = btn.dataset.url;
+
+  // ✅ THIS is what makes it appear in Recently Played
+  addRecentId(id);
+
+  openPlayer(title, url);
 });
 
-closeBtn.onclick=closePlayer;
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape") closePlayer();
+closeBtn.addEventListener("click", closePlayer);
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape") closePlayer();
 });
 </script>
 
