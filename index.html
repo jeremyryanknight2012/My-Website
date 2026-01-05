@@ -94,77 +94,14 @@
     .card h1{margin:0 0 8px;font-size:22px}
     .card p{margin:0;color:var(--muted);line-height:1.5}
 
-    /* Netflix-style row */
-    .row{margin-top:18px}
-    .row-title{
-      margin:0 0 10px;
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--muted);
+    .actions{
+      margin-top:14px;
       display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-
-    .row-actions{display:flex;gap:8px;align-items:center}
-    .small-btn{
-      appearance:none;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:8px 10px;
-      border-radius:10px;
-      font-weight:800;
-      cursor:pointer;
-      font-size:12px;
-      text-decoration:none;
-      display:inline-block;
-    }
-    .small-btn:hover{background:rgba(255,255,255,.10)}
-
-    .scroller{
-      display:flex;
-      gap:12px;
-      overflow-x:auto;
-      padding-bottom:10px;
-      scroll-snap-type:x mandatory;
-      -webkit-overflow-scrolling:touch;
-    }
-
-    .scroller::-webkit-scrollbar{height:10px}
-    .scroller::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:999px}
-    .scroller::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
-    .scroller::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.20)}
-
-    .game{
-      scroll-snap-align:start;
-      flex:0 0 240px;
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
       gap:10px;
-      transition:transform .12s ease, background .12s ease;
+      flex-wrap:wrap;
     }
 
-    .game:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
-
-    .thumb{
-      width:100%;
-      height:160px;
-      object-fit:contain;
-      background:rgba(255,255,255,.04);
-      border-radius:12px;
-      border:1px solid var(--border);
-    }
-
-    .game-name{margin:0;font-weight:800;font-size:14px}
-
-    .play-link{
+    .btn{
       appearance:none;
       border:1px solid var(--border);
       background:rgba(255,255,255,.06);
@@ -173,17 +110,10 @@
       border-radius:12px;
       font-weight:800;
       text-decoration:none;
-      text-align:center;
       display:inline-block;
       cursor:pointer;
     }
-    .play-link:hover{background:rgba(255,255,255,.10)}
-
-    .empty{
-      color:var(--muted);
-      font-size:13px;
-      margin:0;
-    }
+    .btn:hover{background:rgba(255,255,255,.10)}
   </style>
 </head>
 <body>
@@ -203,100 +133,22 @@
   <main>
     <div class="card">
       <h1>Welcome to StudyMath</h1>
-      <p></p>
+      <p>Hope you enjoy the site!</p>
 
-      <div class="row" style="margin-top:16px;">
-        <div class="row-title">
-          <span>Recently Played</span>
-          <div class="row-actions">
-            <button class="small-btn" id="clearRecent" type="button">Clear</button>
-            <a class="small-btn" href="https://jeremyryanknight2012.github.io/My-Website/games.html">Go to Games</a>
-          </div>
-        </div>
-
-        <p class="empty" id="recentEmpty">No recently played games yet.</p>
-        <div class="scroller" id="recentScroller" style="display:none;"></div>
+      <div class="actions">
+        <a class="btn" href="https://jeremyryanknight2012.github.io/My-Website/games.html">Go to Games</a>
+        <a class="btn" href="https://jeremyryanknight2012.github.io/My-Website/requests.html">Requests</a>
       </div>
     </div>
   </main>
 </div>
 
 <script>
-  // ===== Active nav highlight (simple + safe) =====
-  const nav = document.getElementById("nav");
-  const current = window.location.href;
-  [...nav.querySelectorAll("a")].forEach(a => {
-    if (current === a.href || current.startsWith(a.href)) a.classList.add("active");
-  });
-
-  // ===== Recently Played =====
-  const RECENT_KEY = "studymath_recent_v1";
-  const recentScroller = document.getElementById("recentScroller");
-  const recentEmpty = document.getElementById("recentEmpty");
-  const clearRecent = document.getElementById("clearRecent");
-
-  const BASE = "https://jeremyryanknight2012.github.io/My-Website";
-
-  const GAME_CATALOG = [
-    { id:"stealabrainrot", title:"Steal a Brainrot", thumb:`${BASE}/thumbnails/stealabrainrot.png`, url:`${BASE}/games/stealabrainrot.html` },
-    { id:"1v1lol", title:"1v1.LOL", thumb:`${BASE}/thumbnails/1v1lol.png`, url:`${BASE}/games/1v1lol.html` },
-    { id:"drivemad", title:"Drive Mad", thumb:`${BASE}/thumbnails/drivemad.png`, url:`${BASE}/games/drivemad.html` },
-    { id:"retrobowl", title:"Retro Bowl", thumb:`${BASE}/thumbnails/retrobowl.png`, url:`${BASE}/games/retrobowl.html` },
-    { id:"10minutestilldawn", title:"10 Minutes Till Dawn", thumb:`${BASE}/thumbnails/10minutestilldawn.png`, url:`${BASE}/games/10minutestilldawn.html` },
-    { id:"amandatheadventurer", title:"Amanda the Adventurer", thumb:`${BASE}/thumbnails/amandatheadventurer.png`, url:`${BASE}/games/amandatheadventurer.html` },
-    { id:"bankrobbery2", title:"Bank Robbery 2", thumb:`${BASE}/thumbnails/bankrobbery2.png`, url:`${BASE}/games/bankrobbery2.html` },
-    { id:"baseballbros", title:"Baseball Bros", thumb:`${BASE}/thumbnails/baseballbros.png`, url:`${BASE}/games/baseballbros.html` },
-    { id:"basketbros", title:"Basket Bros", thumb:`${BASE}/thumbnails/basketbros.png`, url:`${BASE}/games/basketbros.html` },
-    { id:"retrobowlcollege", title:"Retro Bowl College", thumb:`${BASE}/thumbnails/retrobowlcollege.png`, url:`${BASE}/games/retrobowlcollege.html` }
-  ];
-
-  const GAME_BY_ID = Object.fromEntries(GAME_CATALOG.map(g => [g.id, g]));
-
-  function safeParse(json, fallback) {
-    try { return JSON.parse(json); } catch { return fallback; }
-  }
-
-  function getRecentIds() {
-    const raw = localStorage.getItem(RECENT_KEY);
-    const arr = safeParse(raw, []);
-    return Array.isArray(arr) ? arr : [];
-  }
-
-  function renderRecent() {
-    const ids = getRecentIds().filter(id => GAME_BY_ID[id]).slice(0, 10);
-    recentScroller.innerHTML = "";
-
-    if (ids.length === 0) {
-      recentEmpty.style.display = "block";
-      recentScroller.style.display = "none";
-      return;
-    }
-
-    recentEmpty.style.display = "none";
-    recentScroller.style.display = "flex";
-
-    ids.forEach(id => {
-      const g = GAME_BY_ID[id];
-      const card = document.createElement("div");
-      card.className = "game";
-      card.innerHTML = `
-        <img class="thumb" src="${g.thumb}" alt="${g.title}">
-        <p class="game-name">${g.title}</p>
-        <a class="play-link" href="${g.url}">Play</a>
-      `;
-      recentScroller.appendChild(card);
-    });
-  }
-
-  clearRecent.addEventListener("click", () => {
-    localStorage.removeItem(RECENT_KEY);
-    renderRecent();
-  });
-
-  renderRecent();
-
-  window.addEventListener("storage", (e) => {
-    if (e.key === RECENT_KEY) renderRecent();
+  // ===== Active nav highlight (safe) =====
+  const currentPath = location.pathname.replace(/\/$/, "");
+  document.querySelectorAll("#nav a").forEach(a => {
+    const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
+    if (linkPath === currentPath) a.classList.add("active");
   });
 </script>
 </body>
