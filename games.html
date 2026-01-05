@@ -59,29 +59,18 @@
       border-radius:10px;
       text-decoration:none;
       color:var(--text);
+      border:1px solid transparent;
+      transition:.15s;
     }
-    .nav a:hover{background:var(--hover)}
-    .nav a.active{background:var(--active)}
+    .nav a:hover{background:var(--hover);border-color:var(--border)}
+    .nav a.active{background:var(--active);border-color:var(--border)}
+
     main{padding:18px;overflow:auto}
     .card{
       background:rgba(255,255,255,.03);
       border:1px solid var(--border);
       border-radius:16px;
       padding:18px;
-    }
-    .search-wrap{
-      margin-top:14px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .search-input,.clear-btn{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:700;
     }
     .row{margin-top:14px}
     .row-title{
@@ -95,6 +84,8 @@
       display:flex;
       gap:12px;
       overflow-x:auto;
+      padding-bottom:10px;
+      -webkit-overflow-scrolling:touch;
     }
     .game{
       width:240px;
@@ -105,12 +96,14 @@
       display:flex;
       flex-direction:column;
       gap:10px;
+      flex:0 0 auto;
     }
     .thumb{
       height:160px;
       object-fit:contain;
       background:rgba(255,255,255,.04);
       border-radius:12px;
+      border:1px solid var(--border);
     }
     .game-btn{
       padding:10px;
@@ -119,8 +112,9 @@
       background:rgba(255,255,255,.08);
       font-weight:800;
       cursor:pointer;
-      color:#ffffff; /* ✅ FORCE WHITE TEXT */
+      color:#ffffff; /* force white text */
     }
+    .game-btn:hover{background:rgba(255,255,255,.12)}
 
     /* ===== Overlay Player ===== */
     .player{
@@ -142,6 +136,17 @@
       background:rgba(0,0,0,.6);
       color:#fff;
     }
+    .clear-btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.20);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .clear-btn:hover{background:rgba(255,255,255,.12)}
+
     .player-frame{
       position:absolute;
       top:52px;
@@ -184,80 +189,82 @@
 <div class="player" id="player">
   <div class="player-topbar">
     <div id="playerName">Game</div>
-    <button id="closeBtn" class="clear-btn">Exit</button>
+    <button id="closeBtn" class="clear-btn" type="button">Exit</button>
   </div>
   <iframe id="playerFrame" class="player-frame"></iframe>
 </div>
 
 <script>
-const current=location.pathname.replace(/\/$/,"");
-document.querySelectorAll("#nav a").forEach(a=>{
-  if(new URL(a.href).pathname.replace(/\/$/,"")===current){
-    a.classList.add("active");
+  // ===== Active nav highlight =====
+  const currentPath = location.pathname.replace(/\/$/, "");
+  document.querySelectorAll("#nav a").forEach(a => {
+    const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
+    if (linkPath === currentPath) a.classList.add("active");
+  });
+
+  // ===== Games list =====
+  const GAMES = [
+    {name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
+    {name:"1v1.LOL",   url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",    thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
+  ];
+
+  const scroller = document.getElementById("allScroller");
+  GAMES.forEach(g=>{
+    const d=document.createElement("div");
+    d.className="game";
+    d.innerHTML=`
+      <img class="thumb" src="${g.thumb}" alt="${g.name}">
+      <strong>${g.name}</strong>
+      <button class="game-btn" data-url="${g.url}" data-title="${g.name}">Launch</button>
+    `;
+    scroller.appendChild(d);
+  });
+
+  // ===== Overlay Player =====
+  const player=document.getElementById("player");
+  const frame=document.getElementById("playerFrame");
+  const nameEl=document.getElementById("playerName");
+  const closeBtn=document.getElementById("closeBtn");
+  let loadTimer=null;
+
+  async function openPlayer(title,url){
+    nameEl.textContent=title;
+    player.classList.add("open");
+    frame.src="about:blank";
+
+    let loaded=false;
+    frame.onload=()=>loaded=true;
+    frame.src=url;
+
+    clearTimeout(loadTimer);
+    loadTimer=setTimeout(()=>{
+      if(!loaded){
+        window.open(url,"_blank");
+        closePlayer();
+      }
+    },2500);
+
+    try{
+      if(!document.fullscreenElement) await player.requestFullscreen();
+    }catch{}
   }
-});
 
-const GAMES=[
-  {name:"Retro Bowl",url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
-  {name:"1v1.LOL",url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
-];
+  function closePlayer(){
+    player.classList.remove("open");
+    frame.src="about:blank";
+    if(document.fullscreenElement) document.exitFullscreen();
+  }
 
-const scroller=document.getElementById("allScroller");
-GAMES.forEach(g=>{
-  const d=document.createElement("div");
-  d.className="game";
-  d.innerHTML=`
-    <img class="thumb" src="${g.thumb}">
-    <strong>${g.name}</strong>
-    <button class="game-btn" data-url="${g.url}" data-title="${g.name}">Launch</button>
-  `;
-  scroller.appendChild(d);
-});
+  document.addEventListener("click",e=>{
+    const btn=e.target.closest(".game-btn");
+    if(!btn) return;
+    openPlayer(btn.dataset.title,btn.dataset.url);
+  });
 
-const player=document.getElementById("player");
-const frame=document.getElementById("playerFrame");
-const nameEl=document.getElementById("playerName");
-const closeBtn=document.getElementById("closeBtn");
-let loadTimer=null;
-
-async function openPlayer(title,url){
-  nameEl.textContent=title;
-  player.classList.add("open");
-  frame.src="about:blank";
-
-  let loaded=false;
-  frame.onload=()=>loaded=true;
-  frame.src=url;
-
-  clearTimeout(loadTimer);
-  loadTimer=setTimeout(()=>{
-    if(!loaded){
-      window.open(url,"_blank");
-      closePlayer();
-    }
-  },1200);
-
-  try{
-    if(!document.fullscreenElement) await player.requestFullscreen();
-  }catch{}
-}
-
-function closePlayer(){
-  player.classList.remove("open");
-  frame.src="about:blank";
-  if(document.fullscreenElement) document.exitFullscreen();
-}
-
-document.addEventListener("click",e=>{
-  const btn=e.target.closest(".game-btn");
-  if(!btn) return;
-  openPlayer(btn.dataset.title,btn.dataset.url);
-});
-
-closeBtn.onclick=closePlayer;
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape") closePlayer();
-});
+  closeBtn.onclick=closePlayer;
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape") closePlayer();
+  });
 </script>
 
 </body>
