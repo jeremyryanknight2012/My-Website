@@ -62,10 +62,6 @@
     }
     .nav a:hover{background:var(--hover)}
     .nav a.active{background:var(--active)}
-    .dot{
-      width:10px;height:10px;border-radius:999px;
-      background:rgba(255,255,255,.35);
-    }
     main{padding:18px;overflow:auto}
     .card{
       background:rgba(255,255,255,.03);
@@ -123,6 +119,7 @@
       background:rgba(255,255,255,.08);
       font-weight:800;
       cursor:pointer;
+      color:#ffffff; /* ✅ FORCE WHITE TEXT */
     }
 
     /* ===== Overlay Player ===== */
@@ -143,6 +140,7 @@
       align-items:center;
       padding:0 12px;
       background:rgba(0,0,0,.6);
+      color:#fff;
     }
     .player-frame{
       position:absolute;
@@ -172,10 +170,6 @@
 <main>
   <div class="card">
     <h1>Games</h1>
-    <div class="search-wrap">
-      <input id="searchInput" class="search-input" placeholder="Search games">
-      <button id="clearSearch" class="clear-btn">Clear</button>
-    </div>
 
     <div class="row">
       <div class="row-title">Games</div>
@@ -196,18 +190,16 @@
 </div>
 
 <script>
-/* ===== NAV ACTIVE ===== */
-const current = location.pathname.replace(/\/$/,"");
+const current=location.pathname.replace(/\/$/,"");
 document.querySelectorAll("#nav a").forEach(a=>{
   if(new URL(a.href).pathname.replace(/\/$/,"")===current){
     a.classList.add("active");
   }
 });
 
-/* ===== GAMES ===== */
 const GAMES=[
-  {id:"retrobowl",name:"Retro Bowl",url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
-  {id:"1v1lol",name:"1v1.LOL",url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
+  {name:"Retro Bowl",url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png"},
+  {name:"1v1.LOL",url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png"}
 ];
 
 const scroller=document.getElementById("allScroller");
@@ -222,7 +214,6 @@ GAMES.forEach(g=>{
   scroller.appendChild(d);
 });
 
-/* ===== PLAYER FIX ===== */
 const player=document.getElementById("player");
 const frame=document.getElementById("playerFrame");
 const nameEl=document.getElementById("playerName");
