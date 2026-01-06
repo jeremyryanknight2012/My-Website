@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>StudyMath - Water</title>
+  <title>StudyMath</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -20,8 +22,6 @@
       margin:0;
       font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
       color:var(--text);
-
-      /* ✅ Background image */
       background:
         radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,.08), rgba(255,255,255,0)),
         url("studymath-background.png") center/cover fixed no-repeat;
@@ -39,6 +39,7 @@
       grid-column:1/-1;
       display:flex;
       align-items:center;
+      justify-content:space-between;
       padding:0 16px;
       border-bottom:1px solid var(--border);
       background:linear-gradient(180deg,var(--panel),var(--panel2));
@@ -64,20 +65,24 @@
 
     .nav{display:flex;flex-direction:column;gap:6px}
 
-    .nav a{
+    .nav button{
       display:flex;
       align-items:center;
       gap:10px;
-      text-decoration:none;
+      width:100%;
+      text-align:left;
       color:var(--text);
       padding:10px 12px;
       border-radius:10px;
       border:1px solid transparent;
+      background:transparent;
+      cursor:pointer;
       transition:.15s;
+      font:inherit;
     }
 
-    .nav a:hover{background:var(--hover);border-color:var(--border)}
-    .nav a.active{background:var(--active);border-color:var(--border)}
+    .nav button:hover{background:var(--hover);border-color:var(--border)}
+    .nav button.active{background:var(--active);border-color:var(--border)}
 
     .dot{
       width:10px;height:10px;border-radius:999px;
@@ -87,11 +92,11 @@
 
     main{
       padding:18px;
-      overflow:hidden; /* iframe handles its own scroll */
+      overflow:hidden;
     }
 
     .card{
-      height:calc(100vh - 56px - 36px); /* full height minus header and padding */
+      height:calc(100vh - 56px - 36px);
       background:rgba(0,0,0,.28);
       border:1px solid var(--border);
       border-radius:16px;
@@ -102,8 +107,28 @@
       gap:12px;
     }
 
-    .card h1{margin:0;font-size:20px}
-    .card p{margin:0;color:var(--muted);line-height:1.5}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .title-wrap h1{margin:0;font-size:20px}
+    .title-wrap p{margin:4px 0 0;color:var(--muted);line-height:1.4}
+
+    /* "Password is: funni" textbox */
+    .password-box{
+      width: min(520px, 100%);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
 
     .frame-wrap{
       flex:1 1 auto;
@@ -119,83 +144,164 @@
       border:0;
     }
 
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+    /* Google Sites-ish button style */
+    .google-sites-button {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.25px;
+      text-transform: uppercase;
+
+      padding: 10px 24px;
+      border-radius: 4px;
+      border: 1px solid #dadce0;
+      cursor: pointer;
+
+      color: #202124;
+      background-color: #ffffff;
+
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+      transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+      user-select:none;
     }
 
-    .btn{
-      appearance:none;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      font-weight:800;
-      text-decoration:none;
-      display:inline-block;
-      cursor:pointer;
+    .google-sites-button:hover {
+      background-color: #f8f9fa;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .btn:hover{background:rgba(255,255,255,.10)}
+
+    .google-sites-button:active {
+      background-color: #f1f3f4;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+      transform: translateY(1px);
+    }
+
+    .google-sites-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.3);
+    }
+
+    /* Make the frame fill screen nicely when fullscreen is active */
+    .frame-wrap:fullscreen {
+      border-radius: 0;
+      border: none;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
   </style>
-
-  <!-- ✅ If iframe is blocked by the site, uncomment this redirect instead -->
-  <!--
-  <meta http-equiv="refresh" content="0; url=https://site.totallylearning.top/">
-  -->
-
 </head>
+
 <body>
 <div class="app">
-  <header><div class="brand">StudyMath</div></header>
+  <header>
+    <div class="brand">StudyMath</div>
+    <div style="color:var(--muted); font-size:13px;">Single-file “all pages” + fullscreen embed</div>
+  </header>
 
   <aside>
     <div class="nav-title">Pages</div>
     <nav class="nav" id="nav">
-      <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/youtube.html"><span class="dot"></span><span>YouTube</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/water.html"><span class="dot"></span><span>Water</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html"><span class="dot"></span><span>Movies</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html"><span class="dot"></span><span>TV Shows</span></a>
+      <button data-page="home"><span class="dot"></span><span>Home</span></button>
+      <button data-page="games"><span class="dot"></span><span>Games</span></button>
+      <button data-page="requests"><span class="dot"></span><span>Requests</span></button>
+      <button data-page="youtube"><span class="dot"></span><span>YouTube</span></button>
+      <button data-page="water"><span class="dot"></span><span>Water</span></button>
+      <button data-page="movies"><span class="dot"></span><span>Movies</span></button>
+      <button data-page="tvshows"><span class="dot"></span><span>TV Shows</span></button>
     </nav>
   </aside>
 
   <main>
     <div class="card">
-      <div>
-        <h1>Water</h1>
-        <p>Loading: site.totallylearning.top</p>
+      <div class="topbar">
+        <div class="title-wrap">
+          <h1 id="pageTitle">Home</h1>
+          <p id="pageSubtitle">Embedded content below</p>
+        </div>
+
+        <!-- Text box above embed -->
+        <input class="password-box" type="text" value="Password is: funni" readonly />
+
+        <!-- Fullscreen button -->
+        <button class="google-sites-button" id="fullscreenBtn" type="button">
+          Fullscreen
+        </button>
       </div>
 
-      <div class="frame-wrap">
-        <iframe
-          src="https://cgxlyxnlynjpbmdiywnrc3rhcnrtewvkdwnhdglvbml0d2fzc29zawdtv2.familyguy.in/signin.html"
-          title="Water"
-          referrerpolicy="no-referrer"
-          loading="eager"
-          allowfullscreen
-        ></iframe>
-      </div>
-
-      <div class="actions">
-        <a class="btn" href="https://site.totallylearning.top/" target="_blank" rel="noopener noreferrer">
-          
-        </a>
+      <div class="frame-wrap" id="frameWrap">
+        <iframe id="frame" src="about:blank" title="Embedded content"></iframe>
       </div>
     </div>
   </main>
 </div>
 
 <script>
-  // ===== Active nav highlight (safe) =====
-  const currentPath = location.pathname.replace(/\/$/, "");
-  document.querySelectorAll("#nav a").forEach(a => {
-    const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
-    if (linkPath === currentPath) a.classList.add("active");
+  // Put YOUR allowed/embed-friendly URLs here:
+  const PAGES = {
+    home:     { title: "Home",     subtitle: "Welcome",                  url: "https://example.com" },
+    games:    { title: "Games",    subtitle: "Games page",               url: "https://example.com" },
+    requests: { title: "Requests", subtitle: "Requests page",            url: "https://example.com" },
+    youtube:  { title: "YouTube",  subtitle: "YouTube page",             url: "https://example.com" },
+    water:    { title: "Water",    subtitle: "Water page",               url: "https://site.totallylearning.top/" },
+    movies:   { title: "Movies",   subtitle: "Movies page",              url: "https://example.com" },
+    tvshows:  { title: "TV Shows", subtitle: "TV shows page",            url: "https://example.com" }
+  };
+
+  const nav = document.getElementById("nav");
+  const frame = document.getElementById("frame");
+  const frameWrap = document.getElementById("frameWrap");
+  const pageTitle = document.getElementById("pageTitle");
+  const pageSubtitle = document.getElementById("pageSubtitle");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+  function setActive(pageKey) {
+    // highlight nav
+    nav.querySelectorAll("button").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.page === pageKey);
+    });
+
+    const p = PAGES[pageKey] || PAGES.home;
+    pageTitle.textContent = p.title;
+    pageSubtitle.textContent = p.subtitle;
+
+    // load page
+    frame.src = p.url;
+
+    // update hash for "multi-page" feeling
+    location.hash = pageKey;
+  }
+
+  nav.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-page]");
+    if (!btn) return;
+    setActive(btn.dataset.page);
   });
+
+  // Fullscreen API for the embed container
+  fullscreenBtn.addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await frameWrap.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      alert("Fullscreen failed in this browser/device.");
+    }
+  });
+
+  // Update button label when fullscreen toggles
+  document.addEventListener("fullscreenchange", () => {
+    fullscreenBtn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
+  });
+
+  // Load page from URL hash on refresh
+  const start = (location.hash || "#home").replace("#", "");
+  setActive(PAGES[start] ? start : "home");
 </script>
 </body>
 </html>
