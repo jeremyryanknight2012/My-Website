@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-  <base href="https://cdn.jsdelivr.net/gh/web-ports/cuphead@main/">
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Unity WebGL Player | Cuphead</title>
 
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       height: 100%;
       overflow: hidden;
       background: #231F20;
@@ -23,15 +21,22 @@
     }
     #loading-text {
       position: fixed;
-      left: 0;
-      right: 0;
+      left: 0; right: 0;
       top: 20px;
       text-align: center;
       color: white;
-      font-size: 48px;
+      font-size: 36px;
       font-family: cursive;
       z-index: 9999;
-      pointer-events: none;
+      padding: 0 16px;
+      word-break: break-word;
+    }
+    #loading-text small {
+      display: block;
+      margin-top: 10px;
+      font-size: 16px;
+      font-family: monospace;
+      opacity: 0.9;
     }
   </style>
 </head>
@@ -40,8 +45,11 @@
   <div id="loading-text">LOADING...</div>
   <div id="unityContainer"></div>
 
-  <script src="Build/UnityLoader.js"></script>
+  <!-- Use absolute URL instead of <base>, to avoid weird path side-effects -->
+  <script src="https://cdn.jsdelivr.net/gh/web-ports/cuphead@main/Build/UnityLoader.js"></script>
+
   <script>
+    const CDN = "https://cdn.jsdelivr.net/gh/web-ports/cuphead@main/";
     const loadingText = document.getElementById("loading-text");
     const container = document.getElementById("unityContainer");
 
@@ -52,9 +60,15 @@
       return (bytes / (1024 * 1024)).toFixed(2);
     }
 
+    function setStatus(main, detail = "") {
+      loadingText.innerHTML = `${main}${detail ? `<small>${detail}</small>` : ""}`;
+    }
+
     async function getSize(url) {
+      // HEAD often fails/403 on some CDNs; treat as best-effort.
       try {
         const res = await fetch(url, { method: "HEAD" });
+        if (!res.ok) return 0;
         const len = res.headers.get("Content-Length");
         return len ? parseInt(len, 10) : 0;
       } catch {
@@ -64,8 +78,14 @@
 
     async function fetchWithProgress(url) {
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`Failed to fetch ${url} (${response.status})`);
-      if (!response.body) throw new Error(`No stream for ${url}`);
+
+      // ✅ CRITICAL: stop if blocked/missing so we don’t merge HTML error pages
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} for ${url}`);
+      }
+      if (!response.body) {
+        throw new Error(`No readable stream for ${url}`);
+      }
 
       const reader = response.body.getReader();
       const chunks = [];
@@ -79,11 +99,12 @@
         loadedBytes += value.length;
         chunks.push(value);
 
-        // Fix "100/10" overflow by ensuring total >= loaded (HEAD can be wrong/missing on CDNs)
+        // Fix “100/10” overflow: total must never be less than loaded.
         if (!totalBytes || totalBytes < loadedBytes) totalBytes = loadedBytes;
 
-        loadingText.textContent =
-          `LOADING... ${bytesToMB(loadedBytes)} MB / ${bytesToMB(totalBytes)} MB`;
+        setStatus(
+          `LOADING... ${bytesToMB(loadedBytes)} MB / ${bytesToMB(totalBytes)} MB`
+        );
       }
 
       const buffer = new Uint8Array(received);
@@ -95,39 +116,40 @@
       return buffer.buffer;
     }
 
-    // IMPORTANT: make the returned blob URL *look like* a .unityweb file
+    // Unity often checks ".unityweb" to decide decompression.
     function makeUnitywebBlobUrl(blob) {
       return URL.createObjectURL(blob) + "#.unityweb";
     }
 
-    async function mergeFiles(fileParts) {
-      const buffers = await Promise.all(fileParts.map(part => fetchWithProgress(part)));
+    async function mergeFiles(urls) {
+      const buffers = await Promise.all(urls.map(fetchWithProgress));
       const mergedBlob = new Blob(buffers, { type: "application/octet-stream" });
       return makeUnitywebBlobUrl(mergedBlob);
     }
 
-    function getParts(file, start, end) {
-      const parts = [];
-      for (let i = start; i <= end; i++) parts.push(file + ".part" + i);
-      return parts;
+    function getParts(path, start, end) {
+      const urls = [];
+      for (let i = start; i <= end; i++) {
+        urls.push(CDN + path + ".part" + i);
+      }
+      return urls;
     }
 
-    function resizeUnityContainer() {
+    function resize() {
       container.style.width = window.innerWidth + "px";
       container.style.height = window.innerHeight + "px";
       const canvas = container.querySelector("canvas");
       if (canvas) {
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
       }
     }
-
-    window.addEventListener("resize", resizeUnityContainer);
+    window.addEventListener("resize", resize);
 
     (async () => {
       try {
         if (typeof UnityLoader === "undefined") {
-          throw new Error("UnityLoader is not defined. Build/UnityLoader.js did not load.");
+          throw new Error("UnityLoader failed to load.");
         }
 
         const allParts = [
@@ -136,29 +158,29 @@
           ...getParts("Build/Build.wasm.code.unityweb", 1, 2),
         ];
 
-        // Best-effort sizing (may be 0 or inaccurate on some CDNs)
+        // Best-effort “total” (may be 0 if HEAD blocked). We clamp during download anyway.
         const sizes = await Promise.all(allParts.map(getSize));
         totalBytes = sizes.reduce((a, b) => a + b, 0);
 
-        const [asmurl, dataUrl, wasmurl] = await Promise.all([
+        // Merge
+        const [asmUrl, dataUrl, wasmUrl] = await Promise.all([
           mergeFiles(getParts("Build/Build.asm.code.unityweb", 1, 3)),
           mergeFiles(getParts("Build/Build.data.unityweb", 1, 102)),
           mergeFiles(getParts("Build/Build.wasm.code.unityweb", 1, 2)),
         ]);
 
-        // Keep the config style your repo uses (UnityLoader.instantiate with config object + url param)
-        const json = {
+        // Config (framework/memory paths must be correct)
+        const config = {
           companyName: "SpanishFreddy",
           productName: "Cuphead",
 
           dataUrl: dataUrl,
-          wasmCodeUrl: wasmurl,
-          asmCodeUrl: asmurl,
+          wasmCodeUrl: wasmUrl,
+          asmCodeUrl: asmUrl,
 
-          // FIXED: include Build/ prefix (yours were missing)
-          wasmFrameworkUrl: "Build/Build.wasm.framework.unityweb",
-          asmMemoryUrl: "Build/Build.asm.memory.unityweb",
-          asmFrameworkUrl: "Build/Build.asm.framework.unityweb",
+          wasmFrameworkUrl: CDN + "Build/Build.wasm.framework.unityweb",
+          asmMemoryUrl: CDN + "Build/Build.asm.memory.unityweb",
+          asmFrameworkUrl: CDN + "Build/Build.asm.framework.unityweb",
 
           TOTAL_MEMORY: 100000000,
           graphicsAPI: ["WebGL 2.0", "WebGL 1.0"],
@@ -167,28 +189,25 @@
           backgroundColor: "#231F20"
         };
 
-        const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-        const blobUrl = URL.createObjectURL(blob);
-
-        UnityLoader.instantiate("unityContainer", json, {
-          url: blobUrl,
+        // Old UnityLoader supports: UnityLoader.instantiate(containerId, configObject)
+        resize();
+        UnityLoader.instantiate("unityContainer", config, {
           Module: {
-            onRuntimeInitialized: function () {
-              resizeUnityContainer();
-              if (loadingText) loadingText.remove();
+            onRuntimeInitialized() {
+              resize();
+              loadingText.remove();
             }
           }
         });
 
-        // Keep resizing occasionally (some Unity builds need this)
-        (function loopResize() {
-          resizeUnityContainer();
-          setTimeout(loopResize, 1000);
-        })();
-
       } catch (err) {
         console.error(err);
-        loadingText.textContent = "FAILED TO LOAD (check console)";
+
+        // ✅ Show the exact failing URL / status (this is what you need to fix next)
+        setStatus(
+          "FAILED TO LOAD",
+          String(err.message || err)
+        );
       }
     })();
   </script>
