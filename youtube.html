@@ -1,1 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyMath – YouTube</title>
 
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f1a33; --panel2:#0c162e;
+      --text:#e8eefc; --muted:#a9b6d6;
+      --border:rgba(255,255,255,.10);
+      --hover:rgba(255,255,255,.07);
+      --active:rgba(255,255,255,.12);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .app{
+      display:grid;
+      grid-template-rows:56px 1fr;
+      grid-template-columns:260px 1fr;
+      height:100vh;
+    }
+
+    header{
+      grid-column:1/-1;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+    }
+
+    .brand{font-weight:800;font-size:18px}
+
+    aside{
+      border-right:1px solid var(--border);
+      background:rgba(255,255,255,.02);
+      padding:14px;
+    }
+
+    .nav-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin:6px 10px 10px;
+    }
+
+    .nav{display:flex;flex-direction:column;gap:6px}
+
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid transparent;
+      transition:.15s;
+    }
+
+    .nav a:hover{background:var(--hover);border-color:var(--border)}
+    .nav a.active{background:var(--active);border-color:var(--border)}
+
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:rgba(255,255,255,.35);
+    }
+
+    main{
+      padding:18px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:20px;
+      max-width:1000px;
+      margin:auto;
+    }
+
+    .card h1{margin:0 0 10px;font-size:22px}
+    .card p{margin:0 0 16px;color:var(--muted)}
+
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn:hover{background:rgba(255,255,255,.12)}
+
+    .embed-wrap{
+      display:none;
+      height:70vh;
+      border:1px solid var(--border);
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    .embed-wrap iframe{
+      width:100%;
+      height:100%;
+      border:0;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div class="brand">StudyMath</div>
+  </header>
+
+  <aside>
+    <div class="nav-title">Pages</div>
+    <nav class="nav">
+      <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
+      <a class="active" href="#"><span class="dot"></span><span>YouTube</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/water.html"><span class="dot"></span><span>Water</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html"><span class="dot"></span><span>Movies</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html"><span class="dot"></span><span>TV Shows</span></a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="card">
+      <h1>YouTube</h1>
+      <p></p>
+
+      <div class="actions">
+        <button class="btn" onclick="showEmbed(1)">Joe Bartolozzi</button>
+        <button class="btn" onclick="showEmbed(2)">Joe Bart Games</button>
+        <button class="btn" onclick="showEmbed(3)">Ice 711</button>
+        <button class="btn" onclick="showEmbed(4)">Flamingo</button>
+      </div>
+
+      <div class="embed-wrap" id="embed1">
+        <iframe src="https://www.youtube.com/playlist?list=PL76_gEdrKLsp21bfx-9TFsNv8Kl8B9YuC" allowfullscreen></iframe>
+      </div>
+
+      <div class="embed-wrap" id="embed2">
+        <iframe src="https://www.youtube.com/playlist?list=PL76_gEdrKLspDvt4kVtlqvtefmH3hFD8I" allowfullscreen></iframe>
+      </div>
+    
+      <div class="embed-wrap" id="embed3">
+        <iframe src="https://www.youtube.com/playlist?list=PL76_gEdrKLspND7AonIxs9Ud_RC7vdXCC" allowfullscreen></iframe>
+      </div>
+      
+      <div class="embed-wrap" id="embed4">
+        <iframe src="https://www.youtube.com/playlist?list=PL76_gEdrKLspW3Odnc6xJc22HeZuO80fq" allowfullscreen></iframe>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  function showEmbed(num){
+    document.getElementById("embed1").style.display = "none";
+    document.getElementById("embed2").style.display = "none";
+    document.getElementById("embed3").style.display = "none";
+    document.getElementById("embed4").style.display = "none";
+    document.getElementById("embed" + num).style.display = "block";
+  }
+</script>
+
+</body>
+</html>
