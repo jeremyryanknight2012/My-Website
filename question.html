@@ -1,1 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyMath — Questions</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f1a33; --panel2:#0c162e;
+      --text:#e8eefc; --muted:#a9b6d6;
+      --border:rgba(255,255,255,.10);
+      --hover:rgba(255,255,255,.07);
+      --active:rgba(255,255,255,.12);
+    }
 
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--text);
+
+      /* Put "studymath-background.png" in the SAME folder as this HTML file */
+      background:
+        linear-gradient(180deg, rgba(11,18,32,.65), rgba(11,18,32,.85)),
+        url("studymath-background.png");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-attachment:fixed;
+    }
+
+    .app{
+      display:grid;
+      grid-template-rows:56px 1fr;
+      grid-template-columns:260px 1fr;
+      height:100vh;
+      backdrop-filter:saturate(1.05);
+    }
+
+    header{
+      grid-column:1/-1;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(15,26,51,.92), rgba(12,22,46,.92));
+    }
+
+    .brand{font-weight:800;font-size:18px}
+
+    aside{
+      border-right:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      padding:14px;
+      overflow:auto;
+    }
+
+    .nav-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin:6px 10px 10px;
+    }
+
+    .nav{display:flex;flex-direction:column;gap:6px}
+
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid transparent;
+      transition:.15s;
+    }
+
+    .nav a:hover{background:var(--hover);border-color:var(--border)}
+    .nav a.active{background:var(--active);border-color:var(--border)}
+
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:rgba(255,255,255,.35);
+      flex:0 0 auto;
+    }
+
+    main{
+      padding:18px;
+      overflow-y:auto;
+      overflow-x:hidden;
+    }
+
+    .card{
+      max-width:100%;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .card h1{margin:0 0 8px;font-size:22px}
+    .card p{margin:0;color:var(--muted);line-height:1.5}
+
+    /* --- Questions UI --- */
+    .q-wrap{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-width:760px;
+    }
+
+    .q-box{
+      width:100%;
+      min-height:64px;
+      resize:vertical;
+      padding:14px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      font-weight:800;
+      font-size:18px;
+      outline:none;
+    }
+    .q-box::placeholder{color:rgba(232,238,252,.55);font-weight:800}
+    .q-box:focus{
+      border-color:rgba(255,255,255,.22);
+      background:rgba(0,0,0,.30);
+    }
+
+    /* Optional: small "code" panel in the sidebar */
+    pre.code{
+      margin:10px 0 0;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(0,0,0,.22);
+      color:rgba(232,238,252,.9);
+      overflow:auto;
+      font-size:12px;
+      line-height:1.45;
+      white-space:pre;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header><div class="brand">StudyMath</div></header>
+
+    <aside>
+      <div class="nav-title">Pages</div>
+      <nav class="nav" id="nav">
+        <!-- Absolute links so they ALWAYS work on GitHub Pages -->
+        <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/youtube.html"><span class="dot"></span><span>YouTube</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/water.html"><span class="dot"></span><span>Water</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html"><span class="dot"></span><span>Movies</span></a>
+        <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html"><span class="dot"></span><span>TV Shows</span></a>
+
+        <!-- NEW PAGE -->
+        <a href="https://jeremyryanknight2012.github.io/My-Website/questions.html"><span class="dot"></span><span>Questions</span></a>
+      </nav>
+
+      <div class="nav-title"></div>
+      <pre class="code">&lt;!-- Add this link to your other pages too: --&gt;
+&lt;a href="https://jeremyryanknight2012.github.io/My-Website/questions.html"&gt;Questions&lt;/a&gt;
+
+&lt;!-- Background image file name: --&gt;
+studymath-background.png</pre>
+    </aside>
+
+    <main>
+      <div class="card">
+        <h1>Questions</h1>
+        <p>Here's any questions you might have on how to do stuff.</p>
+
+        <div class="q-wrap">
+          <textarea class="q-box" placeholder="Q"></textarea>
+          <textarea class="q-box" placeholder="Q"></textarea>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ===== Active nav highlight (safe) =====
+    const currentPath = location.pathname.replace(/\/$/, "");
+    document.querySelectorAll("#nav a").forEach(a => {
+      const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
+      if (linkPath === currentPath) a.classList.add("active");
+    });
+  </script>
+</body>
+</html>
