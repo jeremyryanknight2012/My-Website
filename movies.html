@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -90,10 +89,7 @@
       font-weight:700;
     }
     .search-input{min-width:220px;flex:1}
-    .clear-btn{
-      cursor:pointer;
-      font-weight:800;
-    }
+    .clear-btn{cursor:pointer;font-weight:800}
     .clear-btn:hover{background:rgba(255,255,255,.10)}
 
     .row{margin-top:16px}
@@ -103,10 +99,6 @@
       letter-spacing:.12em;
       color:var(--muted);
       margin-bottom:10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
     }
 
     .scroller{
@@ -114,7 +106,6 @@
       gap:12px;
       overflow-x:auto;
       padding-bottom:10px;
-      -webkit-overflow-scrolling:touch;
     }
     .movie{
       width:240px;
@@ -141,7 +132,7 @@
       background:rgba(255,255,255,.08);
       font-weight:800;
       cursor:pointer;
-      color:#ffffff; /* force white text */
+      color:#fff;
     }
     .movie-btn:hover{background:rgba(255,255,255,.12)}
 
@@ -152,7 +143,7 @@
       font-size:13px;
     }
 
-    /* ===== Overlay Player ===== */
+    /* Player */
     .player{
       position:fixed;
       inset:0;
@@ -175,13 +166,12 @@
     .player-exit{
       padding:10px 12px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.20);
+      border:1px solid rgba(255,255,255,.2);
       background:rgba(255,255,255,.08);
       color:#fff;
       font-weight:800;
       cursor:pointer;
     }
-    .player-exit:hover{background:rgba(255,255,255,.12)}
     .player-frame{
       position:absolute;
       top:52px;
@@ -195,42 +185,41 @@
 
 <body>
 <div class="app">
-<header><div class="brand">StudyMath</div></header>
+
+<header>
+  <div class="brand">StudyMath</div>
+</header>
 
 <aside>
   <div class="nav-title">Pages</div>
   <nav class="nav" id="nav">
-         <!-- Absolute links so they ALWAYS work on GitHub Pages -->
-    <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/youtube.html"><span class="dot"></span><span>YouTube</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/water.html"><span class="dot"></span><span>Water</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html"><span class="dot"></span><span>Movies</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html"><span class="dot"></span><span>TV Shows</span></a>
-      <a href="https://jeremyryanknight2012.github.io/My-Website/questions.html"><span class="dot"></span><span>Questions</span></a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/">Home</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/games.html">Games</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html">Requests</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/youtube.html">YouTube</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/water.html">Water</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html" class="active">Movies</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html">TV Shows</a>
+    <a href="https://jeremyryanknight2012.github.io/My-Website/questions.html">Questions</a>
   </nav>
 </aside>
 
 <main>
   <div class="card">
-    <h1>Games</h1>
+    <h1>Movies</h1>
 
-    <!-- Search -->
     <div class="search-wrap">
-      <input id="q" class="search-input" type="text" placeholder="Search movies..." autocomplete="off" />
-      <button id="clear" class="clear-btn" type="button">Clear</button>
+      <input id="q" class="search-input" placeholder="Search movies..." />
+      <button id="clear" class="clear-btn">Clear</button>
     </div>
 
-    <!-- Top Movies -->
     <div class="row">
-      <div class="row-title"><span>Top Movies</span></div>
+      <div class="row-title">Top Movies</div>
       <div class="scroller" id="topScroller"></div>
     </div>
 
-    <!-- Games (scroll down section) -->
-    <div class="row" style="margin-top:22px;">
-      <div class="row-title"><span>Movies</span></div>
+    <div class="row">
+      <div class="row-title">All Movies</div>
       <p class="empty" id="moviesEmpty" style="display:none;">No movies match your search.</p>
       <div class="scroller" id="allScroller"></div>
     </div>
@@ -239,141 +228,75 @@
 
 </div>
 
-<!-- PLAYER -->
 <div class="player" id="player">
   <div class="player-topbar">
     <div id="playerName">Movie</div>
-    <button id="closeBtn" class="player-exit" type="button">Exit</button>
+    <button id="closeBtn" class="player-exit">Exit</button>
   </div>
   <iframe id="playerFrame" class="player-frame"></iframe>
 </div>
 
 <script>
-  // ===== Active nav highlight =====
-  const currentPath = location.pathname.replace(/\/$/, "");
-  document.querySelectorAll("#nav a").forEach(a => {
-    const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
-    if (linkPath === currentPath) a.classList.add("active");
-  });
-
-  // ===== Data =====
   const TOP_MOVIES = [
-   { id:"1v1lol",   name:"1v1.LOL",   url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",   thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" },
-   { id:"retrobowl", name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" }
+    { id:"thesimpsonsmovie", name:"The Simpsons Movie", url:"https://jeremyryanknight2012.github.io/My-Website/movies/simpsonsmovie.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/simpsonsmovie.png" },
+    { id:"retrobowl", name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" }
   ];
 
-  // Put ALL your movies here. Right now it's the same two — add more later.
   const ALL_MOVIES = [
- { id:"10minutestilldawn",   name:"10 Minutes Till Dawn",   url:"https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html",   thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png" },
+    { id:"10minutestilldawn", name:"10 Minutes Till Dawn", url:"https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png" },
     { id:"bankrobbery2", name:"Bank Robbery 2", url:"https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png" }
+  ];
+
   const topScroller = document.getElementById("topScroller");
   const allScroller = document.getElementById("allScroller");
   const moviesEmpty = document.getElementById("moviesEmpty");
 
-  function cardHTML(g){
+  function cardHTML(m){
     return `
-      <img class="thumb" src="${g.thumb}" alt="${g.name}">
-      <strong>${g.name}</strong>
-      <button class="movie-btn" data-url="${g.url}" data-title="${g.name}">Watch</button>
+      <img class="thumb" src="${m.thumb}">
+      <strong>${m.name}</strong>
+      <button class="movie-btn" data-url="${m.url}" data-title="${m.name}">Watch</button>
     `;
   }
 
-  function renderTop(){
-    topScroller.innerHTML = "";
-    TOP_MOVIES.forEach(g=>{
+  function render(list, el){
+    el.innerHTML = "";
+    list.forEach(m=>{
       const d=document.createElement("div");
       d.className="movie";
-      d.innerHTML = cardHTML(g);
-      topScroller.appendChild(d);
+      d.innerHTML=cardHTML(m);
+      el.appendChild(d);
     });
   }
 
-  function renderAll(list){
-    allScroller.innerHTML = "";
-
-    if(!list.length){
-      moviesEmpty.style.display = "block";
-      return;
-    }
-    moviesEmpty.style.display = "none";
-
-    list.forEach(g=>{
-      const d=document.createElement("div");
-      d.className="movie";
-      d.innerHTML = cardHTML(g);
-      allScroller.appendChild(d);
-    });
-  }
-
-  renderTop();
-  renderAll(ALL_MOVIES);
-
-  // ===== Search =====
-  const q = document.getElementById("q");
-  const clear = document.getElementById("clear");
-
-  function applySearch(){
-    const term = q.value.trim().toLowerCase();
-    if(!term){
-      renderAll(ALL_MOVIES);
-      return;
-    }
-    const filtered = ALL_MOVIES.filter(g => g.name.toLowerCase().includes(term));
-    renderAll(filtered);
-  }
-
-  q.addEventListener("input", applySearch);
-  clear.addEventListener("click", () => {
-    q.value = "";
-    renderAll(ALL_MOVIES);
-    q.focus();
-  });
-
-  // ===== Overlay Player =====
-  const player=document.getElementById("player");
-  const frame=document.getElementById("playerFrame");
-  const nameEl=document.getElementById("playerName");
-  const closeBtn=document.getElementById("closeBtn");
-  let loadTimer=null;
-
-  async function openPlayer(title,url){
-    nameEl.textContent=title;
-    player.classList.add("open");
-    frame.src="about:blank";
-
-    let loaded=false;
-    frame.onload=()=>loaded=true;
-    frame.src=url;
-
-    clearTimeout(loadTimer);
-    loadTimer=setTimeout(()=>{
-      if(!loaded){
-        window.open(url,"_blank");
-        closePlayer();
-      }
-    },2500);
-
-    try{
-      if(!document.fullscreenElement) await player.requestFullscreen();
-    }catch{}
-  }
-
-  function closePlayer(){
-    player.classList.remove("open");
-    frame.src="about:blank";
-    if(document.fullscreenElement) document.exitFullscreen();
-  }
+  render(TOP_MOVIES, topScroller);
+  render(ALL_MOVIES, allScroller);
 
   document.addEventListener("click",e=>{
     const btn=e.target.closest(".movie-btn");
     if(!btn) return;
-    openPlayer(btn.dataset.title,btn.dataset.url);
+    document.getElementById("playerName").textContent=btn.dataset.title;
+    document.getElementById("playerFrame").src=btn.dataset.url;
+    document.getElementById("player").classList.add("open");
   });
 
-  closeBtn.onclick=closePlayer;
-  document.addEventListener("keydown",e=>{
-    if(e.key==="Escape") closePlayer();
+  document.getElementById("closeBtn").onclick=()=>{
+    document.getElementById("player").classList.remove("open");
+    document.getElementById("playerFrame").src="";
+  };
+
+  document.getElementById("q").addEventListener("input",e=>{
+    const v=e.target.value.toLowerCase();
+    const f=ALL_MOVIES.filter(m=>m.name.toLowerCase().includes(v));
+    moviesEmpty.style.display=f.length?"none":"block";
+    render(f,allScroller);
   });
+
+  document.getElementById("clear").onclick=()=>{
+    q.value="";
+    moviesEmpty.style.display="none";
+    render(ALL_MOVIES,allScroller);
+  };
 </script>
 
 </body>
