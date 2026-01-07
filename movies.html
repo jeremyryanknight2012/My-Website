@@ -1,1 +1,380 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyMath — Movies</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a33;
+      --panel2:#0c162e;
+      --text:#e8eefc;
+      --muted:#a9b6d6;
+      --border:rgba(255,255,255,.10);
+      --hover:rgba(255,255,255,.07);
+      --active:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      display:grid;
+      grid-template-rows:56px 1fr;
+      grid-template-columns:260px 1fr;
+      height:100vh;
+    }
+    header{
+      grid-column:1/-1;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+    }
+    .brand{font-weight:800;font-size:18px}
+    aside{
+      border-right:1px solid var(--border);
+      padding:14px;
+      background:rgba(255,255,255,.02);
+    }
+    .nav-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin:6px 10px 10px;
+    }
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a{
+      display:flex;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid transparent;
+      transition:.15s;
+    }
+    .nav a:hover{background:var(--hover);border-color:var(--border)}
+    .nav a.active{background:var(--active);border-color:var(--border)}
+
+    main{padding:18px;overflow:auto}
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .search-wrap{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .search-input,.clear-btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
+    }
+    .search-input{min-width:220px;flex:1}
+    .clear-btn{
+      cursor:pointer;
+      font-weight:800;
+    }
+    .clear-btn:hover{background:rgba(255,255,255,.10)}
+
+    .row{margin-top:16px}
+    .row-title{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .scroller{
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
+      padding-bottom:10px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .movie{
+      width:240px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:0 0 auto;
+    }
+    .thumb{
+      height:160px;
+      object-fit:contain;
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      border:1px solid var(--border);
+    }
+    .movie-btn{
+      padding:10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.08);
+      font-weight:800;
+      cursor:pointer;
+      color:#ffffff; /* force white text */
+    }
+    .movie-btn:hover{background:rgba(255,255,255,.12)}
+
+    .empty{
+      margin:0;
+      color:var(--muted);
+      font-weight:700;
+      font-size:13px;
+    }
+
+    /* ===== Overlay Player ===== */
+    .player{
+      position:fixed;
+      inset:0;
+      background:#000;
+      display:none;
+      z-index:9999;
+    }
+    .player.open{display:block}
+    .player-topbar{
+      position:absolute;
+      top:0;left:0;right:0;
+      height:52px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 12px;
+      background:rgba(0,0,0,.6);
+      color:#fff;
+    }
+    .player-exit{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.20);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .player-exit:hover{background:rgba(255,255,255,.12)}
+    .player-frame{
+      position:absolute;
+      top:52px;
+      left:0;
+      width:100%;
+      height:calc(100% - 52px);
+      border:0;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+<header><div class="brand">StudyMath</div></header>
+
+<aside>
+  <div class="nav-title">Pages</div>
+  <nav class="nav" id="nav">
+         <!-- Absolute links so they ALWAYS work on GitHub Pages -->
+    <a href="https://jeremyryanknight2012.github.io/My-Website/"><span class="dot"></span><span>Home</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/games.html"><span class="dot"></span><span>Games</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html"><span class="dot"></span><span>Requests</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/youtube.html"><span class="dot"></span><span>YouTube</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/water.html"><span class="dot"></span><span>Water</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html"><span class="dot"></span><span>Movies</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html"><span class="dot"></span><span>TV Shows</span></a>
+      <a href="https://jeremyryanknight2012.github.io/My-Website/questions.html"><span class="dot"></span><span>Questions</span></a>
+  </nav>
+</aside>
+
+<main>
+  <div class="card">
+    <h1>Games</h1>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <input id="q" class="search-input" type="text" placeholder="Search games..." autocomplete="off" />
+      <button id="clear" class="clear-btn" type="button">Clear</button>
+    </div>
+
+    <!-- Top Movies -->
+    <div class="row">
+      <div class="row-title"><span>Top Movies</span></div>
+      <div class="scroller" id="topScroller"></div>
+    </div>
+
+    <!-- Games (scroll down section) -->
+    <div class="row" style="margin-top:22px;">
+      <div class="row-title"><span>Movies</span></div>
+      <p class="empty" id="moviesEmpty" style="display:none;">No movies match your search.</p>
+      <div class="scroller" id="allScroller"></div>
+    </div>
+  </div>
+</main>
+
+</div>
+
+<!-- PLAYER -->
+<div class="player" id="player">
+  <div class="player-topbar">
+    <div id="playerName">Movie</div>
+    <button id="closeBtn" class="player-exit" type="button">Exit</button>
+  </div>
+  <iframe id="playerFrame" class="player-frame"></iframe>
+</div>
+
+<script>
+  // ===== Active nav highlight =====
+  const currentPath = location.pathname.replace(/\/$/, "");
+  document.querySelectorAll("#nav a").forEach(a => {
+    const linkPath = new URL(a.href).pathname.replace(/\/$/, "");
+    if (linkPath === currentPath) a.classList.add("active");
+  });
+
+  // ===== Data =====
+  const TOP_MOVIES = [
+   { id:"1v1lol",   name:"1v1.LOL",   url:"https://jeremyryanknight2012.github.io/My-Website/games/1v1lol.html",   thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/1v1lol.png" },
+   { id:"retrobowl", name:"Retro Bowl", url:"https://jeremyryanknight2012.github.io/My-Website/games/retrobowl.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/retrobowl.png" }
+  ];
+
+  // Put ALL your movies here. Right now it's the same two — add more later.
+  const ALL_MOVIES = [
+ { id:"10minutestilldawn",   name:"10 Minutes Till Dawn",   url:"https://jeremyryanknight2012.github.io/My-Website/games/10minutestilldawn.html",   thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/10minutestilldawn.png" },
+    { id:"bankrobbery2", name:"Bank Robbery 2", url:"https://jeremyryanknight2012.github.io/My-Website/games/bankrobbery2.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/bankrobbery2.png" }
+  const topScroller = document.getElementById("topScroller");
+  const allScroller = document.getElementById("allScroller");
+  const moviesEmpty = document.getElementById("moviesEmpty");
+
+  function cardHTML(g){
+    return `
+      <img class="thumb" src="${g.thumb}" alt="${g.name}">
+      <strong>${g.name}</strong>
+      <button class="movie-btn" data-url="${g.url}" data-title="${g.name}">Watch</button>
+    `;
+  }
+
+  function renderTop(){
+    topScroller.innerHTML = "";
+    TOP_MOVIES.forEach(g=>{
+      const d=document.createElement("div");
+      d.className="movie";
+      d.innerHTML = cardHTML(g);
+      topScroller.appendChild(d);
+    });
+  }
+
+  function renderAll(list){
+    allScroller.innerHTML = "";
+
+    if(!list.length){
+      moviesEmpty.style.display = "block";
+      return;
+    }
+    moviesEmpty.style.display = "none";
+
+    list.forEach(g=>{
+      const d=document.createElement("div");
+      d.className="movie";
+      d.innerHTML = cardHTML(g);
+      allScroller.appendChild(d);
+    });
+  }
+
+  renderTop();
+  renderAll(ALL_MOVIES);
+
+  // ===== Search =====
+  const q = document.getElementById("q");
+  const clear = document.getElementById("clear");
+
+  function applySearch(){
+    const term = q.value.trim().toLowerCase();
+    if(!term){
+      renderAll(ALL_MOVIES);
+      return;
+    }
+    const filtered = ALL_MOVIES.filter(g => g.name.toLowerCase().includes(term));
+    renderAll(filtered);
+  }
+
+  q.addEventListener("input", applySearch);
+  clear.addEventListener("click", () => {
+    q.value = "";
+    renderAll(ALL_MOVIES);
+    q.focus();
+  });
+
+  // ===== Overlay Player =====
+  const player=document.getElementById("player");
+  const frame=document.getElementById("playerFrame");
+  const nameEl=document.getElementById("playerName");
+  const closeBtn=document.getElementById("closeBtn");
+  let loadTimer=null;
+
+  async function openPlayer(title,url){
+    nameEl.textContent=title;
+    player.classList.add("open");
+    frame.src="about:blank";
+
+    let loaded=false;
+    frame.onload=()=>loaded=true;
+    frame.src=url;
+
+    clearTimeout(loadTimer);
+    loadTimer=setTimeout(()=>{
+      if(!loaded){
+        window.open(url,"_blank");
+        closePlayer();
+      }
+    },2500);
+
+    try{
+      if(!document.fullscreenElement) await player.requestFullscreen();
+    }catch{}
+  }
+
+  function closePlayer(){
+    player.classList.remove("open");
+    frame.src="about:blank";
+    if(document.fullscreenElement) document.exitFullscreen();
+  }
+
+  document.addEventListener("click",e=>{
+    const btn=e.target.closest(".movie-btn");
+    if(!btn) return;
+    openPlayer(btn.dataset.title,btn.dataset.url);
+  });
+
+  closeBtn.onclick=closePlayer;
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape") closePlayer();
+  });
+</script>
+
+</body>
+</html>
