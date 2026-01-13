@@ -54,16 +54,12 @@
     .nav{display:flex;flex-direction:column;gap:6px}
     .nav a{
       display:flex;
-      gap:10px;
       padding:10px 12px;
       border-radius:10px;
       text-decoration:none;
       color:var(--text);
-      border:1px solid transparent;
-      transition:.15s;
     }
-    .nav a:hover{background:var(--hover);border-color:var(--border)}
-    .nav a.active{background:var(--active);border-color:var(--border)}
+    .nav a.active{background:var(--active)}
 
     main{padding:18px;overflow:auto}
     .card{
@@ -77,8 +73,6 @@
       margin-top:12px;
       display:flex;
       gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
     }
     .search-input,.clear-btn{
       padding:10px 12px;
@@ -88,9 +82,7 @@
       color:var(--text);
       font-weight:700;
     }
-    .search-input{min-width:220px;flex:1}
-    .clear-btn{cursor:pointer;font-weight:800}
-    .clear-btn:hover{background:rgba(255,255,255,.10)}
+    .clear-btn{cursor:pointer}
 
     .row{margin-top:16px}
     .row-title{
@@ -105,7 +97,6 @@
       display:flex;
       gap:12px;
       overflow-x:auto;
-      padding-bottom:10px;
     }
     .tvshow{
       width:240px;
@@ -116,14 +107,12 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      flex:0 0 auto;
     }
     .thumb{
       height:160px;
       object-fit:contain;
       background:rgba(255,255,255,.04);
       border-radius:12px;
-      border:1px solid var(--border);
     }
     .tvshow-btn{
       padding:10px;
@@ -133,52 +122,6 @@
       font-weight:800;
       cursor:pointer;
       color:#fff;
-    }
-    .tvshow-btn:hover{background:rgba(255,255,255,.12)}
-
-    .empty{
-      margin:0;
-      color:var(--muted);
-      font-weight:700;
-      font-size:13px;
-    }
-
-    /* Player */
-    .player{
-      position:fixed;
-      inset:0;
-      background:#000;
-      display:none;
-      z-index:9999;
-    }
-    .player.open{display:block}
-    .player-topbar{
-      position:absolute;
-      top:0;left:0;right:0;
-      height:52px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:0 12px;
-      background:rgba(0,0,0,.6);
-      color:#fff;
-    }
-    .player-exit{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.2);
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .player-frame{
-      position:absolute;
-      top:52px;
-      left:0;
-      width:100%;
-      height:calc(100% - 52px);
-      border:0;
     }
   </style>
 </head>
@@ -192,14 +135,13 @@
 
 <aside>
   <div class="nav-title">Pages</div>
-  <nav class="nav" id="nav">
+  <nav class="nav">
     <a href="https://jeremyryanknight2012.github.io/My-Website/">Home</a>
     <a href="https://jeremyryanknight2012.github.io/My-Website/games.html">Games</a>
     <a href="https://jeremyryanknight2012.github.io/My-Website/requests.html">Requests</a>
     <a href="https://jeremyryanknight2012.github.io/My-Website/youtube.html">YouTube</a>
-    <a href="https://jeremyryanknight2012.github.io/My-Website/water.html">Water</a>
     <a href="https://jeremyryanknight2012.github.io/My-Website/movies.html">Movies</a>
-    <a href="https://jeremyryanknight2012.github.io/My-Website/tvshows.html" class="active">TV Shows</a>
+    <a href="#" class="active">TV Shows</a>
   </nav>
 </aside>
 
@@ -213,13 +155,7 @@
     </div>
 
     <div class="row">
-      <div class="row-title">Top TV Shows</div>
-      <div class="scroller" id="topScroller"></div>
-    </div>
-
-    <div class="row">
       <div class="row-title">All TV Shows</div>
-      <p class="empty" id="tvshowsEmpty" style="display:none;">No TV shows match your search.</p>
       <div class="scroller" id="allScroller"></div>
     </div>
   </div>
@@ -227,74 +163,48 @@
 
 </div>
 
-<div class="player" id="player">
-  <div class="player-topbar">
-    <div id="playerName">TV Show</div>
-    <button id="closeBtn" class="player-exit">Exit</button>
-  </div>
-  <iframe id="playerFrame" class="player-frame"></iframe>
-</div>
-
 <script>
-  const TOP_TVSHOWS = [
-    { id:"thesimpsonsmovie", name:"The Simpsons Movie", url:"https://jeremyryanknight2012.github.io/My-Website/movies/simpsonsmovie.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/simpsonsmovie.png" },
-    { id:"jurassicpark", name:"Jurassic Park", url:"https://jeremyryanknight2012.github.io/My-Website/movies/jurassicpark.html", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/jurassicpark.png" }
-  ];
-
   const ALL_TVSHOWS = [
-    { id:"adventuretime", name:"Adventure Time", url:"https://drive.google.com/drive/folders/1OwoKydzUQUUp6n-Nh7CCAQXGLfchU8Ta", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/adventuretime.png" },
-    { id:"amazingworldofgumball", name:"Amazing World of Gumball", url:"https://drive.google.com/drive/folders/1jhdpF65hUXwCRjOZKqquWB4z8L1ZpII7", thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/amazingworldofgumball.png" }
+    {
+      name:"Adventure Time",
+      url:"https://drive.google.com/drive/folders/1OwoKydzUQUUp6n-Nh7CCAQXGLfchU8Ta",
+      thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/adventuretime.png"
+    },
+    {
+      name:"Amazing World of Gumball",
+      url:"https://drive.google.com/drive/folders/1jhdpF65hUXwCRjOZKqquWB4z8L1ZpII7",
+      thumb:"https://jeremyryanknight2012.github.io/My-Website/thumbnails/amazingworldofgumball.png"
+    }
   ];
 
-  const topScroller = document.getElementById("topScroller");
   const allScroller = document.getElementById("allScroller");
-  const tvshowsEmpty = document.getElementById("tvshowsEmpty");
+  const q = document.getElementById("q");
 
-  function cardHTML(t){
-    return `
-      <img class="thumb" src="${t.thumb}">
-      <strong>${t.name}</strong>
-      <button class="tvshow-btn" data-url="${t.url}" data-title="${t.name}">Watch</button>
-    `;
-  }
-
-  function render(list, el){
-    el.innerHTML = "";
+  function render(list){
+    allScroller.innerHTML="";
     list.forEach(t=>{
       const d=document.createElement("div");
       d.className="tvshow";
-      d.innerHTML=cardHTML(t);
-      el.appendChild(d);
+      d.innerHTML=`
+        <img class="thumb" src="${t.thumb}" alt="${t.name}">
+        <strong>${t.name}</strong>
+        <button class="tvshow-btn" onclick="location.href='${t.url}'">
+          Watch
+        </button>`;
+      allScroller.appendChild(d);
     });
   }
 
-  render(TOP_TVSHOWS, topScroller);
-  render(ALL_TVSHOWS, allScroller);
+  render(ALL_TVSHOWS);
 
-  document.addEventListener("click",e=>{
-    const btn=e.target.closest(".tvshow-btn");
-    if(!btn) return;
-    document.getElementById("playerName").textContent=btn.dataset.title;
-    document.getElementById("playerFrame").src=btn.dataset.url;
-    document.getElementById("player").classList.add("open");
-  });
-
-  document.getElementById("closeBtn").onclick=()=>{
-    document.getElementById("player").classList.remove("open");
-    document.getElementById("playerFrame").src="";
+  q.oninput=()=>{
+    const v=q.value.toLowerCase();
+    render(ALL_TVSHOWS.filter(t=>t.name.toLowerCase().includes(v)));
   };
-
-  document.getElementById("q").addEventListener("input",e=>{
-    const v=e.target.value.toLowerCase();
-    const f=ALL_TVSHOWS.filter(t=>t.name.toLowerCase().includes(v));
-    tvshowsEmpty.style.display=f.length?"none":"block";
-    render(f,allScroller);
-  });
 
   document.getElementById("clear").onclick=()=>{
     q.value="";
-    tvshowsEmpty.style.display="none";
-    render(ALL_TVSHOWS,allScroller);
+    render(ALL_TVSHOWS);
   };
 </script>
 
